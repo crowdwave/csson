@@ -27,7 +27,7 @@ csson/
   packages/
     typescript/     the JS/TS environment (wraps a real CSS parser)
   bindings/         one wrapper per environment, each links libcsson (or lexbor-via-WASM)
-    python/ go/ java/ dotnet/ c/ ruby/ php/ shell/
+    wasm/ nodejs/ rust/ python/ go/ java/ dotnet/ c/ ruby/ php/ shell/
   conformance/      canonical document + expected JSON + independent multi-engine verifier
     v1/readers/     c (lexbor) · chrome (Blink) · firefox (Gecko)
     VERIFICATION.md the cross-engine (core / Chrome / Firefox) verification runbook

@@ -40,8 +40,13 @@ Invariants that gate every task: **never write our own CSS parsing** and
 - [ ] **Per-binding conformance hookup** — generic harness so each binding runs the `conformance/v1` fixtures and must match `expected.json`. Establishes the repeatable pattern.
 
 ## Phase 3 — The remaining environments (each: wrap `libcsson` or WASM, pass conformance)
+- [ ] **Node.js** (`bindings/nodejs`) — over the WASM front door (no CSSOM in Node); also unlocks edit/patch server-side.
+- [ ] **Rust** (`bindings/rust`) — `csson-sys` (bindgen FFI) + safe `csson` crate over `libcsson`. **Binding only, never a reimplementation** (the earlier standalone Rust impl was removed for duplicating parsing).
 - [ ] Go (cgo) · [ ] Java/JVM (JNI/Panama) · [ ] C#/.NET (P/Invoke) · [ ] C/C++ (header) ·
       [ ] Ruby · [ ] PHP (FFI) · [ ] Shell/CLI
+
+> **WASM** (`bindings/wasm`) is tracked in Phase 1 ("WASM front door") — it is the
+> shared dependency for Node.js and in-browser editing, and a conformance engine.
 
 ## Phase 4 — Hardening & release
 - [ ] Memory-safety pass on the C core (valgrind/ASAN; free lexbor objects, bounds).
