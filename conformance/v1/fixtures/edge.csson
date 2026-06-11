@@ -1,0 +1,17 @@
+/* numeric & scalar edge cases — regression guard for canonicalisation + escaping.
+   Leading-zeros / -0 / out-of-safe-range integers must be strings; only canonical
+   integers with |v| <= 2^53-1 are JSON numbers; control chars must be JSON-escaped.
+   Must agree byte-for-byte across all engines. */
+cssonv1 {
+  --lead0: 007;
+  --neg0: -0;
+  --zero: 0;
+  --negsafe: -9007199254740991;
+  --safe: 9007199254740991;
+  --over: 9007199254740992;
+  --huge: 99999999999999999999;
+  --float: 3.14;
+  --expo: 1e3;
+  --ident: active;
+  --ctrl: "a	b";
+}

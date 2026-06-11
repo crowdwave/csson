@@ -1,0 +1,23 @@
+/* ============================================================
+   Acme org chart — CSSON v1 sample WITH COMMENTS
+   (this header must survive any edit)
+   ============================================================ */
+@property --org    { syntax: "<string>";  inherits: false; initial-value: ""; }
+@property --name   { syntax: "<string>";  inherits: false; initial-value: ""; }
+@property --lead   { syntax: "<string>";  inherits: false; initial-value: ""; }
+
+cssonv1 {
+  --org: "Acme";          /* top-level org name — keep this comment */
+  department {
+    --name: "Engineering";
+    team {
+      --name: "Platform";
+      --lead: "Alice";     /* team lead; will be changed to Alicia */
+      member { --name: "Bob"; }
+    }
+  }
+  department {
+    --name: "Design";      /* this whole department will be removed */
+    team { --name: "Brand"; }
+  }
+}

@@ -1,0 +1,5 @@
+lexbor/
+obj/
+*.a
+csson
+.out.json

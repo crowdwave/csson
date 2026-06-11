@@ -1,0 +1,24 @@
+# Build output (CMake / lexbor clone / old ad-hoc build)
+core/build/
+core/build-gate/
+core/obj/
+core/csson
+core/libcsson.a
+*.o
+*.a
+
+# Scratch (never committed; recreated on demand)
+tmp/
+
+# Node / TypeScript
+node_modules/
+packages/*/dist/
+
+# Conformance harness scratch
+conformance/v1/.verify-out/
+conformance/**/.sec*/
+conformance/**/.edits*/
+
+# Editor / OS
+.DS_Store
+*.swp

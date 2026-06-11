@@ -1,0 +1,18 @@
+# Enforced C style for all CSSON C code (vendored third_party/ and lexbor excluded).
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: Latest
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+PointerAlignment: Right
+AlignAfterOpenBracket: Align
+BreakBeforeBraces: Attach
+SpaceBeforeParens: ControlStatements
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+SortIncludes: false

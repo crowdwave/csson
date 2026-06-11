@@ -1,0 +1,30 @@
+# clang-tidy for CSSON C sources (vendored third_party/ and lexbor are excluded
+# via HeaderFilterRegex + per-target scoping in CMake).
+Checks: >
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  -readability-isolate-declaration,
+  -readability-braces-around-statements,
+  -readability-else-after-return,
+  -readability-implicit-bool-conversion,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-multi-level-implicit-pointer-conversion,
+  -cert-err33-c,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -clang-analyzer-security.insecureAPI.strcpy,
+  -clang-analyzer-security.ArrayBound,
+  -clang-analyzer-unix.Stream
+# Disabled with cause: insecureAPI/* demand non-portable Annex K *_s functions;
+# multi-level-pointer + implicit-bool are idiomatic here (realloc/free of char**,
+# int-status conditions); ArrayBound/unix.Stream are taint/alpha false-positives
+# on the bounded CLI slurp. Style (braces/else-after-return) is owned by clang-format.
+WarningsAsErrors: ''
+HeaderFilterRegex: 'csson\.h$'
+FormatStyle: file

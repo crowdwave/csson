@@ -1,0 +1,8 @@
+[
+  { "op": "test",    "path": "/org", "value": "Acme" },
+  { "op": "replace", "path": "/org", "value": "AcmeCo" },
+  { "op": "add",     "path": "/department/0/team/0/founded", "value": 2009 },
+  { "op": "add",     "path": "/department/0/team/0/member/-", "value": { "name": "Zoe" } },
+  { "op": "copy",    "from": "/department/0/team/0/member/0", "path": "/department/0/team/0/member/-" },
+  { "op": "remove",  "path": "/department/1" }
+]

@@ -1,0 +1,19 @@
+/* numeric / scalar edge cases — must read byte-identically across the engines
+   that read the verbatim source token: the lexbor core, the C reader, and the
+   browser cssRules walk (Chrome + Firefox). Exercises floats, exponent,
+   negatives, units, percentage, identifier, quoted string, and nesting. */
+cssonv1 {
+  --pi: 3.14159265358979;
+  --price: 19.95;
+  --sci: 1e3;
+  --neg: -12.5;
+  --count: 42;
+  --negint: -7;
+  --pct: 87.5%;
+  --len: 12.5px;
+  --dur: 0.25s;
+  --ident: active;
+  --str: "hello world";
+  point { --x: 1.5; --y: -2.75; }
+  point { --x: 0; --y: 0; }
+}

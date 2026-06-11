@@ -1,0 +1,47 @@
+@property --org    { syntax: "<string>";       inherits: false; initial-value: ""; }
+@property --name   { syntax: "<string>";       inherits: false; initial-value: ""; }
+@property --lead   { syntax: "<string>";       inherits: false; initial-value: ""; }
+@property --level  { syntax: "<integer>";      inherits: false; initial-value: 0; }
+@property --id     { syntax: "<integer>";      inherits: false; initial-value: 0; }
+@property --status { syntax: "<custom-ident>"; inherits: false; initial-value: unknown; }
+
+cssonv1 {
+  --org: "Acme";
+  department {
+    --name: "Engineering";
+    team {
+      --name: "Platform"; --lead: "Alice";
+      member {
+        --name: "Bob"; --level: 3;
+        role { --name: "backend"; }
+        role { --name: "infra"; }
+        project { --id: 101; --status: active; }
+        project { --id: 102; --status: archived; }
+      }
+      member {
+        --name: "Carol"; --level: 2;
+        role { --name: "frontend"; }
+        project { --id: 103; --status: active; }
+      }
+    }
+    team {
+      --name: "Data"; --lead: "Dan";
+      member {
+        --name: "Eve"; --level: 4;
+        role { --name: "ml"; }
+        role { --name: "infra"; }
+        project { --id: 201; --status: active; }
+      }
+    }
+  }
+  department {
+    --name: "Design";
+    team {
+      --name: "Brand"; --lead: "Faye";
+      member {
+        --name: "Gil"; --level: 2;
+        role { --name: "visual"; }
+      }
+    }
+  }
+}

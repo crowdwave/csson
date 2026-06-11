@@ -1,0 +1,11 @@
+# ctest helper: run `csson canon DOC` and require byte-equality with EXP.
+execute_process(COMMAND "${CSSON}" canon "${DOC}" OUTPUT_VARIABLE got RESULT_VARIABLE rc)
+if(NOT rc EQUAL 0)
+  message(FATAL_ERROR "csson canon failed (rc=${rc})")
+endif()
+file(READ "${EXP}" want)
+string(STRIP "${got}" got)
+string(STRIP "${want}" want)
+if(NOT got STREQUAL want)
+  message(FATAL_ERROR "canon mismatch\n got:  ${got}\n want: ${want}")
+endif()
