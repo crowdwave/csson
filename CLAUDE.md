@@ -83,6 +83,12 @@ C23 one exists.
 - **Linters & analysis (all must pass clean):** `clang-format` (enforced style),
   `clang-tidy`, `cppcheck`, and `-fsanitize=address,undefined` in the test build.
   These run in CI and must be green; aim for the highest possible code quality.
+- **Memory-safety cycle (mandatory, separate gate):** a dedicated check that
+  drives every read/edit/patch path — including the error/cleanup paths — under
+  **valgrind** (target: `0 bytes in use at exit, 0 errors`, so lexbor/yyjson
+  objects are all freed) **and** ASan+UBSan+LSan, plus a fuzz sweep of malformed
+  input. It is the `memcheck` ctest (`core/tests/memcheck.sh`) and is documented
+  as quality-check cycle 5 in `core/README.md`. Run it on every change to C code.
 
 This applies to the core, the C conformance reader, and any C binding. Existing
 ad-hoc `build.sh` scripts are to be migrated to this standard.

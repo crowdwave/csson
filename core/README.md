@@ -61,14 +61,31 @@ The build is **CMake** (canonical), **C23-mandatory** (`-std=c23`,
 ```
 cmake -S . -B build -G Ninja           # add -DCSSON_SANITIZE=ON for ASan+UBSan, -DCSSON_TIDY=ON for clang-tidy
 cmake --build build                    # -> build/libcsson.a + build/csson
-ctest --test-dir build                 # canonical-JSON conformance tests
+ctest --test-dir build                 # conformance + edit + security + memory-safety
 build/csson canon ../conformance/v1/csson_v1.csson   # == ../conformance/v1/expected.json
 build/csson patch examples/sample_commented.csson examples/patch.json
 ```
-Quality gate (all must pass clean): the strict `-Werror` build, `ctest` under
-ASan+UBSan, `clang-tidy`, `cppcheck`, and `clang-format`. The core's canonical
-output is byte-identical to the independent C and browser readers in
-`../conformance/v1` (MD5 `9ae94e…`).
+
+### Quality-check cycles
+Each cycle is independent and must pass clean; together they are the release gate.
+
+| Cycle | What it proves | How to run |
+|---|---|---|
+| **1. Strict build** | zero warnings under `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wcast-qual -Wstrict-prototypes -Werror`, C23-mandatory | `cmake --build build` |
+| **2. Static analysis** | `clang-format` (style), `clang-tidy` (`-DCSSON_TIDY=ON`), `cppcheck` all clean | `clang-format -n -Werror src/*.c src/*.h` · `cppcheck --std=c23 …` · tidy build |
+| **3. Conformance** | canonical JSON byte-identical to the spec fixtures **and** cross-engine (C core ↔ Chrome ↔ Firefox) | `ctest -R canon` · `../conformance/v1/verify.sh` |
+| **4. Edit & security** | comment-preserving edits and the injection/parser-differential/DoS findings (S1–S9) stay fixed | `ctest -R 'edits|security'` |
+| **5. Memory safety** | no leaks (lexbor/yyjson objects freed), no OOB/UAF/UB across every read/edit/patch path incl. error/cleanup paths | `ctest -R memcheck` (bare under the sanitizer build); `MEMCHECK_VALGRIND=1 bash tests/memcheck.sh <plain-build>/csson` for the valgrind pass |
+
+**Cycle 5 — the memory-safety cycle** (`tests/memcheck.sh`) drives ~40 invocations
+covering read, set/remove and all six RFC 6902 patch ops *and their error paths*
+(where leaks hide), plus a fuzz sweep of malformed input. Two complementary tools:
+**valgrind** on a non-sanitized build (target: `0 bytes in use at exit, 0 errors`)
+and **ASan + UBSan + LSan** on the sanitizer build (`-DCSSON_SANITIZE=ON`). Run it
+on every change to the C core.
+
+The core's canonical output is byte-identical to the independent C and browser
+readers in `../conformance/v1` (MD5 `9ae94e…`).
 
 ## Why lexbor
 lexbor is a real CSS parser whose CSSOM exposes **source byte offsets on every
