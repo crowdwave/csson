@@ -1,7 +1,7 @@
 // CSSON browser reader — uses ONLY the browser's built-in CSSOM. No libraries.
 //
 // Walks the authored `cssRules` tree of a stylesheet and returns canonical JSON.
-// Same algorithm as the lexbor core (core/src/csson_core.c): fields from
+// Same algorithm as the lexbor core (core/src/read.c): fields from
 // `--custom` properties, children grouped by selector type (leading & stripped),
 // keys sorted, compact, object arrays in source order. Reads the value via
 // CSSOM `getPropertyValue` — the only built-in available; this is what the

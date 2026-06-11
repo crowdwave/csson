@@ -61,5 +61,5 @@ Invariants that gate every task: **never write our own CSS parsing** and
 
 ## Known issues / decisions pending
 - [ ] **In-browser editing** needs the WASM build (CSSOM exposes no source offsets) — blocked on Phase 1 WASM.
-- [ ] **git** — repo is not initialized; nothing committed (public repo `crowdwave/csson` exists, empty). Decide when to `git init` + first push.
-- [ ] **`tmp/`** is scratch only — recreated on demand by `conformance/v1/readers/firefox/setup.sh`; add it to `.gitignore` when the repo is initialized.
+- [x] **git** — repo initialized; first commit `3e8e77a` pushed to `crowdwave/csson` `main` (58 files). `.gitignore` keeps build/`tmp/`/`node_modules`/`dist` out.
+- [ ] **Root token renamed** `csson` → **`cssonv1`** (version-bearing, required root; spec §2 normative clause). Breaking vs any pre-existing `csson { }` docs.

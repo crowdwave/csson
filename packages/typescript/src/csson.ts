@@ -2,7 +2,7 @@
  *
  * No dependencies, no bundled parser: an end user loads a .csson file as a
  * stylesheet and this walks the browser's authored `cssRules` tree. Same
- * algorithm as the lexbor core (core/src/csson_core.c) and the shared
+ * algorithm as the lexbor core (core/src/read.c) and the shared
  * conformance reader (conformance/v1/readers/browser/reader.js); proven
  * byte-identical across Chrome (Blink) and Firefox (Gecko).
  *

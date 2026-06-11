@@ -48,8 +48,24 @@ target_include_directories(yyjson SYSTEM PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thi
 target_compile_options(yyjson PRIVATE -w)
 
 # --- libcsson (the C ABI) -----------------------------------------------------
-add_library(csson STATIC src/csson_core.c)
+# Layered modules: foundation (mem/buffer/json/pointer) -> lexbor boundary
+# (stylesheet) + leaf services (scalar/textedit/serialize) -> public ABI
+# (read/edit/patch/version). See each header for its responsibility.
+add_library(csson STATIC
+  src/mem.c
+  src/buffer.c
+  src/json.c
+  src/pointer.c
+  src/stylesheet.c
+  src/scalar.c
+  src/textedit.c
+  src/serialize.c
+  src/read.c
+  src/edit.c
+  src/patch.c
+  src/version.c)
 target_include_directories(csson PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_compile_definitions(csson PRIVATE _POSIX_C_SOURCE=200809L) # strdup under -std=c23
 target_link_libraries(csson PUBLIC lexbor_csson PRIVATE yyjson m)
 target_compile_options(csson PRIVATE ${CSSON_STRICT})
 

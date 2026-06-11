@@ -11,6 +11,13 @@ confidence.
 > the test suite. This document is retained as the record of what was found.
 
 ## Scope (files analysed)
+
+> Historical note: at the time of this analysis the core was a single
+> `core/src/csson_core.c`. It has since been split into layered modules
+> (`mem`, `buffer`, `json`, `pointer`, `stylesheet`, `scalar`, `textedit`,
+> `serialize`, `read`, `edit`, `patch`, `version`); the function references below
+> name where each issue lived in the monolith.
+
 - `core/src/csson_core.c` — the `libcsson` reference core (read + edit + patch)
 - `core/cli/csson.c` — the `csson` CLI
 - `core/include/csson.h` — the C ABI

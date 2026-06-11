@@ -14,7 +14,11 @@ core/
   CMakeLists.txt      canonical build (C23-mandatory, strict, fetches lexbor)
   cmake/              ctest helpers
   include/csson.h     the C ABI (read + comment-preserving edit)
-  src/csson_core.c    the implementation over lexbor -> libcsson
+  src/                 libcsson, as layered modules:
+    mem,buffer,json,pointer    foundation (alloc, dynamic buffer, JSON escaping, JSON Pointer)
+    stylesheet                 the lexbor boundary — parse + selector + rule-tree navigation
+    scalar,textedit,serialize  value coercion · source-splice primitives · JSON→CSSON writer
+    read,edit,patch,version    the public ABI (canonical read · set/remove · RFC 6902 · ABI misc)
   cli/csson.c         the `csson` command-line utility
   build.sh            thin CMake wrapper
   third_party/        vendored yyjson (MIT) — parses the RFC 6902 patch document
