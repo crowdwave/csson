@@ -91,6 +91,11 @@ No production code until these pass. Each is small and answers one risk.
    diffed. **R1 cleared; R4 raised; S4 is now the next gate.**
 2. **S3 bundle-loads** (R3) — csstree IIFE runs in bare QuickJS.
 3. **S2 @property-parity** (R2) — csstree vs Chrome `registerProperty`/`parse`.
+   **✅ DONE — PASS.** `csstree.lexer.match` in QuickJS: 17/17 correct; Chrome
+   `CSS.registerProperty`: identical verdicts ⇒ **csstree == browser**. The
+   off-the-shelf MIT `csstree/validator` solves `@property` in QuickJS — no Rust
+   engine needed. See `spikes/s2/RESULTS.md`. (Representative set; gate the full
+   type set against the browser oracle.)
 4. **S4 edits** (R4) — comment-preserving `set`/`remove` via `loc`.
 5. **S5 size** (R5) — full bundle measured native + wasm + gzip.
 6. **S6 threads** (R6) + **S7 startup** (R7) + **S8 perf** (R8) — the cost spikes.
