@@ -83,6 +83,12 @@ No production code until these pass. Each is small and answers one risk.
 
 1. **S1 read-parity** (R1/R11) — csstree-in-QuickJS vs `expected.json` on all
    fixtures, byte-identical. **← the gate; if this fails, stop.**
+   **✅ DONE — PASS (3/3 byte-identical in QuickJS).** See `spikes/s1/RESULTS.md`.
+   Caveat: csstree doesn't natively parse CSSON's bare nested rules (lags the
+   browser on CSS Nesting); recovered via Raw-reparse, but that **complicates the
+   edit path** → S4 must pick a nesting strategy (mandate `&`-prefixed selectors,
+   or offset-map the reparse). §3.3 edge cases (CRLF/NUL/invalid-UTF-8) not yet
+   diffed. **R1 cleared; R4 raised; S4 is now the next gate.**
 2. **S3 bundle-loads** (R3) — csstree IIFE runs in bare QuickJS.
 3. **S2 @property-parity** (R2) — csstree vs Chrome `registerProperty`/`parse`.
 4. **S4 edits** (R4) — comment-preserving `set`/`remove` via `loc`.
