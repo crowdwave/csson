@@ -1,5 +1,19 @@
 # CSSON — project instructions
 
+## GitHub: always operate as the `crowdwave` account
+
+**Before ANY GitHub interaction** (`git push`, `gh ...`, PR/issue ops), check the
+active account and ensure it is **`crowdwave`** — the session's `gh` keeps
+reverting to `starqueue`, which has only READ access to `crowdwave/csson` and
+fails with `403 Permission denied`.
+
+```sh
+gh auth status | grep "Active account"          # verify
+gh auth switch --hostname github.com --user crowdwave   # if it is not crowdwave
+```
+
+Do this check every time; do not assume the previous switch is still active.
+
 ## Prime directive: CSSON NEVER writes its own parsing/processing
 
 CSSON is a data format that *is* valid CSS. Every CSSON implementation MUST obtain
