@@ -58,6 +58,9 @@ p noop     '[{"path":"/x"}]'
 p unknown  '[{"op":"frobnicate","path":"/x"}]'
 p inject   '[{"op":"add","path":"/x }; evil{--z","value":7}]'
 p injkey   '[{"op":"add","path":"/dept/0/k","value":{"a }; } evil{--z":1}}]'
+p fj       '{"org":"Acme","dept":[{"name":"Eng","size":12},{"name":"Ops"}]}'
+p fjbad    'not json'
+p fjarr    '[1,2,3]'
 
 # read path
 run "canon doc"            canon "$d/doc.csson"
@@ -100,6 +103,16 @@ run "patch no op (err)"    patch "$d/doc.csson" "$d/noop"
 run "patch unknown (err)"  patch "$d/doc.csson" "$d/unknown"
 run "patch inject path"    patch "$d/flat.csson" "$d/inject"
 run "patch inject key"     patch "$d/doc.csson" "$d/injkey"
+# JSON-bridge API
+run "get scalar"           get "$d/doc.csson" /org
+run "get subobject"        get "$d/doc.csson" /dept/0
+run "get not-found (err)"  get "$d/doc.csson" /nope
+run "get root"             get "$d/doc.csson" ""
+run "from-json valid"      from-json "$d/fj"
+run "from-json bad (err)"  from-json "$d/fjbad"
+run "from-json array (err)" from-json "$d/fjarr"
+run "set-json scalar"      set-json "$d/flat.csson" /x '"hi"'
+run "set-json object (err)" set-json "$d/flat.csson" /x '{"a":1}'
 # CLI surface
 run "versions"             versions
 run "missing args"         set "$d/flat.csson"

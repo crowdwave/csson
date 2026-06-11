@@ -30,8 +30,17 @@ Invariants that gate every task: **never write our own CSS parsing** and
       ASan/UBSan — all green. **Remaining:** WASM target (Emscripten) + wire the
       gate into CI.
 - [ ] **WASM front door** — compile lexbor + core to WASM (Emscripten); enables in-browser **editing** and Node usage. Add to conformance (WASM engine must match `expected.json`).
-- [ ] **`csson_from_json`** — expose JSON→CSSON (serializer already exists internally in the patch engine); CLI verb `csson from-json`; document the v1 representability limits (scalar arrays, floats→string, null).
-- [ ] **CLI distribution** — `get` (JSON Pointer) verb; stdin polish; build matrix → prebuilt `csson` binaries (amd64/arm64 · linux/macOS/windows).
+- [x] **Developer API completeness** — `csson_get` (read one value by pointer),
+      `csson_from_json` (author CSSON from a JSON object), `csson_set_json` (set from
+      a JSON value), `csson_error_kind` + `csson_error_kind_of` (programmatic error
+      branching). CLI verbs `get`/`from-json`/`set-json`. Tests: `api` + extended
+      `memcheck` (valgrind + ASan clean). (`src/jsonapi.c`)
+- [ ] **Schema validation** (`csson_validate` + CLI `validate`) — check each field
+      against its `@property` declaration. lexbor exposes `@property` only as a
+      generic at-rule, so read its block descriptors ourselves and match the CSS
+      `syntax` grammar. Scope MVP to `<integer>`/`<string>`/`<custom-ident>` (the
+      spec's types) and error on richer grammars rather than half-supporting them.
+- [ ] **CLI distribution** — stdin polish; build matrix → prebuilt `csson` binaries (amd64/arm64 · linux/macOS/windows).
 - [ ] **More conformance fixtures** — escaped strings, comments-in-values, deep nesting, empty nodes, duplicate keys, Unicode; regenerate expected; run cross-engine.
 - [ ] **Ratify spec v1** — flip `Status: Draft` → ratified/frozen once the above edge cases are pinned.
 

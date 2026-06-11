@@ -30,10 +30,14 @@ core/
 | Function | Purpose |
 |---|---|
 | `csson_to_canonical_json(src,len,err)` | read → canonical JSON (sorted keys, compact) |
-| `csson_set(src,len,pointer,value,err)` | replace a scalar at a JSON Pointer — comments preserved |
+| `csson_get(src,len,pointer,err)` | read **one value** (JSON) at a JSON Pointer (`""` = whole doc) |
+| `csson_from_json(json,len,err)` | **author** a CSSON document from a JSON object (read inverse) |
+| `csson_set(src,len,pointer,value,err)` | replace a scalar from a raw CSSON token — comments preserved |
+| `csson_set_json(src,len,pointer,json_value,err)` | replace a scalar from a **JSON value** (does the quoting) |
 | `csson_remove(src,len,pointer,err)` | remove a field or node — comments preserved |
 | `csson_patch(src,len,patch_json,err)` | apply an **RFC 6902 JSON Patch** — comment-preserving, atomic |
 | `csson_supported_versions()` | e.g. `"1"` |
+| `csson_error_kind_of(err)` | classify an `*err` message → `csson_error_kind` (for branching) |
 | `csson_free_string(s)` | release returned strings |
 
 Edits address nodes with **RFC 6901 JSON Pointers** (`/department/0/team/0/lead`).
@@ -45,11 +49,14 @@ fuzzed parser; CSSON itself is still parsed only by lexbor.
 
 ## CLI
 ```
-csson canon <file>                 parse → canonical JSON
-csson check <file>                 exit 0 if valid CSSON
-csson set   <file> <ptr> <value>   replace a scalar (comment-preserving)
-csson rm    <file> <ptr>           remove a field or node (comment-preserving)
-csson patch <file> <patch.json>    apply an RFC 6902 JSON Patch (comment-preserving, atomic)
+csson canon     <file>               parse → canonical JSON
+csson get       <file> <ptr>         read one value (JSON) at a JSON Pointer
+csson check     <file>               exit 0 if valid CSSON
+csson set       <file> <ptr> <value> replace a scalar from a raw CSSON token
+csson set-json  <file> <ptr> <json>  replace a scalar from a JSON value
+csson rm        <file> <ptr>         remove a field or node (comment-preserving)
+csson patch     <file> <patch.json>  apply an RFC 6902 JSON Patch (comment-preserving, atomic)
+csson from-json <file>               serialize a JSON object into a CSSON document
 csson versions
 ```
 

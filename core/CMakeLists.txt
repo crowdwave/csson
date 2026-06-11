@@ -63,6 +63,7 @@ add_library(csson STATIC
   src/read.c
   src/edit.c
   src/patch.c
+  src/jsonapi.c
   src/version.c)
 target_include_directories(csson PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_compile_definitions(csson PRIVATE _POSIX_C_SOURCE=200809L) # strdup under -std=c23
@@ -75,12 +76,19 @@ set_target_properties(csson_cli PROPERTIES OUTPUT_NAME csson)
 target_link_libraries(csson_cli PRIVATE csson)
 target_compile_options(csson_cli PRIVATE ${CSSON_STRICT})
 
+# --- C-level API test ---------------------------------------------------------
+add_executable(api_test tests/api_test.c)
+target_link_libraries(api_test PRIVATE csson)
+target_compile_options(api_test PRIVATE ${CSSON_STRICT})
+
 # --- sanitizers (our targets) -------------------------------------------------
 if(CSSON_SANITIZE)
   set(SAN -fsanitize=address,undefined -fno-omit-frame-pointer)
   target_compile_options(csson PRIVATE ${SAN})
   target_compile_options(csson_cli PRIVATE ${SAN})
   target_link_options(csson_cli PRIVATE ${SAN})
+  target_compile_options(api_test PRIVATE ${SAN})
+  target_link_options(api_test PRIVATE ${SAN})
 endif()
 
 # --- clang-tidy on our sources only -------------------------------------------
@@ -115,6 +123,9 @@ add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TA
 # parser-differential checks (S2/S4) run via conformance/v1/security with WITH_BROWSER=1.
 add_test(NAME security COMMAND ${CMAKE_COMMAND} -E env CSSON=$<TARGET_FILE:csson_cli>
   bash ${CMAKE_CURRENT_SOURCE_DIR}/../conformance/v1/security/run.sh)
+
+# C-level API test (get / from_json / set_json / error kinds).
+add_test(NAME api COMMAND api_test)
 
 # Memory-safety regression: every read/edit/patch path incl. error/cleanup paths.
 # Runs bare under whatever sanitizers the build has (ASan/UBSan/LSan with

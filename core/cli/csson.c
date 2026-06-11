@@ -1,13 +1,16 @@
 /* csson — the CSSON command-line utility (over libcsson / liblexbor).
  *
- *   csson canon  <file>                 parse -> canonical JSON (default verb)
- *   csson check  <file>                 exit 0 if valid CSSON, else 1
- *   csson set    <file> <ptr> <value>   replace a scalar (comment-preserving)
- *   csson rm     <file> <ptr>           remove a field or node (comment-preserving)
- *   csson patch  <file> <patch.json>    apply an RFC 6902 JSON Patch (comment-preserving)
- *   csson versions                      standard versions this build supports
+ *   csson canon     <file>               parse -> canonical JSON (default verb)
+ *   csson get       <file> <ptr>         read one value (JSON) at a JSON Pointer
+ *   csson check     <file>               exit 0 if valid CSSON, else 1
+ *   csson set       <file> <ptr> <value> replace a scalar from a raw CSSON token
+ *   csson set-json  <file> <ptr> <json>  replace a scalar from a JSON value
+ *   csson rm        <file> <ptr>         remove a field or node (comment-preserving)
+ *   csson patch     <file> <patch.json>  apply an RFC 6902 JSON Patch (comment-preserving)
+ *   csson from-json <file>               serialize a JSON object into a CSSON document
+ *   csson versions                       standard versions this build supports
  *
- * <file> of "-" reads stdin. Edits print to stdout (pipe or redirect to save).
+ * <file> of "-" reads stdin. Read/edit output goes to stdout (pipe or redirect).
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,7 +71,8 @@ static int fail(char *err) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "usage: csson canon|check|set|rm|patch|versions ...\n");
+        fprintf(stderr,
+                "usage: csson canon|get|check|set|set-json|rm|patch|from-json|versions ...\n");
         return 2;
     }
     const char *cmd = argv[1];
@@ -93,6 +97,23 @@ int main(int argc, char **argv) {
             rc = fail(err);
         else
             printf("%s\n", out);
+    } else if (strcmp(cmd, "get") == 0) {
+        if (argc < 4) {
+            fprintf(stderr, "csson get <file> <pointer>\n");
+            rc = 2;
+        } else {
+            out = csson_get(src, len, argv[3], &err);
+            if (!out)
+                rc = fail(err);
+            else
+                printf("%s\n", out);
+        }
+    } else if (strcmp(cmd, "from-json") == 0) {
+        out = csson_from_json(src, len, &err);
+        if (!out)
+            rc = fail(err);
+        else
+            fputs(out, stdout);
     } else if (strcmp(cmd, "check") == 0) {
         out = csson_to_canonical_json(src, len, &err);
         if (!out) {
@@ -106,6 +127,17 @@ int main(int argc, char **argv) {
             rc = 2;
         } else {
             out = csson_set(src, len, argv[3], argv[4], &err);
+            if (!out)
+                rc = fail(err);
+            else
+                fputs(out, stdout);
+        }
+    } else if (strcmp(cmd, "set-json") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "csson set-json <file> <pointer> <json-value>\n");
+            rc = 2;
+        } else {
+            out = csson_set_json(src, len, argv[3], argv[4], &err);
             if (!out)
                 rc = fail(err);
             else
