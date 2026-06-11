@@ -115,3 +115,10 @@ add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TA
 # parser-differential checks (S2/S4) run via conformance/v1/security with WITH_BROWSER=1.
 add_test(NAME security COMMAND ${CMAKE_COMMAND} -E env CSSON=$<TARGET_FILE:csson_cli>
   bash ${CMAKE_CURRENT_SOURCE_DIR}/../conformance/v1/security/run.sh)
+
+# Memory-safety regression: every read/edit/patch path incl. error/cleanup paths.
+# Runs bare under whatever sanitizers the build has (ASan/UBSan/LSan with
+# CSSON_SANITIZE=ON); set MEMCHECK_VALGRIND=1 with a non-sanitized build for a
+# valgrind pass. Catches leaks (esp. lexbor/yyjson objects), OOB and UAF.
+add_test(NAME memcheck COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/memcheck.sh
+  $<TARGET_FILE:csson_cli>)

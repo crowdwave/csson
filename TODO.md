@@ -49,7 +49,10 @@ Invariants that gate every task: **never write our own CSS parsing** and
 > shared dependency for Node.js and in-browser editing, and a conformance engine.
 
 ## Phase 4 — Hardening & release
-- [ ] Memory-safety pass on the C core (valgrind/ASAN; free lexbor objects, bounds).
+- [x] Memory-safety pass on the C core — valgrind (0 bytes in use at exit, 0 errors)
+      + ASan/UBSan/LSan over all read/edit/patch paths incl. error/cleanup, and a
+      12k-run fuzz. Locked in as `ctest -R memcheck` (`tests/memcheck.sh`; bare under
+      the sanitizer build, or `MEMCHECK_VALGRIND=1` against a plain build).
 - [x] Security review (untrusted `.csson` + patch JSON) — threat model + ranked
       findings in `docs/csson-security-analysis.md`; test set in
       `conformance/v1/security/`. **All S1–S9 fixed** (patch key/type/path injection,

@@ -1,6 +1,5 @@
 # Build output (CMake / lexbor clone / old ad-hoc build)
-core/build/
-core/build-gate/
+core/build*/
 core/obj/
 core/csson
 core/libcsson.a
