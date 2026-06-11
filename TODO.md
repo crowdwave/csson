@@ -35,11 +35,19 @@ Invariants that gate every task: **never write our own CSS parsing** and
       a JSON value), `csson_error_kind` + `csson_error_kind_of` (programmatic error
       branching). CLI verbs `get`/`from-json`/`set-json`. Tests: `api` + extended
       `memcheck` (valgrind + ASan clean). (`src/jsonapi.c`)
-- [ ] **Schema validation** (`csson_validate` + CLI `validate`) — check each field
-      against its `@property` declaration. lexbor exposes `@property` only as a
-      generic at-rule, so read its block descriptors ourselves and match the CSS
-      `syntax` grammar. Scope MVP to `<integer>`/`<string>`/`<custom-ident>` (the
-      spec's types) and error on richer grammars rather than half-supporting them.
+- [x] **CSSOM-style handle API** — `csson_open`/`close`/`sheet_text`, `csson_root`,
+      `csson_rule_count`/`rule_at`/`selector_text`, `csson_property_*`,
+      `csson_get_property`(verbatim/typed), `csson_set_property`/`remove_property`,
+      `csson_insert_rule`/`delete_rule`. Path-addressed handles over the live tree;
+      edits via the atomic patch engine. Tests: `sheet` (api+valgrind clean).
+      (`src/sheet.c`). **Remaining:** `CSSPropertyRule` read accessors
+      (`@property` as data — needs the block re-parse trick).
+- [ ] **`@property` schema validation** (`csson_validate` + CLI `validate`) —
+      **decision pending:** lexbor canNOT match the CSS `syntax` grammar (it is a
+      tokenizer; `@property` is an unknown at-rule). Full C-side validation requires
+      **binding a real engine via a C ABI** — lightningcss or Servo/stylo (Rust) as
+      a small static lib + thin C shim. Choose the engine, then implement; the
+      browser harness (CSS.registerProperty / CSSStyleValue.parse) is the conformance oracle.
 - [ ] **CLI distribution** — stdin polish; build matrix → prebuilt `csson` binaries (amd64/arm64 · linux/macOS/windows).
 - [ ] **More conformance fixtures** — escaped strings, comments-in-values, deep nesting, empty nodes, duplicate keys, Unicode; regenerate expected; run cross-engine.
 - [ ] **Ratify spec v1** — flip `Status: Draft` → ratified/frozen once the above edge cases are pinned.

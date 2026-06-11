@@ -71,6 +71,46 @@ char *csson_remove(const char *src, size_t len, const char *pointer, char **err)
  * patch is rejected (returns NULL) and the source is left unchanged. */
 char *csson_patch(const char *src, size_t len, const char *patch_json, char **err);
 
+/* ----------------------------------------------------------------------------
+ * CSSOM-style handle API — drive CSSON the way a browser exposes a stylesheet.
+ *
+ * Open a document once into a `csson_sheet` (like `new CSSStyleSheet()` +
+ * `replaceSync`), then navigate a live, index-addressed tree of `csson_rule`s
+ * (≈ `cssRules` / `CSSStyleRule`), read and write fields through the rule's style
+ * block (≈ `getPropertyValue`/`setProperty`/`removeProperty`), and insert/delete
+ * child rules (≈ `CSSGroupingRule.insertRule`/`deleteRule`). Edits are applied as
+ * comment-preserving source splices and the sheet is re-parsed in place; rule
+ * handles are owned by the sheet (freed by csson_close) and stay valid across
+ * edits (indices may shift, exactly like the CSSOM).
+ *
+ * Returned strings are owned (free with csson_free_string); int-returning edit
+ * functions yield 0 on success or -1 with *err set. ----------------------------*/
+typedef struct csson_sheet csson_sheet;
+typedef struct csson_rule csson_rule;
+
+/* Open/serialize/close (≈ new CSSStyleSheet + replaceSync / .cssText). */
+csson_sheet *csson_open(const char *src, size_t len, char **err);
+char *csson_sheet_text(const csson_sheet *sheet); /* current source, comments intact */
+void csson_close(csson_sheet *sheet);
+
+/* Navigate (≈ .cssRules / .item(i) / .selectorText). */
+csson_rule *csson_root(csson_sheet *sheet);            /* the `cssonv1` rule */
+size_t csson_rule_count(csson_rule *rule);             /* child nodes of `rule` */
+csson_rule *csson_rule_at(csson_rule *rule, size_t i); /* the i-th child node */
+char *csson_selector_text(csson_rule *rule);           /* the node type */
+
+/* Style block (≈ CSSStyleDeclaration). */
+size_t csson_property_count(csson_rule *rule);
+char *csson_property_name_at(csson_rule *rule, size_t i);           /* e.g. "--org" */
+char *csson_get_property(csson_rule *rule, const char *name);       /* verbatim value, or NULL */
+char *csson_get_property_value(csson_rule *rule, const char *name); /* coerced JSON scalar */
+int csson_set_property(csson_rule *rule, const char *name, const char *json_value, char **err);
+int csson_remove_property(csson_rule *rule, const char *name, char **err);
+
+/* Structure (≈ insertRule/deleteRule). `text` is CSSON node source, index -1 = append. */
+int csson_insert_rule(csson_rule *parent, const char *text, long index, char **err);
+int csson_delete_rule(csson_rule *parent, size_t index, char **err);
+
 /* Standard versions this build supports, e.g. "1". Borrowed static; do NOT free. */
 const char *csson_supported_versions(void);
 

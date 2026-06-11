@@ -64,6 +64,7 @@ add_library(csson STATIC
   src/edit.c
   src/patch.c
   src/jsonapi.c
+  src/sheet.c
   src/version.c)
 target_include_directories(csson PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_compile_definitions(csson PRIVATE _POSIX_C_SOURCE=200809L) # strdup under -std=c23
@@ -76,10 +77,14 @@ set_target_properties(csson_cli PROPERTIES OUTPUT_NAME csson)
 target_link_libraries(csson_cli PRIVATE csson)
 target_compile_options(csson_cli PRIVATE ${CSSON_STRICT})
 
-# --- C-level API test ---------------------------------------------------------
+# --- C-level API tests --------------------------------------------------------
 add_executable(api_test tests/api_test.c)
 target_link_libraries(api_test PRIVATE csson)
 target_compile_options(api_test PRIVATE ${CSSON_STRICT})
+
+add_executable(sheet_test tests/sheet_test.c)
+target_link_libraries(sheet_test PRIVATE csson)
+target_compile_options(sheet_test PRIVATE ${CSSON_STRICT})
 
 # --- sanitizers (our targets) -------------------------------------------------
 if(CSSON_SANITIZE)
@@ -89,6 +94,8 @@ if(CSSON_SANITIZE)
   target_link_options(csson_cli PRIVATE ${SAN})
   target_compile_options(api_test PRIVATE ${SAN})
   target_link_options(api_test PRIVATE ${SAN})
+  target_compile_options(sheet_test PRIVATE ${SAN})
+  target_link_options(sheet_test PRIVATE ${SAN})
 endif()
 
 # --- clang-tidy on our sources only -------------------------------------------
@@ -124,8 +131,9 @@ add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TA
 add_test(NAME security COMMAND ${CMAKE_COMMAND} -E env CSSON=$<TARGET_FILE:csson_cli>
   bash ${CMAKE_CURRENT_SOURCE_DIR}/../conformance/v1/security/run.sh)
 
-# C-level API test (get / from_json / set_json / error kinds).
+# C-level API tests (get / from_json / set_json / error kinds; CSSOM handle API).
 add_test(NAME api COMMAND api_test)
+add_test(NAME sheet COMMAND sheet_test)
 
 # Memory-safety regression: every read/edit/patch path incl. error/cleanup paths.
 # Runs bare under whatever sanitizers the build has (ASan/UBSan/LSan with
