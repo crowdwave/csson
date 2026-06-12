@@ -33,3 +33,6 @@ bindings/javascript/dist/
 bindings/javascript/csson.wasm
 bindings/python/__pycache__/
 bindings/python/*.egg-info/
+
+# Local scratch TODO (not published)
+TODO.md

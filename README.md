@@ -4,6 +4,22 @@
 
 It is a configuration/data format that reuses a strict subset of CSS syntax instead of inventing a new one.
 
+> **94 ready-to-read CSSON examples** live in [`samples/`](samples/) — from one-liners to deeply-nested, schema-typed configs. Browse them all:
+
+<details>
+<summary><b>50 real-world examples</b> — <code>samples/showcase/</code></summary>
+
+[3d-scene](samples/showcase/3d-scene-csson.css) · [board-game-rules](samples/showcase/board-game-rules-csson.css) · [brewery-recipe](samples/showcase/brewery-recipe-csson.css) · [cargo-ship](samples/showcase/cargo-ship-csson.css) · [cdn-edge](samples/showcase/cdn-edge-csson.css) · [chemistry-lab](samples/showcase/chemistry-lab-csson.css) · [ci-pipeline](samples/showcase/ci-pipeline-csson.css) · [database-schema](samples/showcase/database-schema-csson.css) · [design-tokens](samples/showcase/design-tokens-csson.css) · [dns-zone](samples/showcase/dns-zone-csson.css) · [drone-mission](samples/showcase/drone-mission-csson.css) · [ecommerce-catalog](samples/showcase/ecommerce-catalog-csson.css) · [esports-tournament](samples/showcase/esports-tournament-csson.css) · [financial-portfolio](samples/showcase/financial-portfolio-csson.css) · [firewall-rules](samples/showcase/firewall-rules-csson.css) · [fleet-logistics](samples/showcase/fleet-logistics-csson.css) · [flight-plan](samples/showcase/flight-plan-csson.css) · [genome-pipeline](samples/showcase/genome-pipeline-csson.css) · [greenhouse-automation](samples/showcase/greenhouse-automation-csson.css) · [hello-minimal](samples/showcase/hello-minimal-csson.css) · [hospital-ward](samples/showcase/hospital-ward-csson.css) · [kubernetes-deployment](samples/showcase/kubernetes-deployment-csson.css) · [library-catalog](samples/showcase/library-catalog-csson.css) · [load-balancer](samples/showcase/load-balancer-csson.css) · [mars-rover](samples/showcase/mars-rover-csson.css) · [message-queue](samples/showcase/message-queue-csson.css) · [ml-hyperparameters](samples/showcase/ml-hyperparameters-csson.css) · [movie-shotlist](samples/showcase/movie-shotlist-csson.css) · [nuclear-reactor](samples/showcase/nuclear-reactor-csson.css) · [nutrition-plan](samples/showcase/nutrition-plan-csson.css) · [observability-stack](samples/showcase/observability-stack-csson.css) · [orchestra](samples/showcase/orchestra-csson.css) · [particle-detector](samples/showcase/particle-detector-csson.css) · [podcast-feed](samples/showcase/podcast-feed-csson.css) · [railway-timetable](samples/showcase/railway-timetable-csson.css) · [recipe-lasagna](samples/showcase/recipe-lasagna-csson.css) · [retro-emulator](samples/showcase/retro-emulator-csson.css) · [robot-arm](samples/showcase/robot-arm-csson.css) · [rpg-character](samples/showcase/rpg-character-csson.css) · [satellite-constellation](samples/showcase/satellite-constellation-csson.css) · [smart-home](samples/showcase/smart-home-csson.css) · [solar-power-plant](samples/showcase/solar-power-plant-csson.css) · [spacecraft-mission](samples/showcase/spacecraft-mission-csson.css) · [submarine-systems](samples/showcase/submarine-systems-csson.css) · [synth-patch](samples/showcase/synth-patch-csson.css) · [theme-park](samples/showcase/theme-park-csson.css) · [traffic-intersection](samples/showcase/traffic-intersection-csson.css) · [weather-station](samples/showcase/weather-station-csson.css) · [web-server](samples/showcase/web-server-csson.css) · [wind-turbine-farm](samples/showcase/wind-turbine-farm-csson.css)
+
+</details>
+
+<details>
+<summary><b>44 feature demonstrations</b> — <code>samples/features/</code> (each teaches one capability, simple → advanced)</summary>
+
+[feature-arrays-advanced-1](samples/features/feature-arrays-advanced-1-csson.css) · [feature-arrays-advanced-2](samples/features/feature-arrays-advanced-2-csson.css) · [feature-arrays-intermediate-1](samples/features/feature-arrays-intermediate-1-csson.css) · [feature-arrays-intermediate-2](samples/features/feature-arrays-intermediate-2-csson.css) · [feature-arrays-simple-1](samples/features/feature-arrays-simple-1-csson.css) · [feature-arrays-simple-2](samples/features/feature-arrays-simple-2-csson.css) · [feature-comments-advanced-1](samples/features/feature-comments-advanced-1-csson.css) · [feature-comments-intermediate-1](samples/features/feature-comments-intermediate-1-csson.css) · [feature-comments-simple-1](samples/features/feature-comments-simple-1-csson.css) · [feature-css-nesting-advanced-1](samples/features/feature-css-nesting-advanced-1-csson.css) · [feature-css-nesting-intermediate-1](samples/features/feature-css-nesting-intermediate-1-csson.css) · [feature-css-nesting-simple-1](samples/features/feature-css-nesting-simple-1-csson.css) · [feature-fields-advanced-1](samples/features/feature-fields-advanced-1-csson.css) · [feature-fields-intermediate-1](samples/features/feature-fields-intermediate-1-csson.css) · [feature-fields-simple-1](samples/features/feature-fields-simple-1-csson.css) · [feature-fields-simple-2](samples/features/feature-fields-simple-2-csson.css) · [feature-floats-advanced-1](samples/features/feature-floats-advanced-1-csson.css) · [feature-floats-intermediate-1](samples/features/feature-floats-intermediate-1-csson.css) · [feature-floats-simple-1](samples/features/feature-floats-simple-1-csson.css) · [feature-floats-simple-2](samples/features/feature-floats-simple-2-csson.css) · [feature-lists-advanced-1](samples/features/feature-lists-advanced-1-csson.css) · [feature-lists-intermediate-1](samples/features/feature-lists-intermediate-1-csson.css) · [feature-lists-simple-1](samples/features/feature-lists-simple-1-csson.css) · [feature-nesting-advanced-1](samples/features/feature-nesting-advanced-1-csson.css) · [feature-nesting-advanced-2](samples/features/feature-nesting-advanced-2-csson.css) · [feature-nesting-intermediate-1](samples/features/feature-nesting-intermediate-1-csson.css) · [feature-nesting-simple-1](samples/features/feature-nesting-simple-1-csson.css) · [feature-nesting-simple-2](samples/features/feature-nesting-simple-2-csson.css) · [feature-records-advanced-1](samples/features/feature-records-advanced-1-csson.css) · [feature-records-intermediate-1](samples/features/feature-records-intermediate-1-csson.css) · [feature-records-simple-1](samples/features/feature-records-simple-1-csson.css) · [feature-records-simple-2](samples/features/feature-records-simple-2-csson.css) · [feature-scalars-advanced-1](samples/features/feature-scalars-advanced-1-csson.css) · [feature-scalars-intermediate-1](samples/features/feature-scalars-intermediate-1-csson.css) · [feature-scalars-simple-1](samples/features/feature-scalars-simple-1-csson.css) · [feature-scalars-simple-2](samples/features/feature-scalars-simple-2-csson.css) · [feature-schema-advanced-1](samples/features/feature-schema-advanced-1-csson.css) · [feature-schema-advanced-2](samples/features/feature-schema-advanced-2-csson.css) · [feature-schema-intermediate-1](samples/features/feature-schema-intermediate-1-csson.css) · [feature-schema-simple-1](samples/features/feature-schema-simple-1-csson.css) · [feature-schema-simple-2](samples/features/feature-schema-simple-2-csson.css) · [feature-tuples-advanced-1](samples/features/feature-tuples-advanced-1-csson.css) · [feature-tuples-intermediate-1](samples/features/feature-tuples-intermediate-1-csson.css) · [feature-tuples-simple-1](samples/features/feature-tuples-simple-1-csson.css)
+
+</details>
+
 The core idea is:
 
 ```css
@@ -313,76 +329,86 @@ a browser-computed config format
 JSON with different punctuation
 ```
 
-The strongest version of CSSON is a **CSS-syntax config format** with a single
-reference core (TypeScript on QuickJS-ng + PostCSS + csstree) exposed as a CLI, a
-C ABI, a WebAssembly module, and language bindings.
+The strongest version of CSSON is a **CSS-syntax config format**.
 
 ---
 
-**Structured data that is also valid CSS.** A node is a CSS style rule, fields are
-custom properties (`--key`), nested objects are nested rules, and repeated sibling
-rules become arrays. The point is to carry structured data through pipelines that
-already parse CSS — without adding a second format or parser.
+## Documentation
 
-This repository provides everything needed to use CSSON across major programming
-environments, from a single standard that every implementation reads the same way.
+**[crowdwave.github.io/csson](https://crowdwave.github.io/csson/)** — the docs
+site: a live overview plus a guide for each way to use CSSON.
 
-## Prime directive
-> **CSSON never writes its own parsing/processing.** Every implementation reads
-> from a real CSS parser's authored rule tree and only maps that tree to data — no
-> hand-written tokenizers, scanners, brace-walkers, or regex extraction. The
-> reference core is TypeScript on **QuickJS-ng** over **PostCSS** (rule tree +
-> comment-preserving edits) and **csstree** (`@property`). See `CLAUDE.md`.
+| | |
+|---|---|
+| [CLI](https://crowdwave.github.io/csson/cli.html) | the `csson` command — read, edit, validate from a shell |
+| [Node.js](https://crowdwave.github.io/csson/nodejs.html) | `@csson/js` — runs the WebAssembly core; no native build |
+| [Python](https://crowdwave.github.io/csson/python.html) | `ctypes` over `libcsson`; no third-party dependencies |
+| [Browser](https://crowdwave.github.io/csson/browser.html) | read with the native CSSOM, edit with the WebAssembly core |
 
-## Governing rule
-> **CSSON reproduces what a developer gets reading the stylesheet from a browser
-> with ordinary API calls** (`document.styleSheets` → `cssRules`). The browser is
-> the oracle; canonical output is **byte-identical across every engine**.
+## Quick taste
 
-## Layout
+```sh
+# CLI: a CSSON file IS a stylesheet — parse it to canonical JSON
+csson canon config-csson.css
+csson get config-csson.css /database/0/pool-max     # one value, by JSON Pointer
+csson set-json config-csson.css /port 9090          # comment-preserving edit
+csson validate '<integer>' 8080                     # @property check
+```
+```js
+// Node.js / TypeScript
+import csson from "@csson/js";
+csson.parse(text);                  // -> canonical JSON
+csson.set(text, "/port", 9090);     // -> new source, comments intact
+```
+```python
+# Python
+import csson
+csson.loads(text)                   # -> dict
+csson.patch(text, [{"op": "replace", "path": "/env", "value": "prod"}])
+```
+
+## How it works
+
+CSSON has **one reference core**: TypeScript running on an embedded
+**QuickJS-ng** engine, reading the authored rule tree from **PostCSS** (records
+and comment-preserving edits) and validating `@property` with **csstree**. That
+core ships three ways — a C library (`libcsson`), a WebAssembly module
+(`csson.wasm`), and the `csson` CLI — and the language bindings are thin wrappers
+over it, so every environment computes the *same* answer.
+
+Two invariants govern everything:
+
+> **Prime directive — CSSON never writes its own parsing.** Structure always
+> comes from a real CSS parser's rule tree; there are no hand-rolled tokenizers,
+> scanners, brace-walkers, or regex extraction.
+
+> **Browser is the oracle.** CSSON reproduces exactly what a developer gets
+> reading the stylesheet from a browser with ordinary API calls
+> (`document.styleSheets` → `cssRules`). Canonical output is **byte-identical
+> across the C core, Chrome, Firefox and WebAssembly** — proven on every fixture
+> by `conformance/v1/verify.sh`.
+
+## Repository layout
+
 ```
 csson/
-  CLAUDE.md         project directives (prime directive + browser-parity)
   spec/v1/SPEC.md   the standard — normative CSSON v1
-  core/             the reference core: a C facade over embedded QuickJS-ng running
-                    ts/csson.ts (PostCSS + csstree) -> libcsson (.a/.so) + the csson CLI
+  core/             C facade over embedded QuickJS-ng running ts/csson.ts
+                    -> libcsson (.a / .so) + the csson CLI
   bindings/
-    javascript/     JS/TS — runs csson.wasm (Node, Deno, browser); no native build
-    python/         ctypes FFI over libcsson.so; zero dependencies
-    wasm/           builds the portable csson.wasm core the JS binding loads
-  conformance/v1/   canonical fixtures + expected JSON + a 4-engine verifier
-    readers/        c (QuickJS) · chrome (Blink) · firefox (Gecko) · wasm
-  samples/          ~90 example documents (features/ demos + showcase/ real-world)
-  docs/             the GitHub Pages site (landing + per-language docs + guide)
+    javascript/     JS/TS over csson.wasm (Node, Deno, browser)
+    python/         ctypes FFI over libcsson.so
+    wasm/           builds the portable csson.wasm core
+  conformance/v1/   canonical fixtures + the 4-engine verifier
+  samples/          94 example documents (showcase/ + features/)
+  docs/             the GitHub Pages site
+  CLAUDE.md         project directives (the two invariants above)
 ```
 
-## Bindings
-- **[JavaScript / TypeScript](bindings/javascript)** — runs `csson.wasm`; Node via
-  `node:wasi`, browser via a tiny WASI shim. No native build, ships types.
-- **[Python](bindings/python)** — `ctypes` FFI over the native `libcsson` shared
-  library; no third-party dependencies.
+## Standard & status
 
-Both expose the same surface (`parse`/`loads`, `get`, `set`, `remove`, `patch`,
-`stringify`/`dumps`, `validate`, `version`) and the `csson` CLI offers it from a
-shell. See the [docs site](https://crowdwave.github.io/csson/).
-
-## Conformance
-Canonical JSON is **byte-identical across four engines** — the C core (QuickJS),
-Chrome (Blink), Firefox (Gecko), and the WASM build — on every fixture, comments
-and edits included. Run `conformance/v1/verify.sh`.
-
-## Versioning
-- **Standard version** — a single integer (CSSON v1, v2, …); the caller selects it
-  (default = current). **v1 is the current — and only — standard.** A future v2,
-  if needed, is added beside v1, which is then frozen.
-- **Implementation version** — each library's own semver.
-
-## Status
-The core is **working**: reads canonical JSON, performs comment-preserving edits
-(`set`/`rm`) and atomic RFC 6902 JSON Patch, and validates `@property` syntaxes —
-all byte-identical across the four engines. The JavaScript/TypeScript and Python
-bindings are **complete and tested**.
-
-See the [documentation site](https://crowdwave.github.io/csson/) — the landing page
-with live examples, per-language guides (CLI, Node.js, Python, browser), and
-`docs/css-data-complete-guide.html`, the complete CSSON v1 guide.
+CSSON **v1** is the current — and only — standard; a future v2, if ever needed,
+is added beside it and v1 is frozen. The core and both bindings
+(JavaScript/TypeScript and Python) are **complete and tested**: read, get,
+comment-preserving `set`/`remove`, atomic RFC 6902 patch, and `@property`
+validation, all byte-identical across the four engines.

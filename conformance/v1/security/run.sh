@@ -4,7 +4,7 @@
 # Each case states a threat and the SECURE expected outcome, then classifies the
 # current build as:
 #   PASS       — the attack is defended (secure behaviour observed)
-#   VULNERABLE — the attack succeeds (an OPEN finding from docs/csson-security-analysis.md)
+#   VULNERABLE — the attack succeeds (an OPEN finding)
 #   DIVERGENT  — core and the browser disagree (a parser-differential / parity break)
 #
 # This is a living security assessment, not a pass/fail gate: it is expected to
@@ -127,5 +127,5 @@ else
 fi
 
 echo
-echo "OPEN findings still present: $open  (see docs/csson-security-analysis.md)"
+echo "OPEN findings still present: $open"
 exit "$open"

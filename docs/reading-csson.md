@@ -113,7 +113,7 @@ problems:
   throws a `SecurityError` — you can't read it back;
 - the browser executes the file's CSS semantics — `@import` is fetched, `url()`
   values trigger requests — so loading **untrusted** CSSON this way is a security
-  risk (see `csson-security-analysis.md`, S9).
+  risk.
 
 Read CSSON as *data* (section above); don't attach it to the page.
 

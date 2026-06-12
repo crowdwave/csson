@@ -1,8 +1,8 @@
 # CSSON security test set
 
 Adversarial inputs that probe CSSON's attack surface (injection, parser
-differentials, DoS). Companion to the analysis in
-[`../../../docs/csson-security-analysis.md`](../../../docs/csson-security-analysis.md).
+differentials, DoS). The S1–S9 findings these checks lock down are resolved on
+the current core; this suite keeps them closed.
 
 ## Run
 ```sh
