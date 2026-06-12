@@ -1,0 +1,73 @@
+/* satellite-constellation.csson — LEO broadband constellation layout */
+cssonv1 {
+  --constellation: "SkyMesh";
+  --operator: "Orbital Networks Inc";
+  --total-satellites: 96;
+  --architecture: "Walker-Delta";
+  --design-life: 7y;
+
+  /* Each orbital plane is a repeated sibling -> array */
+  plane {
+    --id: 1;
+    --altitude: 550km;
+    --inclination: 53deg;
+    --raan: 0deg;                 /* right ascension of ascending node */
+    --satellites: 24;
+    --spacing: 15deg;
+  }
+  plane {
+    --id: 2;
+    --altitude: 550km;
+    --inclination: 53deg;
+    --raan: 90deg;
+    --satellites: 24;
+    --spacing: 15deg;
+  }
+  plane {
+    --id: 3;
+    --altitude: 570km;
+    --inclination: 70deg;
+    --raan: 180deg;
+    --satellites: 24;
+    --spacing: 15deg;
+  }
+  plane {
+    --id: 4;
+    --altitude: 570km;
+    --inclination: 70deg;
+    --raan: 270deg;
+    --satellites: 24;
+    --spacing: 15deg;
+  }
+
+  /* Per-satellite bus and payload spec */
+  satellite-bus {
+    --mass: 260kg;
+    --power: 5kW;
+    --propulsion: "Hall-effect thruster";
+    --downlink-bands: ku, ka;     /* comma array */
+    --uplink-band: ka;
+    --frequencies: 12ghz, 20ghz, 30ghz;
+    --intersat-links: "optical";
+  }
+
+  /* Ground segment — repeated ground stations */
+  ground-station {
+    --name: "Svalbard";
+    --location: 78.2deg 15.6deg;  /* space tuple lat/long */
+    --antennas: 4;
+    --band: ka;
+  }
+  ground-station {
+    --name: "Punta Arenas";
+    --location: -53.0deg -70.9deg;
+    --antennas: 3;
+    --band: ka;
+  }
+  ground-station {
+    --name: "Fairbanks";
+    --location: 64.8deg -147.7deg;
+    --antennas: 5;
+    --band: ku;
+  }
+}

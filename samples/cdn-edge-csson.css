@@ -1,0 +1,59 @@
+/* cdn-edge.csson — CDN edge configuration */
+cssonv1 {
+  --distribution: "d3xampl3cdn";
+  --price-class: "PriceClass_All";
+
+  /* Origin servers behind the edge */
+  origin {
+    --id: "primary";
+    --domain: "origin.example.com";
+    --protocol: https-only;
+    --connect-timeout: 10s;
+    --read-timeout: 30s;
+    custom-headers {
+      --X-Origin-Token: "secret-handshake";
+    }
+  }
+  origin {
+    --id: "failover";
+    --domain: "origin-dr.example.com";
+    --protocol: https-only;
+  }
+
+  /* Cache behaviour rules */
+  cache-rule {
+    --path-pattern: "/static/*";
+    --target-origin: "primary";
+    --min-ttl: 0s;
+    --default-ttl: 86400s;       /* 1 day */
+    --max-ttl: 31536000s;        /* 1 year */
+    --compress: true;
+    --viewer-protocol: redirect-to-https;
+  }
+  cache-rule {
+    --path-pattern: "/api/*";
+    --target-origin: "primary";
+    --default-ttl: 0s;           /* never cache API */
+    --forward-headers: Authorization, Accept, "Accept-Language";
+    --forward-cookies: all;
+  }
+  cache-rule {
+    --path-pattern: "*";
+    --target-origin: "primary";
+    --default-ttl: 3600s;
+  }
+
+  /* Geo routing — restrict + redirect by region */
+  geo {
+    --restriction: blacklist;
+    --countries: KP, CU, IR;     /* ISO codes, comma array */
+
+    /* CSS-nesting child form demonstrated here */
+    & latency-routing {
+      --enabled: true;
+      --default-pop: "iad";
+      region { --match: "eu-*"; --pop: "fra"; }
+      region { --match: "ap-*"; --pop: "sin"; }
+    }
+  }
+}

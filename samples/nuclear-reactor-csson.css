@@ -1,0 +1,66 @@
+/* nuclear-reactor.csson — PWR unit monitoring & protection config */
+cssonv1 {
+  --plant: "Riverbend Unit 2";
+  --reactor_type: "PWR";
+  --thermal_power: 3411MW;
+  --electrical_output: 1150MW;
+
+  /* Reactor core parameters */
+  core {
+    --fuel_assemblies: 193;  /* integer */
+    --enrichment: 4.95%;
+    --avg_temp: 310degC;
+    --avg_pressure: 155bar;
+    --burnup: 50GWd/tU;
+  }
+
+  /* Repeated control rod bank blocks -> "control_rod" array */
+  control_rod {
+    --bank: "A";
+    --position: 100%;        /* fully withdrawn */
+    --worth: 850pcm;
+  }
+  control_rod {
+    --bank: "B";
+    --position: 92%;
+    --worth: 820pcm;
+  }
+  control_rod {
+    --bank: "shutdown";
+    --position: 100%;
+    --worth: 4200pcm;
+  }
+
+  /* Coolant loops -> "coolant_loop" array */
+  coolant_loop {
+    --id: 1;
+    --hot_leg_temp: 327degC;
+    --cold_leg_temp: 292degC;
+    --flow_rate: 4700kg/s;
+    --pump_speed: 1190rpm;
+  }
+  coolant_loop {
+    --id: 2;
+    --hot_leg_temp: 326degC;
+    --cold_leg_temp: 291degC;
+    --flow_rate: 4710kg/s;
+    --pump_speed: 1190rpm;
+  }
+
+  /* Safety / protection systems */
+  safety_systems {
+    --eccs: "high-pressure-injection";
+    --containment_pressure: 1.0bar;
+    --boron_concentration: 1200ppm;
+    --diesel_generators: 2; /* integer */
+  }
+
+  /* Reactor protection SCRAM trip setpoints */
+  scram_thresholds {
+    --high_neutron_flux: 118%;
+    --high_pressure: 165bar;
+    --low_pressure: 130bar;
+    --high_temp: 343degC;
+    --low_coolant_flow: 87%;
+  }
+}

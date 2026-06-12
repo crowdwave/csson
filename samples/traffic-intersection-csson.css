@@ -1,0 +1,94 @@
+/* traffic-intersection.csson — smart signalised intersection controller */
+cssonv1 {
+  --intersection: "King St / Queen Ave";
+  --controller: "TC-9000";
+  --mode: "adaptive";
+  --cycle-length: 90s;
+  --coordinated: yes;
+
+  /* Approaches — repeated -> array */
+  approach {
+    --bearing: "north";
+    --lanes: 3;
+    --speed-limit: 60kmh;
+    --turn-lanes: left, right;   /* comma array */
+  }
+  approach {
+    --bearing: "south";
+    --lanes: 3;
+    --speed-limit: 60kmh;
+    --turn-lanes: left;
+  }
+  approach {
+    --bearing: "east";
+    --lanes: 2;
+    --speed-limit: 50kmh;
+    --turn-lanes: right;
+  }
+  approach {
+    --bearing: "west";
+    --lanes: 2;
+    --speed-limit: 50kmh;
+    --turn-lanes: left, right;
+  }
+
+  /* Signal phases with timings in seconds */
+  phase {
+    --id: "A";
+    --movement: "NS-through";
+    --green: 35s;
+    --yellow: 4s;
+    --all-red: 2s;
+  }
+  phase {
+    --id: "B";
+    --movement: "NS-left";
+    --green: 12s;
+    --yellow: 4s;
+    --all-red: 2s;
+  }
+  phase {
+    --id: "C";
+    --movement: "EW-through";
+    --green: 25s;
+    --yellow: 4s;
+    --all-red: 2s;
+  }
+
+  /* Vehicle detectors */
+  detector {
+    --type: "inductive-loop";
+    --approach: "north";
+    --distance: 40m;
+  }
+  detector {
+    --type: "radar";
+    --approach: "east";
+    --range: 150m;
+  }
+
+  /* Pedestrian crossings */
+  pedestrian {
+    --crossing: "north";
+    --walk-time: 7s;
+    --clearance: 12s;
+    --push-button: yes;
+    --audible: yes;
+  }
+  pedestrian {
+    --crossing: "east";
+    --walk-time: 6s;
+    --clearance: 10s;
+    --push-button: yes;
+    --audible: yes;
+  }
+
+  /* Adaptive timing parameters */
+  adaptive {
+    --algorithm: "SCATS";
+    --min-green: 8s;
+    --max-green: 60s;
+    --saturation-threshold: 85%;
+    --detector-occupancy: 40%;
+  }
+}

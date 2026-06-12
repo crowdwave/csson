@@ -1,0 +1,71 @@
+/* observability-stack.csson — metrics, alerts, dashboards */
+cssonv1 {
+  --stack: "obs-prod";
+  --retention: 90d;
+
+  /* Typed hint: a sampling percentage. @property validates but is
+     not emitted in the data output. */
+  @property --sample-rate {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 100%;
+  }
+
+  /* Metrics scrape configuration */
+  scrape {
+    --job: "node-exporter";
+    --interval: 15s;
+    --timeout: 10s;
+    --sample-rate: 100%;        /* percentage scalar */
+    target { --address: "10.0.5.11:9100"; --region: "us-east"; }
+    target { --address: "10.0.5.12:9100"; --region: "us-east"; }
+    target { --address: "10.0.6.11:9100"; --region: "eu-west"; }
+  }
+  scrape {
+    --job: "app-metrics";
+    --interval: 30s;
+    --sample-rate: 50%;          /* sample half of high-cardinality series */
+    --metrics-path: "/metrics";
+    target { --address: "checkout.payments:9090"; }
+  }
+
+  /* Tracing pipeline */
+  tracing {
+    --sampler: probabilistic;
+    --sample-rate: 5%;
+    --exporter: otlp;
+    --endpoint: "tempo:4317";
+  }
+
+  /* Alerting rules (repeated -> array) */
+  alert {
+    --name: "HighErrorRate";
+    --expr: "rate(http_errors_total[5m]) > 0.05";
+    --for: 10m;
+    --severity: critical;
+    labels { --team: "backend"; --pager: "true"; }
+    --summary: "Error rate above 5% for 10 minutes";
+  }
+  alert {
+    --name: "HighLatencyP99";
+    --expr: "histogram_quantile(0.99, http_latency) > 0.5";
+    --for: 5m;
+    --severity: warning;
+    labels { --team: "backend"; }
+  }
+  alert {
+    --name: "DiskFilling";
+    --expr: "disk_free_ratio < 0.10";
+    --for: 15m;
+    --severity: warning;
+  }
+
+  /* Dashboards */
+  dashboard {
+    --title: "Service Overview";
+    --refresh: 30s;
+    panel { --title: "Requests/sec"; --type: graph; --unit: "reqps"; }
+    panel { --title: "p99 Latency"; --type: graph; --unit: ms; }
+    panel { --title: "Error Budget"; --type: gauge; --thresholds: 0.8, 0.95; }
+  }
+}

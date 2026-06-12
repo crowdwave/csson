@@ -1,0 +1,36 @@
+/* Film production shot list — scenes (array), shots with camera angles (deg),
+   lens (mm) and durations, plus cast and locations. */
+cssonv1 {
+  --production: "The Last Ferry";
+  --director: "R. Castellano";
+  --aspect-ratio: 2.39 / 1;
+  --framerate: 24;
+
+  cast {
+    role { --character: "Mara"; --actor: "J. Whitfield"; }
+    role { --character: "Eli"; --actor: "T. Okafor"; }
+    role { --character: "Captain"; --actor: "S. Borg"; }
+  }
+
+  locations {
+    location { --name: "Harbor Pier"; --type: "exterior"; --time: "dusk"; }
+    location { --name: "Wheelhouse"; --type: "interior"; --time: "night"; }
+  }
+
+  /* Scenes contain repeated shot blocks -> nested arrays, 3 levels deep. */
+  scenes {
+    scene {
+      --number: 12;
+      --slug: "EXT. HARBOR PIER - DUSK";
+      shot { --id: "12A"; --size: "wide"; --angle: 0deg; --lens: 24mm; --duration: 8s; }
+      shot { --id: "12B"; --size: "medium"; --angle: 35deg; --lens: 50mm; --duration: 5s; }
+      shot { --id: "12C"; --size: "close-up"; --angle: -15deg; --lens: 85mm; --duration: 3s; }
+    }
+    scene {
+      --number: 13;
+      --slug: "INT. WHEELHOUSE - NIGHT";
+      shot { --id: "13A"; --size: "two-shot"; --angle: 10deg; --lens: 35mm; --duration: 12s; }
+      shot { --id: "13B"; --size: "insert"; --angle: 90deg; --lens: 100mm; --duration: 2s; }
+    }
+  }
+}

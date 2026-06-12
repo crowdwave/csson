@@ -1,0 +1,53 @@
+/* 3D scene graph — camera, lights, meshes with transforms, materials.
+   Demonstrates oklch + hex colors, deg/position tuples, and @property typing. */
+cssonv1 {
+  /* Type the field of view as an angle. */
+  @property --fov {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 60deg;
+  }
+
+  --name: "Harbor at Dusk";
+  --units: "meters";
+
+  camera {
+    --fov: 50deg;
+    --position: 0 4 12;        /* x y z tuple */
+    --target: 0 1 0;
+    --near: 0.1;
+    --far: 1000;
+  }
+
+  /* Repeated light blocks -> array; colors as hex and oklch. */
+  lights {
+    light { --type: "directional"; --color: #fff4d6; --intensity: 1.2; --direction: -1 -2 -1; }
+    light { --type: "point"; --color: oklch(0.72 0.15 45); --intensity: 3.5; --position: 5 6 -3; }
+    light { --type: "ambient"; --color: #20283a; --intensity: 0.3; }
+  }
+
+  /* Mesh nodes with transform tuples and nested material references. */
+  meshes {
+    mesh {
+      --name: "Pier";
+      --position: 0 0 0;
+      --rotation: 0deg 15deg 0deg;
+      --scale: 1 1 1;
+      material { --albedo: oklch(0.45 0.04 70); --roughness: 0.8; --metallic: 0.0; }
+    }
+    mesh {
+      --name: "Lighthouse";
+      --position: -8 0 -5;
+      --rotation: 0deg 0deg 0deg;
+      --scale: 1 2 1;
+      material { --albedo: #d94f4f; --roughness: 0.4; --metallic: 0.1; }
+    }
+    mesh {
+      --name: "Water";
+      --position: 0 -0.5 0;
+      --rotation: 0deg 0deg 0deg;
+      --scale: 100 1 100;
+      material { --albedo: oklch(0.35 0.08 230); --roughness: 0.05; --metallic: 0.0; }
+    }
+  }
+}

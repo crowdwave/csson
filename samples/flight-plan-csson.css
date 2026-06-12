@@ -1,0 +1,84 @@
+/* flight-plan.csson — airline operational flight plan, SYD -> LAX */
+cssonv1 {
+  --flight: "QF11";
+  --callsign: "QANTAS 11";
+  --date: "2026-06-12";
+  --departure: "YSSY";          /* Sydney */
+  --destination: "KLAX";        /* Los Angeles */
+  --cruise-altitude: 37000ft;
+  --cruise-mach: 0.85;          /* decimal -> verbatim string */
+
+  /* Aircraft */
+  aircraft {
+    --type: "Boeing 787-9";
+    --registration: "VH-ZNA";
+    --seats: 236;
+    --mtow: 254000kg;            /* max takeoff weight */
+    --range: 14140km;
+  }
+
+  /* Route waypoints — repeated -> array, ordered along the track */
+  waypoint {
+    --name: "SYD";
+    --lat: -33.95deg;
+    --long: 151.18deg;
+    --altitude: 0ft;
+    --eta: "08:00";
+  }
+  waypoint {
+    --name: "WALSH";
+    --lat: -30.10deg;
+    --long: 159.40deg;
+    --altitude: 37000ft;
+    --eta: "08:42";
+  }
+  waypoint {
+    --name: "NANDI";
+    --lat: -17.75deg;
+    --long: 177.45deg;
+    --altitude: 39000ft;
+    --eta: "11:15";
+  }
+  waypoint {
+    --name: "LAX";
+    --lat: 33.94deg;
+    --long: -118.40deg;
+    --altitude: 0ft;
+    --eta: "22:30";
+  }
+
+  /* Fuel planning */
+  fuel {
+    --block: 138000kg;
+    --trip: 121000kg;
+    --reserve: 9000kg;
+    --alternate: 5000kg;
+    --taxi: 800kg;
+  }
+
+  /* Weather brief */
+  weather {
+    --departure-metar: "YSSY 12008KT CAVOK 14/08 Q1019";
+    --enroute-winds: "250/85";
+    --destination-taf: "KLAX 27012KT 9999 FEW020";
+    --turbulence: "light";
+  }
+
+  /* Crew complement */
+  crew {
+    --captain: "A. Stuart";
+    --first-officer: "M. Chen";
+    --relief-pilots: 2;
+    --cabin-crew: 12;
+  }
+
+  /* Alternate aerodromes — repeated */
+  alternate {
+    --icao: "KSAN";
+    --distance: 180km;
+  }
+  alternate {
+    --icao: "KLAS";
+    --distance: 380km;
+  }
+}

@@ -1,0 +1,52 @@
+/* ml-hyperparameters.csson — deep learning training configuration */
+cssonv1 {
+  --experiment: "resnet-finetune-v4";
+  --task: "image-classification";
+  --seed: 1337;             /* integer */
+  --mixed_precision: "bf16";
+
+  /* Model architecture with repeated layer blocks -> "layer" array */
+  architecture {
+    --backbone: "resnet50";
+    --pretrained: 1;
+    layer { --name: "conv_stem"; --filters: 64;  --kernel: 7; --stride: 2; }
+    layer { --name: "stage1";    --filters: 256; --blocks: 3; }
+    layer { --name: "stage2";    --filters: 512; --blocks: 4; }
+    layer { --name: "head";      --units: 1000; --activation: "softmax"; }
+  }
+
+  /* Optimizer */
+  optimizer {
+    --type: "sgd";
+    --learning_rate: 0.05;   /* verbatim decimal string */
+    --momentum: 0.9;
+    --weight_decay: 0.0001;
+    --nesterov: 1;
+  }
+
+  /* Data pipeline */
+  data {
+    --dataset: "imagenet-1k";
+    --batch_size: 256;       /* integer */
+    --image_size: 224 224;   /* space tuple */
+    --train_split: 90%;
+    --val_split: 10%;
+    --augmentations: randaugment, mixup, cutmix; /* comma array */
+  }
+
+  /* LR schedule */
+  schedule {
+    --type: "cosine";
+    --warmup_epochs: 5;
+    --total_epochs: 90;
+    --min_lr: 0.0001;
+  }
+
+  /* Checkpointing */
+  checkpoints {
+    --save_every: 5;         /* epochs, integer */
+    --keep_last: 3;
+    --monitor: "val_top1";
+    --dir: "s3://models/resnet-finetune-v4";
+  }
+}

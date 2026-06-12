@@ -1,0 +1,77 @@
+/* drone-mission.csson — autonomous UAV survey mission */
+cssonv1 {
+  --mission: "Field Survey 42";
+  --aircraft: "Quadcopter X4";
+  --pilot: "remote";
+  --max-altitude: 120m;
+  --rtl-altitude: 60m;          /* return-to-launch altitude */
+
+  /* Ordered survey waypoints — repeated -> array */
+  waypoint {
+    --seq: 1;
+    --gps: 51.5074 -0.1278;     /* space tuple lat/long, decimals -> string */
+    --altitude: 80m;
+    --hover-time: 5s;
+    --action: "photo";
+  }
+  waypoint {
+    --seq: 2;
+    --gps: 51.5090 -0.1250;
+    --altitude: 80m;
+    --hover-time: 5s;
+    --action: "photo";
+  }
+  waypoint {
+    --seq: 3;
+    --gps: 51.5110 -0.1230;
+    --altitude: 100m;
+    --hover-time: 8s;
+    --action: "video";
+  }
+  waypoint {
+    --seq: 4;
+    --gps: 51.5074 -0.1278;
+    --altitude: 60m;
+    --hover-time: 0s;
+    --action: "land";
+  }
+
+  /* Camera and gimbal */
+  camera {
+    --model: "Zenith 20MP";
+    --gimbal-pitch: -90deg;      /* straight down */
+    --gimbal-yaw: 0deg;
+    --shutter: "1/1000";
+    --iso: 100;
+    --overlap: 75%;
+  }
+
+  /* Geofence polygon corners as tuples */
+  geofence {
+    --type: "polygon";
+    --max-altitude: 120m;
+    --action-on-breach: "rtl";
+    --corner: 51.5060 -0.1300;
+    --corner: 51.5130 -0.1300;
+    --corner: 51.5130 -0.1200;
+    --corner: 51.5060 -0.1200;
+  }
+
+  /* Battery state and thresholds */
+  battery {
+    --chemistry: "LiPo";
+    --cells: 6;
+    --capacity: 5200mah;
+    --start-voltage: 25.2V;
+    --low-warning: 22%;
+    --critical: 15%;
+  }
+
+  /* Failsafe behaviours */
+  failsafe {
+    --rc-loss: "rtl";
+    --gps-loss: "hover";
+    --low-battery: "land";
+    --geofence-breach: "rtl";
+  }
+}

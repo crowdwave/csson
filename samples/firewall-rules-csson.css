@@ -1,0 +1,60 @@
+/* firewall-rules.csson — a security group / firewall policy */
+cssonv1 {
+  --name: "web-tier-sg";
+  --vpc: "vpc-0a1b2c3d";
+  --default-action: deny;     /* deny-by-default posture */
+
+  /* Inbound rules (repeated ingress blocks -> array) */
+  ingress {
+    --description: "HTTPS from anywhere";
+    --proto: tcp;
+    --ports: 443;
+    --cidr: 0.0.0.0/0;
+    --action: allow;
+  }
+  ingress {
+    --description: "HTTP redirect from anywhere";
+    --proto: tcp;
+    --ports: 80;
+    --cidr: 0.0.0.0/0;
+    --action: allow;
+  }
+  ingress {
+    --description: "SSH from bastion only";
+    --proto: tcp;
+    --ports: 22;
+    --cidr: 10.0.0.0/24;
+    --action: allow;
+  }
+  ingress {
+    --description: "App port range from internal LB";
+    --proto: tcp;
+    --ports: 8000 8999;          /* space tuple = range */
+    --cidr: 10.0.1.0/24;
+    --action: allow;
+  }
+  ingress {
+    --description: "Block known-bad scanner";
+    --proto: all;
+    --ports: any;
+    --cidr: 198.51.100.0/24;
+    --action: deny;
+    --priority: 1;
+  }
+
+  /* Outbound rules */
+  egress {
+    --description: "Allow DNS out";
+    --proto: udp;
+    --ports: 53;
+    --cidr: 0.0.0.0/0;
+    --action: allow;
+  }
+  egress {
+    --description: "Allow all other egress";
+    --proto: all;
+    --ports: any;
+    --cidr: 0.0.0.0/0;
+    --action: allow;
+  }
+}

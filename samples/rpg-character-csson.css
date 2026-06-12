@@ -1,0 +1,51 @@
+/* RPG character sheet — demonstrates @property typing, repeated inventory
+   blocks (array), nested equipment slots, and abilities with cooldowns. */
+cssonv1 {
+  /* Type the hit-point stat so readers know it is an integer. */
+  @property --hp {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 100;
+  }
+
+  --name: "Thalia Brightblade";
+  --class: "Paladin";
+  --level: 14;
+  --alignment: "lawful good";
+
+  stats {
+    --hp: 142;
+    --mp: 60;
+    --strength: 18;
+    --dexterity: 12;
+    --constitution: 16;
+    --intelligence: 10;
+    --wisdom: 14;
+    --charisma: 17;
+  }
+
+  /* Equipment slots — a single nested object, each slot a child. */
+  equipment {
+    head { --item: "Helm of Valor"; --armor: 8; }
+    chest { --item: "Sunforged Plate"; --armor: 22; }
+    main-hand { --item: "Dawnbreaker"; --damage: "2d8"; }
+    off-hand { --item: "Aegis Shield"; --block: 30%; }
+  }
+
+  /* Repeated inventory blocks collapse into a JSON array. */
+  inventory {
+    item { --name: "Healing Potion"; --quantity: 5; --weight: 0.5; }
+    item { --name: "Antidote"; --quantity: 2; --weight: 0.3; }
+    item { --name: "Torch"; --quantity: 8; --weight: 1.0; }
+    item { --name: "Rope (50ft)"; --quantity: 1; --weight: 5.0; }
+  }
+
+  --skills: athletics, persuasion, religion, intimidation;
+
+  /* Abilities use time-unit scalars for cooldowns. */
+  abilities {
+    ability { --name: "Lay on Hands"; --heal: 50; --cooldown: 30s; }
+    ability { --name: "Divine Smite"; --damage: "4d8"; --cooldown: 6s; }
+    ability { --name: "Aura of Courage"; --range: 30; --cooldown: 0s; }
+  }
+}

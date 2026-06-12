@@ -1,0 +1,55 @@
+/* particle-detector.csson — collider experiment detector configuration */
+cssonv1 {
+  --experiment: "HADRON-X";
+  --beam_energy: 6.8TeV;     /* per beam (verbatim string) */
+  --magnetic_field: 3.8tesla;
+  --bunch_spacing: 25ns;
+
+  /* Subsystems modelled as nested objects (one of each) */
+  subsystems {
+    tracker {
+      --technology: "silicon-pixel";
+      --layers: 4;           /* integer */
+      --channels: 124000000;
+      --resolution: 10um;
+      --radius_inner: 30mm;
+      --radius_outer: 1100mm;
+    }
+    calorimeter {
+      --type: "electromagnetic";
+      --material: "PbWO4";
+      --channels: 75848;
+      --energy_resolution: 2.8%;
+      --depth: 23cm;
+    }
+    muon {
+      --technology: "drift-tubes";
+      --stations: 4;
+      --channels: 172000;
+      --coverage: "|eta| < 2.4";
+    }
+  }
+
+  /* Multi-level trigger system */
+  trigger {
+    level1 {
+      --rate_in: 40MHz;
+      --rate_out: 100kHz;
+      --latency: 4us;
+      --thresholds: 20 50 120;  /* space tuple: muon/jet/MET GeV */
+    }
+    high_level {
+      --rate_out: 1kHz;
+      --farm_nodes: 30000;
+      --streams: physics, calibration, express; /* comma array */
+    }
+  }
+
+  /* Data acquisition */
+  daq {
+    --event_size: 1.5MB;
+    --bandwidth: 200GB/s;
+    --buffer_depth: 512;     /* integer */
+    --compression: "lz4";
+  }
+}

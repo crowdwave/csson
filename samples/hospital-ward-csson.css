@@ -1,0 +1,52 @@
+/* Hospital ward roster — repeated bed and staff blocks form arrays.
+   Includes an @property block typing patient acuity as an integer.
+   Three nesting levels: ward -> beds -> bed; ward -> medications -> dose. */
+cssonv1 {
+  /* Type the acuity score so consumers treat it as an integer 1-5. */
+  @property --acuity {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 1;
+  }
+
+  --ward-name: "4 West — Cardiology";
+  --capacity: 24;
+  --occupied: 21;
+
+  /* Beds — repeated, so "bed" is an array. */
+  beds {
+    bed { --number: 401; --occupied: 1; --patient: "anon-7741"; --acuity: 4; }
+    bed { --number: 402; --occupied: 1; --patient: "anon-7752"; --acuity: 2; }
+    bed { --number: 403; --occupied: 0; --acuity: 1; }
+    bed { --number: 404; --occupied: 1; --patient: "anon-7768"; --acuity: 5; }
+  }
+
+  /* Staff on shift — repeated, with shift windows as strings. */
+  staff {
+    nurse { --name: "R. Okafor"; --role: "charge nurse"; --shift: "07:00-19:00"; }
+    nurse { --name: "L. Tran"; --role: "registered nurse"; --shift: "07:00-19:00"; }
+    nurse { --name: "M. Della"; --role: "registered nurse"; --shift: "19:00-07:00"; }
+    doctor { --name: "Dr. Patel"; --role: "cardiology registrar"; --shift: "08:00-18:00"; }
+  }
+
+  /* Equipment counts. */
+  equipment {
+    --ventilators: 4;
+    --infusion-pumps: 30;
+    --defibrillators: 3;
+    --telemetry-units: 18;
+  }
+
+  /* Medication schedule — repeated dose blocks. */
+  medications {
+    dose { --drug: "Aspirin"; --amount: 100mg; --frequency: "daily"; }
+    dose { --drug: "Atorvastatin"; --amount: 40mg; --frequency: "nightly"; }
+    dose { --drug: "Furosemide"; --amount: 20mg; --frequency: "twice daily"; }
+  }
+
+  protocols {
+    --handover-time: 30min;
+    --rounds-interval: 4h;
+    --escalation: "MET call on acuity 5";
+  }
+}

@@ -1,0 +1,72 @@
+/* fleet-logistics.csson — last-mile delivery fleet and routing config */
+cssonv1 {
+  --depot: "North Distribution Centre";
+  --region: "Metro West";
+  --service-date: "2026-06-12";
+  --total-stops: 142;
+
+  /* Vehicles in service — repeated -> array */
+  vehicle {
+    --rego: "DEL-101";
+    --type: "panel van";
+    --capacity: 1200kg;
+    --volume: 9m3;
+    --fuel-type: "diesel";
+    --range: 600km;
+  }
+  vehicle {
+    --rego: "DEL-102";
+    --type: "box truck";
+    --capacity: 4500kg;
+    --volume: 28m3;
+    --fuel-type: "diesel";
+    --range: 800km;
+  }
+  vehicle {
+    --rego: "DEL-103";
+    --type: "cargo bike";
+    --capacity: 80kg;
+    --volume: 0.5m3;
+    --fuel-type: "electric";
+    --range: 60km;
+  }
+
+  /* Delivery routes — repeated, each with nested stops and a driver */
+  route {
+    --id: "R1";
+    --vehicle: "DEL-101";
+    --distance: 84km;
+    --window: "08:00-12:00";
+
+    driver {
+      --name: "J. Okafor";
+      --licence: "HR";
+      --shift: 8h;
+    }
+    stop { --address: "12 Elm St"; --packages: 3; --eta: "08:20"; }
+    stop { --address: "45 Oak Ave"; --packages: 1; --eta: "08:35"; }
+    stop { --address: "9 Pine Rd"; --packages: 5; --eta: "09:05"; }
+  }
+  route {
+    --id: "R2";
+    --vehicle: "DEL-102";
+    --distance: 156km;
+    --window: "06:00-14:00";
+
+    driver {
+      --name: "S. Lindqvist";
+      --licence: "MR";
+      --shift: 9h;
+    }
+    stop { --address: "Warehouse 7"; --packages: 40; --eta: "06:45"; }
+    stop { --address: "Retail Park B"; --packages: 22; --eta: "08:10"; }
+  }
+
+  /* Schedule windows shared across routes */
+  schedule {
+    --morning: "06:00-12:00";
+    --afternoon: "12:00-18:00";
+    --cutoff: "20:00";
+    --priority-bands: express, standard, economy;   /* comma array */
+  }
+}

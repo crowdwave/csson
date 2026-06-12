@@ -1,0 +1,56 @@
+/* Library catalog — repeated book blocks form an array. Years and copies
+   are bare integers (numbers); ISBNs and shelf codes are quoted strings.
+   Loan durations carry day units. */
+cssonv1 {
+  --branch: "Riverside Public Library";
+  --catalog-version: 3;
+
+  /* Books — repeated, so "book" is a JSON array. */
+  collection {
+    book {
+      --title: "The Pragmatic Programmer";
+      --author: "Hunt & Thomas";
+      --isbn: "978-0135957059";
+      --year: 2019;
+      --copies: 4;
+      --shelf: "CS-204";
+    }
+    book {
+      --title: "Sapiens";
+      --author: "Yuval Noah Harari";
+      --isbn: "978-0062316097";
+      --year: 2015;
+      --copies: 6;
+      --shelf: "HIS-118";
+    }
+    book {
+      --title: "The Left Hand of Darkness";
+      --author: "Ursula K. Le Guin";
+      --isbn: "978-0441478125";
+      --year: 1969;
+      --copies: 2;
+      --shelf: "SF-067";
+    }
+  }
+
+  /* Membership tiers as discrete child objects. */
+  members {
+    adult { --tier: "adult"; --max-loans: 20; --active: 4210; }
+    student { --tier: "student"; --max-loans: 15; --active: 1860; }
+    junior { --tier: "junior"; --max-loans: 10; --active: 980; }
+  }
+
+  /* Loan rules — durations in days, fines as money strings. */
+  loan-rules {
+    --standard-period: 21days;
+    --renewal-period: 14days;
+    --max-renewals: 2;
+    --hold-shelf: 7days;
+  }
+
+  fines {
+    --daily-overdue: "0.25";
+    --max-per-item: "15.00";
+    --lost-item-fee: "25.00";
+  }
+}

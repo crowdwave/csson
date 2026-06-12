@@ -1,0 +1,42 @@
+/* Synthesizer patch — oscillators (Hz), envelope (ms), filters, LFOs, FX.
+   Heavy use of Hz and ms unit scalars. */
+cssonv1 {
+  --name: "Glass Choir Pad";
+  --author: "Lyra Nguyen";
+  --polyphony: 8;
+  --category: "pad";
+
+  /* Repeated oscillator blocks -> array; frequencies in Hz. */
+  oscillators {
+    oscillator { --waveform: "sawtooth"; --frequency: 440Hz; --detune: -7; --level: 80%; }
+    oscillator { --waveform: "square"; --frequency: 220Hz; --detune: 5; --level: 65%; }
+    oscillator { --waveform: "sine"; --frequency: 880Hz; --detune: 0; --level: 40%; }
+  }
+
+  /* ADSR envelope in milliseconds. */
+  envelope {
+    --attack: 350ms;
+    --decay: 600ms;
+    --sustain: 70%;
+    --release: 1200ms;
+  }
+
+  filter {
+    --type: "lowpass";
+    --cutoff: 2400Hz;
+    --resonance: 18%;
+    --keytrack: 50%;
+  }
+
+  /* LFOs as repeated modulation sources. */
+  lfos {
+    lfo { --target: "cutoff"; --rate: 0.3Hz; --depth: 35%; --shape: "triangle"; }
+    lfo { --target: "pitch"; --rate: 5.2Hz; --depth: 8%; --shape: "sine"; }
+  }
+
+  effects {
+    reverb { --size: 85%; --decay: 4500ms; --mix: 30%; }
+    delay { --time: 375ms; --feedback: 45%; --mix: 22%; }
+    chorus { --rate: 0.8Hz; --depth: 40%; --mix: 50%; }
+  }
+}

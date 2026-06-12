@@ -1,0 +1,48 @@
+/* Orchestra concert — sections, seating tuples, program (array),
+   tuning. Uses the CSS-nesting `& child` form for the conductor node. */
+cssonv1 {
+  --ensemble: "Meridian Philharmonic";
+  --conductor: "A. Vasquez";
+  --venue: "Halcyon Hall";
+  --concert-pitch: 440Hz;
+
+  tuning {
+    --reference: "A4";
+    --frequency: 440Hz;
+    --temperament: "equal";
+  }
+
+  /* `& child` nesting form: a child object named "podium". */
+  & podium {
+    --position: 0px 0px;        /* stage-coordinate tuple */
+    --height: 30cm;
+  }
+
+  /* Sections nested by family. */
+  sections {
+    strings {
+      --count: 44;
+      desk { --instrument: "violin I"; --players: 16; --position: -3px 2px; }
+      desk { --instrument: "violin II"; --players: 14; --position: 3px 2px; }
+      desk { --instrument: "viola"; --players: 12; --position: 4px 4px; }
+      desk { --instrument: "cello"; --players: 10; --position: -4px 4px; }
+    }
+    brass {
+      --count: 11;
+      desk { --instrument: "horn"; --players: 4; --position: 0px 8px; }
+      desk { --instrument: "trumpet"; --players: 3; --position: 2px 9px; }
+      desk { --instrument: "trombone"; --players: 3; --position: 4px 9px; }
+    }
+    percussion {
+      --count: 4;
+      desk { --instrument: "timpani"; --players: 1; --position: 0px 11px; }
+    }
+  }
+
+  /* Program — repeated piece blocks form an array. */
+  program {
+    piece { --composer: "Sibelius"; --title: "Finlandia"; --duration: 9min; --order: 1; }
+    piece { --composer: "Brahms"; --title: "Symphony No. 4"; --duration: 40min; --order: 2; }
+    piece { --composer: "Ravel"; --title: "Bolero"; --duration: 15min; --order: 3; }
+  }
+}

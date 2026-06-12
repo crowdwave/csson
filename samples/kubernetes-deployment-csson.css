@@ -1,0 +1,80 @@
+/* kubernetes-deployment.csson — a Deployment workload */
+cssonv1 {
+  --apiVersion: "apps/v1";
+  --kind: "Deployment";
+
+  metadata {
+    --name: "checkout-service";
+    --namespace: "payments";
+    labels {
+      --app: "checkout";
+      --tier: "backend";
+      --version: "v2.4.1";
+    }
+  }
+
+  spec {
+    --replicas: 4;                      /* integer */
+    --revisionHistoryLimit: 5;
+
+    selector {
+      matchLabels { --app: "checkout"; }
+    }
+
+    /* Pod template — deepest nesting in this file */
+    template {
+      metadata {
+        labels { --app: "checkout"; --tier: "backend"; }
+      }
+      spec {
+        --terminationGracePeriodSeconds: 30;
+
+        /* Primary application container */
+        container {
+          --name: "checkout";
+          --image: "registry.internal/checkout:v2.4.1";
+          --imagePullPolicy: IfNotPresent;
+
+          port { --containerPort: 8080; --name: "http"; }
+          port { --containerPort: 9090; --name: "metrics"; }
+
+          resources {
+            requests { --cpu: 250m; --memory: 256Mi; }
+            limits   { --cpu: 1000m; --memory: 512Mi; }
+          }
+
+          env { --name: "LOG_LEVEL"; --value: "info"; }
+          env { --name: "DB_HOST"; --value: "postgres.payments.svc"; }
+          env { --name: "MAX_CONNECTIONS"; --value: 50; }
+
+          livenessProbe {
+            httpGet { --path: "/healthz"; --port: 8080; }
+            --initialDelaySeconds: 15;
+            --periodSeconds: 20;
+          }
+          readinessProbe {
+            httpGet { --path: "/ready"; --port: 8080; }
+            --initialDelaySeconds: 5;
+            --periodSeconds: 10;
+          }
+
+          volumeMount { --name: "config"; --mountPath: "/etc/checkout"; --readOnly: true; }
+          volumeMount { --name: "cache"; --mountPath: "/var/cache"; }
+        }
+
+        /* Sidecar log shipper */
+        container {
+          --name: "log-shipper";
+          --image: "registry.internal/fluentbit:1.9";
+          resources {
+            requests { --cpu: 50m; --memory: 64Mi; }
+            limits   { --cpu: 100m; --memory: 128Mi; }
+          }
+        }
+
+        volume { --name: "config"; configMap { --name: "checkout-config"; } }
+        volume { --name: "cache"; emptyDir { --sizeLimit: 256Mi; } }
+      }
+    }
+  }
+}

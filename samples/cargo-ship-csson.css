@@ -1,0 +1,91 @@
+/* cargo-ship.csson — container ship voyage plan and cargo manifest */
+cssonv1 {
+  --voyage: "TP-228E";
+  --service: "Transpacific Express";
+  --departure: "2026-06-12";
+  --laden: yes;
+
+  /* Vessel specifications, including a CSS-nested child block (& form) */
+  vessel {
+    --name: "MV Meridian";
+    --imo: "9876543";
+    --flag: "Singapore";
+    --loa: 366m;                 /* length overall */
+    --beam: 51m;
+    --capacity: 14000teu;
+    --service-speed: 22kn;
+
+    /* & child nesting form -> object key "engine" */
+    & engine {
+      --type: "2-stroke diesel";
+      --power: 60000kW;
+      --rpm: 84;
+      --fuel-consumption: 220t;
+    }
+  }
+
+  /* Cargo holds — repeated -> array */
+  hold {
+    --number: 1;
+    --teu: 2400;
+    --weight: 31000t;
+    --reefer-plugs: 120;
+  }
+  hold {
+    --number: 2;
+    --teu: 3600;
+    --weight: 47000t;
+    --reefer-plugs: 200;
+  }
+  hold {
+    --number: 3;
+    --teu: 3600;
+    --weight: 46000t;
+    --reefer-plugs: 200;
+  }
+
+  /* Great-circle route summary */
+  route {
+    --origin: "Shanghai";
+    --destination: "Long Beach";
+    --distance: 10500km;
+    --transit-time: 14d;
+    --great-circle: yes;
+  }
+
+  /* Ports of call — repeated -> array, in sequence */
+  port-of-call {
+    --name: "Shanghai";
+    --unlocode: "CNSHA";
+    --eta: "2026-06-12";
+    --moves: 4200;
+  }
+  port-of-call {
+    --name: "Busan";
+    --unlocode: "KRPUS";
+    --eta: "2026-06-14";
+    --moves: 1800;
+  }
+  port-of-call {
+    --name: "Long Beach";
+    --unlocode: "USLGB";
+    --eta: "2026-06-26";
+    --moves: 5100;
+  }
+
+  /* Bunker fuel state */
+  bunker {
+    --vlsfo: 4200t;              /* very-low-sulphur fuel oil */
+    --mgo: 600t;                 /* marine gas oil */
+    --sulphur-cap: 0.5%;
+    --rob: 4800t;               /* remaining on board */
+  }
+
+  /* Draft and stability */
+  draft {
+    --fore: 14.2m;
+    --aft: 14.8m;
+    --air-draft: 58m;
+    --trim: 0.6m;
+  }
+}

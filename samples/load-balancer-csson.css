@@ -1,0 +1,75 @@
+/* load-balancer.csson — L4/L7 load balancer (HAProxy-ish) */
+cssonv1 {
+  --name: "edge-lb-01";
+  --mode: http;
+
+  global {
+    --maxconn: 20000;
+    --tune-ssl-default-dh-param: 2048;
+  }
+
+  /* Public HTTPS frontend */
+  frontend {
+    --name: "https-in";
+    --bind: "0.0.0.0:443";
+    --mode: http;
+    --tls: true;
+    --default-backend: "web-pool";
+
+    /* Route /api to a different backend */
+    rule {
+      --condition: "path_beg /api";
+      --use-backend: "api-pool";
+    }
+  }
+
+  /* TCP frontend for the database proxy (L4) */
+  frontend {
+    --name: "pg-in";
+    --bind: "0.0.0.0:5432";
+    --mode: tcp;
+    --default-backend: "pg-pool";
+  }
+
+  /* Web backend with health checks, weights, sticky sessions */
+  backend {
+    --name: "web-pool";
+    --balance: roundrobin;
+
+    health-check {
+      --type: http;
+      --path: "/healthz";
+      --interval: 2s;
+      --timeout: 1s;
+      --rise: 2;
+      --fall: 3;
+    }
+
+    sticky {
+      --enabled: true;
+      --cookie: "SRVID";
+      --mode: insert;
+    }
+
+    server { --name: "web1"; --address: "10.0.2.11:8080"; --weight: 100; }
+    server { --name: "web2"; --address: "10.0.2.12:8080"; --weight: 100; }
+    server { --name: "web3"; --address: "10.0.2.13:8080"; --weight: 50; --backup: true; }
+  }
+
+  /* API backend, least-connections */
+  backend {
+    --name: "api-pool";
+    --balance: leastconn;
+    health-check { --type: http; --path: "/ready"; --interval: 3s; }
+    server { --name: "api1"; --address: "10.0.3.11:9000"; --weight: 100; }
+    server { --name: "api2"; --address: "10.0.3.12:9000"; --weight: 100; }
+  }
+
+  /* Plain TCP DB pool */
+  backend {
+    --name: "pg-pool";
+    --balance: source;
+    --mode: tcp;
+    server { --name: "pg-primary"; --address: "10.0.4.10:5432"; --check: true; }
+  }
+}

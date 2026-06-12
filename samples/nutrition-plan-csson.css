@@ -1,0 +1,47 @@
+/* Weekly meal plan — three nesting levels: plan -> day -> meal.
+   Repeated day blocks and repeated meal blocks both form arrays.
+   Calories are bare integers (numbers); macros carry gram units (strings). */
+cssonv1 {
+  --plan-name: "Lean Bulk Week 3";
+  --goal: "muscle-gain";
+  --daily-target: 2800;
+
+  /* Daily macro and hydration targets. */
+  targets {
+    --protein: 180g;
+    --carbs: 320g;
+    --fat: 80g;
+    --fiber: 35g;
+    --water: 3L;
+  }
+
+  /* Repeated day blocks; each contains repeated meal blocks (deep array nesting). */
+  week {
+    day {
+      --name: "Monday";
+      meal { --name: "breakfast"; --calories: 620; --protein: 38g; --carbs: 70g; --fat: 18g; }
+      meal { --name: "lunch"; --calories: 780; --protein: 52g; --carbs: 85g; --fat: 22g; }
+      meal { --name: "dinner"; --calories: 860; --protein: 58g; --carbs: 90g; --fat: 26g; }
+      meal { --name: "snack"; --calories: 320; --protein: 24g; --carbs: 30g; --fat: 10g; }
+    }
+    day {
+      --name: "Tuesday";
+      meal { --name: "breakfast"; --calories: 600; --protein: 40g; --carbs: 65g; --fat: 16g; }
+      meal { --name: "lunch"; --calories: 810; --protein: 55g; --carbs: 88g; --fat: 24g; }
+      meal { --name: "dinner"; --calories: 840; --protein: 56g; --carbs: 86g; --fat: 25g; }
+    }
+    day {
+      --name: "Wednesday";
+      meal { --name: "breakfast"; --calories: 640; --protein: 42g; --carbs: 72g; --fat: 18g; }
+      meal { --name: "lunch"; --calories: 790; --protein: 50g; --carbs: 84g; --fat: 23g; }
+      meal { --name: "dinner"; --calories: 880; --protein: 60g; --carbs: 92g; --fat: 27g; }
+    }
+  }
+
+  /* Daily supplement stack. */
+  supplements {
+    supplement { --name: "whey protein"; --dose: 30g; --timing: "post-workout"; }
+    supplement { --name: "creatine"; --dose: 5g; --timing: "morning"; }
+    supplement { --name: "vitamin D"; --dose: "2000 IU"; --timing: "morning"; }
+  }
+}

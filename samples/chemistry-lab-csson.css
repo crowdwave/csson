@@ -1,0 +1,62 @@
+/* chemistry-lab.csson — bench reaction protocol (esterification) */
+cssonv1 {
+  --protocol: "Fischer esterification";
+  --product: "ethyl acetate";
+  --batch_size: 250ml;
+  --revision: 3;             /* integer */
+
+  /* Repeated reagent blocks -> "reagent" array */
+  reagent {
+    --name: "acetic acid";
+    --role: "substrate";
+    --concentration: "glacial";
+    --volume: 60ml;
+  }
+  reagent {
+    --name: "ethanol";
+    --role: "substrate";
+    --concentration: "absolute";
+    --volume: 90ml;
+  }
+  reagent {
+    --name: "sulfuric acid";
+    --role: "catalyst";
+    --concentration: 98%;
+    --volume: 2ml;
+  }
+
+  /* Ordered procedure steps -> "step" array */
+  step {
+    --order: 1;
+    --action: "combine reagents in round-bottom flask";
+    --temperature: 25degC;
+    --duration: 300s;
+  }
+  step {
+    --order: 2;
+    --action: "reflux";
+    --temperature: 78degC;
+    --duration: 3600s;
+  }
+  step {
+    --order: 3;
+    --action: "neutralize and wash";
+    --temperature: 20degC;
+    --duration: 600s;
+  }
+
+  /* Equipment list */
+  equipment {
+    --glassware: rbf-500, condenser, sep-funnel; /* comma array */
+    --heat_source: "heating-mantle";
+    --stirring: 400rpm;
+  }
+
+  /* Safety requirements */
+  safety {
+    --ppe: goggles, nitrile-gloves, lab-coat; /* comma array */
+    --fume_hood: 1;          /* required (integer) */
+    --hazards: corrosive, flammable;
+    --waste_stream: "organic-halogen-free";
+  }
+}

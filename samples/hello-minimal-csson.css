@@ -1,0 +1,6 @@
+/* The simplest possible CSSON — the "hello world". */
+cssonv1 {
+  --name: "hello";
+  --port: 8080;
+  --enabled: true;
+}

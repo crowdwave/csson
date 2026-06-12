@@ -1,0 +1,47 @@
+/* E-commerce catalog — repeated product blocks become a JSON array.
+   Demonstrates quoted-string money, tag comma-arrays, and nested
+   category + shipping objects. */
+cssonv1 {
+  --store-name: "Northwind Outfitters";
+  --currency: "USD";
+  --tax-rate: 8.25%;
+
+  /* Each product { } repeats, so "product" becomes an array. */
+  catalog {
+    product {
+      --name: "Trail Runner Jacket";
+      --sku: "NW-JKT-001";
+      --price: "129.99";
+      --stock: 42;
+      --tags: outdoor, waterproof, lightweight;
+    }
+    product {
+      --name: "Summit Hiking Boots";
+      --sku: "NW-BOT-014";
+      --price: "189.50";
+      --stock: 18;
+      --tags: footwear, leather, all-terrain;
+    }
+    product {
+      --name: "Alpine Down Vest";
+      --sku: "NW-VST-007";
+      --price: "USD 94.00";
+      --stock: 0;
+      --tags: insulation, packable;
+    }
+  }
+
+  /* Categories nested as discrete child objects. */
+  categories {
+    apparel { --label: "Apparel"; --count: 128; }
+    footwear { --label: "Footwear"; --count: 64; }
+    accessories { --label: "Accessories"; --count: 211; }
+  }
+
+  /* Shipping options — a small object with unit and money scalars. */
+  shipping {
+    standard { --cost: "5.99"; --eta: 5days; }
+    express { --cost: "14.99"; --eta: 2days; }
+    --free-threshold: "75.00";
+  }
+}

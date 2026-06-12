@@ -1,0 +1,61 @@
+/* greenhouse-automation.csson — smart greenhouse climate & growing config */
+cssonv1 {
+  --facility: "Glasshouse Block C";
+  --area: 2400m2;
+  --crop: "tomato";
+
+  /* Repeated growing zone blocks -> "zone" array */
+  zone {
+    --id: "Z1";
+    --row_count: 12;        /* integer */
+    --setpoint_temp: 22degC;
+    --setpoint_humidity: 70%;
+  }
+  zone {
+    --id: "Z2";
+    --row_count: 12;
+    --setpoint_temp: 24degC;
+    --setpoint_humidity: 65%;
+  }
+  zone {
+    --id: "Z3";
+    --row_count: 8;
+    --setpoint_temp: 21degC;
+    --setpoint_humidity: 75%;
+  }
+
+  /* Climate control */
+  climate {
+    --day_temp: 24degC;
+    --night_temp: 18degC;
+    --humidity_band: 60% 80%;   /* space tuple low/high */
+    --vent_open_at: 26degC;
+    --heating: "hydronic";
+  }
+
+  /* Irrigation schedule with repeated cycle blocks */
+  irrigation {
+    --source: "rainwater";
+    --ec_target: 2.4;           /* mS/cm, verbatim decimal */
+    --ph_target: 5.8;
+    cycle { --time: "06:00"; --duration: 180s; --volume: 4L; }
+    cycle { --time: "12:00"; --duration: 240s; --volume: 6L; }
+    cycle { --time: "17:00"; --duration: 180s; --volume: 4L; }
+  }
+
+  /* Supplemental lighting */
+  lighting {
+    --type: "LED";
+    --spectrum: red, blue, far-red; /* comma array */
+    --ppfd: 450umol;
+    --photoperiod: 16;          /* hours, integer */
+    --dli_target: 22mol;
+  }
+
+  /* CO2 enrichment */
+  co2 {
+    --target: 900ppm;
+    --source: "flue-gas";
+    --inject_below: 700ppm;
+  }
+}

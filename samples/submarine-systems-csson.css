@@ -1,0 +1,79 @@
+/* submarine-systems.csson — submarine onboard systems configuration */
+cssonv1 {
+  /* Typed schema: crush/operating depths validate as <length> */
+  @property --depth {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0m;
+  }
+
+  --vessel: "SSK Triton";
+  --class: "diesel-electric";
+  --displacement: 2400t;
+  --crew: 48;
+  --test-depth: 300m;
+  --crush-depth: 480m;
+
+  /* Ballast and trim */
+  ballast {
+    --main-tanks: 6;
+    --trim-tanks: 4;
+    --blow-pressure: 200bar;
+    --emergency-blow: yes;
+  }
+
+  /* Propulsion plant */
+  propulsion {
+    --diesels: 2;
+    --diesel-power: 3200kW;
+    --motor-power: 4000kW;
+    --battery-banks: 2;
+    --submerged-speed: 20kn;
+    --surfaced-speed: 12kn;
+    --aip: "fuel-cell";          /* air-independent propulsion */
+  }
+
+  /* Sonar suite — repeated arrays of arrays */
+  sonar {
+    --type: "bow array";
+    --mode: "passive";
+    --frequency: 5khz;
+    --range: 80km;
+  }
+  sonar {
+    --type: "flank array";
+    --mode: "passive";
+    --frequency: 2khz;
+    --range: 120km;
+  }
+  sonar {
+    --type: "active intercept";
+    --mode: "active";
+    --frequency: 25khz;
+    --range: 15km;
+  }
+
+  /* Depth operating envelope */
+  depth-limits {
+    --periscope: 18m;
+    --safe-operating: 250m;
+    --test: 300m;
+    --never-exceed: 450m;
+  }
+
+  /* Life support */
+  life-support {
+    --oxygen-generation: "electrolysis";
+    --co2-scrubbing: "amine";
+    --endurance-submerged: 21d;
+    --o2-reserve: 96h;
+  }
+
+  /* Navigation */
+  navigation {
+    --primary: "inertial";
+    --backup: gps, loran;        /* comma array */
+    --gyro-drift: 0.5deg;
+    --depth-sounder: yes;
+  }
+}

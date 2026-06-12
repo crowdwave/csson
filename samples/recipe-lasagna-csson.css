@@ -1,0 +1,43 @@
+/* Classic lasagna recipe — repeated ingredient and step blocks become
+   arrays. Amounts with units stay string scalars; bare integers (servings,
+   step numbers) become JSON numbers. */
+cssonv1 {
+  --title: "Beef & Ricotta Lasagna";
+  --cuisine: "Italian";
+  --servings: 8;
+  --prep-time: 40min;
+  --cook-time: 55min;
+  --oven-temp: 190C;
+  --difficulty: "medium";
+
+  /* Ingredients — repeated, so "ingredient" is an array. */
+  ingredients {
+    ingredient { --name: "lasagna sheets"; --amount: "12 sheets"; }
+    ingredient { --name: "ground beef"; --amount: 500g; }
+    ingredient { --name: "ricotta cheese"; --amount: 250g; }
+    ingredient { --name: "mozzarella"; --amount: 200g; }
+    ingredient { --name: "tomato passata"; --amount: "700ml"; }
+    ingredient { --name: "onion"; --amount: "1 large"; }
+    ingredient { --name: "garlic"; --amount: "3 cloves"; }
+    ingredient { --name: "olive oil"; --amount: "2 tbsp"; }
+  }
+
+  /* Steps — repeated, durations in minutes. */
+  method {
+    step { --order: 1; --instruction: "Soften onion and garlic in oil."; --duration: 5min; }
+    step { --order: 2; --instruction: "Brown the beef, then add passata and simmer."; --duration: 25min; }
+    step { --order: 3; --instruction: "Layer sauce, sheets, ricotta; repeat."; --duration: 10min; }
+    step { --order: 4; --instruction: "Top with mozzarella and bake until golden."; --duration: 40min; }
+    step { --order: 5; --instruction: "Rest before slicing."; --duration: 10min; }
+  }
+
+  /* Per-serving nutrition — gram units stay strings. */
+  nutrition {
+    --calories: 540;
+    --protein: 32g;
+    --carbs: 38g;
+    --fat: 27g;
+  }
+
+  --allergens: dairy, gluten;
+}

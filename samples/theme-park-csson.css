@@ -1,0 +1,29 @@
+/* Theme park — zones containing rides (array): capacity, duration,
+   height requirement (cm), thrill rating; plus operating schedule. */
+cssonv1 {
+  --name: "Mythic Shores";
+  --opened: 2019;
+  --area: "85 hectares";
+
+  zones {
+    zone {
+      --name: "Tide Quarter";
+      --theme: "nautical";
+      ride { --name: "Kraken's Plunge"; --type: "water coaster"; --capacity: 24; --duration: 150s; --min-height: 132cm; --thrill: 5; }
+      ride { --name: "Lagoon Carousel"; --type: "carousel"; --capacity: 40; --duration: 120s; --min-height: 0cm; --thrill: 1; }
+    }
+    zone {
+      --name: "Ember Heights";
+      --theme: "volcanic";
+      ride { --name: "Magma Drop"; --type: "drop tower"; --capacity: 16; --duration: 45s; --min-height: 140cm; --thrill: 5; }
+      ride { --name: "Cinder Spin"; --type: "spinner"; --capacity: 20; --duration: 90s; --min-height: 110cm; --thrill: 3; }
+    }
+  }
+
+  /* Operating schedule per day type. */
+  schedule {
+    day { --type: "weekday"; --open: "10:00"; --close: "20:00"; }
+    day { --type: "weekend"; --open: "09:00"; --close: "22:00"; }
+    day { --type: "holiday"; --open: "08:00"; --close: "23:00"; }
+  }
+}

@@ -1,0 +1,65 @@
+/* wind-turbine-farm.csson — offshore wind farm SCADA & asset config */
+cssonv1 {
+  --farm_name: "North Shoal Array";
+  --turbine_count: 24;       /* integer */
+  --total_capacity: 192MW;
+
+  /* Wind resource profile for the site */
+  wind_profile {
+    --mean_speed: 9.4m/s;
+    --prevailing_dir: 240deg;
+    --weibull_k: 2.1;        /* shape factor (verbatim, has decimal) */
+    --air_density: 1.225;    /* kg/m3 */
+    --turbulence_intensity: 12%;
+  }
+
+  /* Repeated turbine blocks -> "turbine" array */
+  turbine {
+    --id: "WTG-01";
+    --hub_height: 120m;
+    --rotor_diameter: 164m;
+    --rated_power: 8MW;
+    --cut_in: 3m/s;
+    --cut_out: 25m/s;
+  }
+  turbine {
+    --id: "WTG-02";
+    --hub_height: 120m;
+    --rotor_diameter: 164m;
+    --rated_power: 8MW;
+    --cut_in: 3m/s;
+    --cut_out: 25m/s;
+  }
+  turbine {
+    --id: "WTG-03";
+    --hub_height: 135m;
+    --rotor_diameter: 174m;
+    --rated_power: 9.5MW;
+    --cut_in: 3m/s;
+    --cut_out: 25m/s;
+  }
+
+  /* Grid export */
+  grid {
+    --collection_voltage: 66kV;
+    --export_voltage: 220kV;
+    --frequency: 50Hz;
+    --substation: "Onshore-Hartwell";
+  }
+
+  /* SCADA telemetry */
+  scada {
+    --protocol: "IEC-61400-25";
+    --poll_interval: 2s;
+    --tags: rpm, pitch, yaw, power, nacelle_temp; /* comma array */
+    --historian_retention: 365;  /* days, integer */
+  }
+
+  /* Scheduled maintenance windows */
+  maintenance {
+    --interval: 6;           /* months between services, integer */
+    --next_service: "2026-09-01";
+    --crew_size: 4;
+    --vessel: "SOV Aurora";
+  }
+}

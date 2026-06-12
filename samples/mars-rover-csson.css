@@ -1,0 +1,76 @@
+/* mars-rover.csson — surface rover configuration and daily operations */
+cssonv1 {
+  --rover: "Aeolus";
+  --mission: "MX-3";
+  --landing-site: "Jezero Crater";
+  --landing-sol: 0;
+  --mass: 1025kg;
+
+  /* Power: RTG primary with solar trickle */
+  power {
+    --primary: "RTG";
+    --rtg-output: 110W;
+    --solar-supplement: 40W;
+    --battery: "Li-ion";
+    --battery-capacity: 43Ah;
+    --daily-energy: 2.5kWh;
+  }
+
+  /* Science instruments — repeated -> array */
+  instrument {
+    --name: "Mastcam-Z";
+    --type: "camera";
+    --mass: 4kg;
+    --power: 17W;
+  }
+  instrument {
+    --name: "SuperCam";
+    --type: "spectrometer";
+    --mass: 11kg;
+    --power: 18W;
+  }
+  instrument {
+    --name: "Drill";
+    --type: "sampling";
+    --mass: 9kg;
+    --power: 30W;
+    --core-depth: 60mm;
+  }
+
+  /* Mobility system */
+  mobility {
+    --wheels: 6;
+    --wheel-diameter: 525mm;
+    --drive: "rocker-bogie";
+    --top-speed: 0.15kmh;
+    --max-slope: 30deg;
+    --ground-clearance: 600mm;
+  }
+
+  /* Thermal control */
+  thermal {
+    --rhu-count: 8;              /* radioisotope heater units */
+    --survival-temp: -40degc;
+    --operating-temp: -20degc;
+    --warm-electronics-box: yes;
+  }
+
+  /* Comms relay via orbiters */
+  comms {
+    --direct-to-earth: "X-band";
+    --relay-band: "UHF";
+    --relay-rate: 2mbps;
+    --orbiters: "MRO", "TGO";    /* comma array of quoted strings */
+    --downlink-window: 8m;
+  }
+
+  /* Per-sol activity schedule */
+  sol-schedule {
+    --wake: "07:30";
+    --science-block: "09:00-12:00";
+    --drive-block: "13:00-15:30";
+    --uplink: "16:00";
+    --sleep: "18:00";
+    --activities: imaging, driving, drilling;   /* comma array */
+  }
+}

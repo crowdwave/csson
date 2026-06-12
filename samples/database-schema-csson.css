@@ -1,0 +1,60 @@
+/* database-schema.csson — relational schema for a shop database */
+cssonv1 {
+  --database: "shopdb";
+  --engine: postgresql;
+  --version: 16;
+
+  /* Typed schema hint for a column's port-like numeric id.
+     @property blocks validate but do not appear in data output. */
+  @property --column-precision {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 0;
+  }
+
+  /* users table */
+  table {
+    --name: "users";
+    column { --name: "id";         --type: bigserial; --primary-key: true; }
+    column { --name: "email";      --type: "varchar(255)"; --nullable: false; --unique: true; }
+    column { --name: "created_at"; --type: timestamptz; --default: now(); }
+    column { --name: "status";     --type: "varchar(16)"; --default: "active"; }
+
+    index { --name: "idx_users_email"; --columns: email; --unique: true; }
+  }
+
+  /* orders table with a foreign key back to users */
+  table {
+    --name: "orders";
+    column { --name: "id";          --type: bigserial; --primary-key: true; }
+    column { --name: "user_id";     --type: bigint; --nullable: false; }
+    column { --name: "total_cents"; --type: integer; --default: 0; }
+    column { --name: "currency";    --type: "char(3)"; --default: "USD"; }
+    column { --name: "placed_at";   --type: timestamptz; --default: now(); }
+
+    index { --name: "idx_orders_user"; --columns: user_id; }
+    index { --name: "idx_orders_placed"; --columns: placed_at, user_id; }
+
+    foreign-key {
+      --name: "fk_orders_user";
+      --columns: user_id;
+      --references: "users(id)";
+      --on-delete: cascade;
+      --on-update: restrict;
+    }
+  }
+
+  /* order_items — composite, references two tables */
+  table {
+    --name: "order_items";
+    column { --name: "order_id";   --type: bigint; --nullable: false; }
+    column { --name: "product_id"; --type: bigint; --nullable: false; }
+    column { --name: "quantity";   --type: integer; --default: 1; }
+    column { --name: "unit_cents"; --type: integer; --nullable: false; }
+
+    --primary-key: order_id product_id;     /* space tuple = composite key */
+
+    foreign-key { --columns: order_id;   --references: "orders(id)"; --on-delete: cascade; }
+    foreign-key { --columns: product_id; --references: "products(id)"; --on-delete: restrict; }
+  }
+}

@@ -1,0 +1,52 @@
+/* Smart home configuration — repeated room and device blocks form arrays.
+   Demonstrates the CSS-nesting "& child" form for the schedule object.
+   Color temps in kelvin, brightness as percent, thermostat in degrees. */
+cssonv1 {
+  --home-name: "Maple Street House";
+  --timezone: "Australia/Sydney";
+  --hub-firmware: "4.2.1";
+
+  /* Rooms — repeated, so "room" is an array. */
+  rooms {
+    room { --name: "Living Room"; --floor: 1; --area: "32sqm"; }
+    room { --name: "Master Bedroom"; --floor: 2; --area: "20sqm"; }
+    room { --name: "Kitchen"; --floor: 1; --area: "18sqm"; }
+  }
+
+  /* Devices — repeated, mixed types as separate blocks. */
+  devices {
+    light { --name: "Living Room Ceiling"; --color-temp: 2700K; --brightness: 80%; --on: 1; }
+    light { --name: "Kitchen Strip"; --color-temp: 4000K; --brightness: 100%; --on: 1; }
+    thermostat { --name: "Hallway"; --target: 21C; --mode: "heat"; --current: 19C; }
+    lock { --name: "Front Door"; --state: "locked"; --battery: 88%; }
+    lock { --name: "Back Door"; --state: "locked"; --battery: 64%; }
+  }
+
+  /* Scenes — repeated presets. */
+  scenes {
+    scene { --name: "Movie Night"; --brightness: 20%; --color-temp: 2200K; }
+    scene { --name: "Morning"; --brightness: 90%; --color-temp: 5000K; }
+  }
+
+  /* Automations — the schedule child uses the & nesting form. */
+  automations {
+    automation {
+      --name: "Evening Lights";
+      --trigger: sunset;
+      & schedule {
+        --time: "18:30";
+        --days: mon, tue, wed, thu, fri;
+        --action: "lights on 60%";
+      }
+    }
+    automation {
+      --name: "Night Lock";
+      --trigger: time;
+      & schedule {
+        --time: "23:00";
+        --days: mon, tue, wed, thu, fri, sat, sun;
+        --action: "lock all doors";
+      }
+    }
+  }
+}

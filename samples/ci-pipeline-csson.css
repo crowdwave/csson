@@ -1,0 +1,65 @@
+/* ci-pipeline.csson — a CI/CD pipeline definition */
+cssonv1 {
+  --pipeline: "build-test-deploy";
+  --version: 2;
+
+  /* What kicks the pipeline off */
+  triggers {
+    --branches: main, develop, "release/*";   /* comma array */
+    --on: push, pull_request, tag;
+    --schedule: "0 2 * * *";                   /* nightly cron, quoted */
+  }
+
+  /* Shared build cache */
+  cache {
+    --key: "deps-${checksum}";
+    --paths: "node_modules", ".venv", "~/.cargo";
+    --ttl: 7d;
+  }
+
+  /* Stage 1: build */
+  stage {
+    --name: "build";
+    job {
+      --name: "compile";
+      --image: "rust:1.78";
+      --timeout: 20m;
+      step { --run: "cargo build --release"; }
+      step { --run: "cargo doc --no-deps"; }
+    }
+  }
+
+  /* Stage 2: test, with a matrix fan-out */
+  stage {
+    --name: "test";
+    job {
+      --name: "unit";
+      --image: "rust:1.78";
+      matrix {
+        --os: linux, macos, windows;          /* comma array */
+        --toolchain: stable, beta, nightly;
+      }
+      step { --run: "cargo test --all"; }
+      step { --run: "cargo clippy -- -D warnings"; }
+    }
+    job {
+      --name: "integration";
+      --image: "rust:1.78";
+      --needs: "unit";
+      --retry: 2;
+      step { --run: "./scripts/integration.sh"; --timeout: 5m; }
+    }
+  }
+
+  /* Stage 3: deploy, gated on manual approval */
+  stage {
+    --name: "deploy";
+    --when: manual;
+    job {
+      --name: "ship-prod";
+      --environment: "production";
+      --only: main;
+      step { --run: "./deploy.sh --env prod"; }
+    }
+  }
+}

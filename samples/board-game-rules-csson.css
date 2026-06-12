@@ -1,0 +1,44 @@
+/* Board game definition — players, pieces, board layout, turn phases,
+   win conditions, and initial setup. */
+cssonv1 {
+  --title: "Siege of Embervale";
+  --designer: "M. Okonkwo";
+  --min-players: 2;
+  --max-players: 4;
+  --playtime: "60-90 min";
+  --recommended-age: 12;
+
+  board {
+    --shape: "hexagonal";
+    --size: 19 19;        /* space tuple: columns rows */
+    --terrain-types: plains, forest, mountain, water, ruins;
+  }
+
+  /* Repeated piece blocks -> array of piece definitions. */
+  pieces {
+    piece { --name: "Footman"; --count: 12; --move: 1; --attack: 2; }
+    piece { --name: "Archer"; --count: 6; --move: 1; --attack: 3; }
+    piece { --name: "Knight"; --count: 4; --move: 3; --attack: 4; }
+    piece { --name: "Catapult"; --count: 2; --move: 1; --attack: 6; }
+  }
+
+  /* Turn structure with ordered phases. */
+  turn {
+    phase { --name: "Upkeep"; --order: 1; }
+    phase { --name: "Movement"; --order: 2; }
+    phase { --name: "Combat"; --order: 3; }
+    phase { --name: "Build"; --order: 4; }
+  }
+
+  win-conditions {
+    --primary: "control 3 of 4 strongholds";
+    --alternate: "eliminate all enemy commanders";
+    --turn-limit: 15;
+  }
+
+  setup {
+    --starting-gold: 50;
+    --starting-pieces: 6;
+    --draw-cards: 3;
+  }
+}

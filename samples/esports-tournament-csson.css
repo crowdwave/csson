@@ -1,0 +1,36 @@
+/* Esports tournament — teams (array), bracket rounds, schedule, prize pool. */
+cssonv1 {
+  --name: "Arc Invitational 2026";
+  --game: "Velocity Arena";
+  --format: "double elimination";
+  --prize-pool: "$250,000";
+  --venue: "Aurora Dome";
+
+  /* Repeated team blocks become an array. */
+  teams {
+    team { --tag: "NVX"; --name: "Nova Exiles"; --seed: 1; --region: "NA"; }
+    team { --tag: "KRN"; --name: "Karenina"; --seed: 2; --region: "EU"; }
+    team { --tag: "ZPH"; --name: "Zephyr"; --seed: 3; --region: "KR"; }
+    team { --tag: "BLT"; --name: "Basalt"; --seed: 4; --region: "BR"; }
+  }
+
+  bracket {
+    round { --name: "Quarterfinals"; --best-of: 3; --order: 1; }
+    round { --name: "Semifinals"; --best-of: 5; --order: 2; }
+    round { --name: "Grand Final"; --best-of: 7; --order: 3; }
+  }
+
+  /* Match schedule with start times and durations. */
+  schedule {
+    match { --id: "QF1"; --start: "2026-07-04T14:00:00Z"; --slot: 90min; }
+    match { --id: "QF2"; --start: "2026-07-04T16:00:00Z"; --slot: 90min; }
+    match { --id: "GF"; --start: "2026-07-06T18:00:00Z"; --slot: 180min; }
+  }
+
+  rules {
+    --map-pool: "Ridge", "Foundry", "Tidewater", "Skyline";
+    --pause-limit: 2;
+    --tech-pause: 10min;
+    --overtime: true;
+  }
+}

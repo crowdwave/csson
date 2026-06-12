@@ -1,0 +1,35 @@
+/* Retro console emulator profile — video, audio, input mappings, shaders. */
+cssonv1 {
+  --console: "Super Famicom";
+  --core: "snes9x";
+  --region: "NTSC";
+
+  video {
+    --internal-resolution: 256px 224px;   /* space tuple */
+    --output-resolution: 1920px 1080px;
+    --refresh-rate: 60Hz;
+    --aspect-ratio: 4 / 3;
+    --integer-scale: true;
+    --vsync: true;
+  }
+
+  audio {
+    --sample-rate: 32000Hz;
+    --channels: 2;
+    --buffer: 64ms;
+    --resampler: "sinc";
+  }
+
+  /* Input mappings — repeated blocks for each player's controller. */
+  input {
+    player { --slot: 1; --device: "gamepad"; --deadzone: 15%; }
+    player { --slot: 2; --device: "gamepad"; --deadzone: 15%; }
+  }
+
+  /* Shader chain — repeated passes form an array. */
+  shaders {
+    pass { --name: "crt-geom"; --order: 1; --scale: 1.0; }
+    pass { --name: "scanlines"; --order: 2; --scale: 1.0; }
+    pass { --name: "bloom"; --order: 3; --scale: 0.5; }
+  }
+}

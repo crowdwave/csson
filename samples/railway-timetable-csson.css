@@ -1,0 +1,55 @@
+/* railway-timetable.csson — regional rail line schedule and fares */
+cssonv1 {
+  --line: "Coastal Express";
+  --line-code: "CE";
+  --operator: "National Rail";
+  --gauge: 1435mm;              /* standard gauge -> verbatim string */
+  --electrified: yes;
+
+  /* Stations along the line — repeated -> array, in stopping order */
+  station {
+    --name: "Central";
+    --code: "CTL";
+    --arrival: "06:00";
+    --departure: "06:05";
+    --platform: 3;
+  }
+  station {
+    --name: "Riverside";
+    --code: "RVS";
+    --arrival: "06:24";
+    --departure: "06:26";
+    --platform: 1;
+  }
+  station {
+    --name: "Harbourton";
+    --code: "HBT";
+    --arrival: "06:51";
+    --departure: "06:53";
+    --platform: 2;
+  }
+  station {
+    --name: "Seacliff";
+    --code: "SCF";
+    --arrival: "07:20";
+    --departure: "07:20";
+    --platform: 1;
+  }
+
+  /* Rolling stock assigned to this service */
+  train {
+    --set: "EMU-220";
+    --cars: 6;
+    --capacity: 540;
+    --max-speed: 160kmh;
+    --accessible: yes;
+  }
+
+  /* Fare table by class */
+  fares {
+    --currency: "AUD";
+    --peak-surcharge: 20%;       /* percent -> verbatim string */
+    standard { --adult: "12.50"; --child: "6.25"; --concession: "8.00"; }
+    first    { --adult: "22.00"; --child: "11.00"; --concession: "15.00"; }
+  }
+}

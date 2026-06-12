@@ -1,0 +1,38 @@
+/* Podcast feed — show metadata, categories (comma array), episode array
+   with durations, urls, and publish dates. */
+cssonv1 {
+  --title: "Signals & Noise";
+  --author: "Dana Ortiz";
+  --language: "en-US";
+  --explicit: false;
+  --artwork: url("https://cdn.example.com/signals/cover.jpg");
+  --categories: "Technology", "Science", "Society & Culture";
+
+  /* Repeated episode blocks -> array. */
+  episodes {
+    episode {
+      --number: 42;
+      --title: "The Quiet Web";
+      --duration: 38min;
+      --published: "2026-05-30";
+      --audio: url("https://cdn.example.com/signals/042.mp3");
+      --size: "54.2 MB";
+    }
+    episode {
+      --number: 43;
+      --title: "Latency Is a Feeling";
+      --duration: 45min;
+      --published: "2026-06-06";
+      --audio: url("https://cdn.example.com/signals/043.mp3");
+      --size: "63.8 MB";
+    }
+    episode {
+      --number: 44;
+      --title: "Backups Nobody Tests";
+      --duration: 52min;
+      --published: "2026-06-13";
+      --audio: url("https://cdn.example.com/signals/044.mp3");
+      --size: "71.1 MB";
+    }
+  }
+}

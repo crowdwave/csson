@@ -1,0 +1,42 @@
+/* dns-zone.csson — authoritative zone for example.com */
+cssonv1 {
+  --origin: "example.com.";
+  --ttl: 3600;          /* default TTL in seconds (integer) */
+
+  /* Start of Authority */
+  soa {
+    --primary: "ns1.example.com.";
+    --hostmaster: "hostmaster.example.com.";
+    --serial: 2026061201;
+    --refresh: 7200;
+    --retry: 3600;
+    --expire: 1209600;
+    --minimum: 300;
+  }
+
+  /* Name servers (repeated NS blocks -> array) */
+  ns { --host: "ns1.example.com."; }
+  ns { --host: "ns2.example.com."; }
+
+  /* A records */
+  a { --name: "@";   --ip: 203.0.113.10; --ttl: 3600; }
+  a { --name: "www"; --ip: 203.0.113.10; }
+  a { --name: "api"; --ip: 203.0.113.20; }
+
+  /* AAAA records */
+  aaaa { --name: "@";   --ip: "2001:db8::10"; }
+  aaaa { --name: "www"; --ip: "2001:db8::10"; }
+
+  /* Mail exchangers with priorities */
+  mx { --name: "@"; --priority: 10; --host: "mail1.example.com."; }
+  mx { --name: "@"; --priority: 20; --host: "mail2.example.com."; }
+
+  /* CNAME aliases */
+  cname { --name: "blog"; --target: "ghs.googlehosted.com."; }
+  cname { --name: "shop"; --target: "shops.myshopify.com."; }
+
+  /* TXT records — SPF and DKIM */
+  txt { --name: "@";          --value: "v=spf1 include:_spf.example.com ~all"; }
+  txt { --name: "_dmarc";     --value: "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"; }
+  txt { --name: "default._domainkey"; --value: "v=DKIM1; k=rsa; p=MIGfMA0..."; }
+}

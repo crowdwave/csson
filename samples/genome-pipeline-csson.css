@@ -1,0 +1,59 @@
+/* genome-pipeline.csson — whole-genome sequencing analysis pipeline */
+cssonv1 {
+  --pipeline: "wgs-germline";
+  --version: "2.6.0";
+  --sample_count: 48;        /* integer */
+
+  /* Reference genome — uses the CSS-nesting "& child" form */
+  reference {
+    --build: "GRCh38";
+    --source: "Ensembl-110";
+
+    & files {
+      --fasta: "Homo_sapiens.GRCh38.dna.fa";
+      --index: "GRCh38.fa.fai";
+      --dict: "GRCh38.dict";
+      --known_sites: dbsnp_155.vcf, mills_indels.vcf; /* comma array */
+    }
+  }
+
+  /* Repeated stage blocks -> "stage" array (ordered) */
+  stage {
+    --name: "alignment";
+    --tool: "bwa-mem2";
+    --threads: 16;           /* integer */
+    --min_seed_length: 19;
+    --mark_duplicates: 1;
+  }
+  stage {
+    --name: "variant-calling";
+    --tool: "deepvariant";
+    --model: "WGS";
+    --threads: 32;
+    --min_base_quality: 10;
+  }
+  stage {
+    --name: "annotation";
+    --tool: "vep";
+    --cache: "GRCh38-110";
+    --threads: 8;
+  }
+
+  /* Compute resources */
+  compute {
+    --scheduler: "slurm";
+    --partition: "genomics";
+    --memory: 128GB;
+    --walltime: 24h;
+    --scratch: 500GB;
+  }
+
+  /* Quality control thresholds */
+  quality {
+    --min_mapping_rate: 95%;
+    --min_coverage: 30x;
+    --max_dup_rate: 12%;
+    --min_q30: 85%;
+    --ti_tv_ratio: 2.0 2.1;  /* expected range, space tuple */
+  }
+}

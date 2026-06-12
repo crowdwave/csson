@@ -1,0 +1,59 @@
+/* message-queue.csson — broker config (Kafka-ish with queues) */
+cssonv1 {
+  --cluster: "events-prod";
+  --broker-count: 3;
+  --bootstrap-servers: "kafka-0:9092", "kafka-1:9092", "kafka-2:9092";
+
+  /* Cluster-wide defaults */
+  defaults {
+    --replication-factor: 3;
+    --min-insync-replicas: 2;
+    --compression: lz4;
+  }
+
+  /* Topics (repeated -> array) */
+  topic {
+    --name: "orders.created";
+    --partitions: 12;
+    --retention: 168h;          /* 7 days as a time unit string */
+    --cleanup-policy: delete;
+    --max-message-bytes: 1048576;
+  }
+  topic {
+    --name: "orders.shipped";
+    --partitions: 6;
+    --retention: 72h;
+    --cleanup-policy: delete;
+  }
+  topic {
+    --name: "audit.log";
+    --partitions: 3;
+    --retention: 2160h;         /* 90 days */
+    --cleanup-policy: compact;
+    --min-compaction-lag: 1h;
+  }
+
+  /* Consumer groups subscribed to topics */
+  consumer-group {
+    --id: "fulfillment";
+    --subscribes: "orders.created", "orders.shipped";
+    --max-poll-records: 500;
+    --session-timeout: 30s;
+    --auto-offset-reset: earliest;
+  }
+  consumer-group {
+    --id: "analytics";
+    --subscribes: "orders.created";
+    --max-poll-records: 2000;
+    --auto-offset-reset: latest;
+  }
+
+  /* A classic work queue alongside the streaming topics */
+  queue {
+    --name: "email.outbox";
+    --durable: true;
+    --max-length: 100000;
+    --dead-letter: "email.dlq";
+    --message-ttl: 86400000;     /* ms, integer */
+  }
+}

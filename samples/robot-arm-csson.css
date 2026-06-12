@@ -1,0 +1,88 @@
+/* robot-arm.csson — 6-axis industrial robot arm configuration */
+cssonv1 {
+  --model: "KR-60-HA";
+  --dof: 6;                  /* degrees of freedom (integer) */
+  --reach: 2033mm;
+  --payload: 60kg;
+  --repeatability: 0.05mm;
+
+  /* Typed schema for a joint angle limit */
+  @property --angle_limit {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  /* Repeated joint blocks -> "joint" array (axes 1..6) */
+  joint {
+    --axis: 1;
+    --min_angle: -185deg;
+    --max_angle: 185deg;
+    --max_speed: 120deg/s;
+    --max_torque: 880Nm;
+  }
+  joint {
+    --axis: 2;
+    --min_angle: -130deg;
+    --max_angle: 20deg;
+    --max_speed: 115deg/s;
+    --max_torque: 880Nm;
+  }
+  joint {
+    --axis: 3;
+    --min_angle: -100deg;
+    --max_angle: 144deg;
+    --max_speed: 120deg/s;
+    --max_torque: 540Nm;
+  }
+  joint {
+    --axis: 4;
+    --min_angle: -350deg;
+    --max_angle: 350deg;
+    --max_speed: 190deg/s;
+    --max_torque: 120Nm;
+  }
+  joint {
+    --axis: 5;
+    --min_angle: -120deg;
+    --max_angle: 120deg;
+    --max_speed: 180deg/s;
+    --max_torque: 120Nm;
+  }
+  joint {
+    --axis: 6;
+    --min_angle: -350deg;
+    --max_angle: 350deg;
+    --max_speed: 260deg/s;
+    --max_torque: 60Nm;
+  }
+
+  /* End effector */
+  end_effector {
+    --type: "two-finger-gripper";
+    --max_grip_force: 140N;
+    --stroke: 85mm;
+    --tcp_offset: 0 0 215;   /* x y z space tuple, mm */
+  }
+
+  /* Kinematics solver settings */
+  kinematics {
+    --solver: "analytical";
+    --singularity_avoidance: 1;
+    --max_cartesian_speed: 2.0m/s;
+  }
+
+  /* Safety-rated monitored zones */
+  safety_zones {
+    zone {
+      --name: "operator";
+      --shape: "box";
+      --reduced_speed: 250mm/s;
+    }
+    zone {
+      --name: "exclusion";
+      --shape: "cylinder";
+      --stop_category: 1;    /* integer */
+    }
+  }
+}

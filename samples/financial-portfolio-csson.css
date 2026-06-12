@@ -1,0 +1,60 @@
+/* Investment portfolio — repeated holding blocks form an array.
+   Includes an @property schema block to type the allocation field,
+   quoted-string cost basis, and percent-unit allocations. */
+cssonv1 {
+  /* Type the allocation custom property as a percentage number. */
+  @property --allocation {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+  }
+
+  --owner: "Andrew Stuart";
+  --base-currency: "AUD";
+  --risk-profile: "moderate-aggressive";
+  --rebalance-frequency: quarterly;
+
+  /* Holdings — repeated, so "holding" is a JSON array. */
+  holdings {
+    holding {
+      --ticker: "VAS.AX";
+      --name: "Vanguard Australian Shares";
+      --shares: 340;
+      --cost-basis: "28450.00";
+      --allocation: 35%;
+    }
+    holding {
+      --ticker: "VGS.AX";
+      --name: "Vanguard International Shares";
+      --shares: 210;
+      --cost-basis: "21900.50";
+      --allocation: 30%;
+    }
+    holding {
+      --ticker: "GOLD.AX";
+      --name: "Gold Bullion ETF";
+      --shares: 95;
+      --cost-basis: "8740.00";
+      --allocation: 10%;
+    }
+    holding {
+      --ticker: "VAF.AX";
+      --name: "Australian Fixed Interest";
+      --shares: 500;
+      --cost-basis: "24600.00";
+      --allocation: 25%;
+    }
+  }
+
+  /* Accounts the holdings sit across. */
+  accounts {
+    brokerage { --provider: "Selfwealth"; --type: "individual"; }
+    super { --provider: "AustralianSuper"; --type: "smsf"; }
+  }
+
+  targets {
+    --annual-return: 7.5%;
+    --max-drawdown: 20%;
+    --emergency-buffer: "15000.00";
+  }
+}

@@ -1,0 +1,75 @@
+/* solar-power-plant.csson — utility-scale PV plant configuration */
+cssonv1 {
+  --plant_name: "Sunfield West";
+  --capacity: 50MW;          /* nameplate AC capacity (verbatim string) */
+  --commissioned: 2024;      /* integer */
+  --grid_node: "SUBSTATION-7";
+
+  /* Panel specification shared across arrays */
+  panel_spec {
+    --manufacturer: "Trina Solar";
+    --model: "Vertex-S+";
+    --rated_power: 425W;
+    --efficiency: 21.8%;
+    --cells: 132;            /* integer */
+    --voc: 38.5V;
+  }
+
+  /* Repeated PV array blocks -> "array" list */
+  array {
+    --id: "A1";
+    --modules: 4200;
+    --orientation: 180deg;   /* due south */
+    --tilt: 28deg;
+  }
+  array {
+    --id: "A2";
+    --modules: 4200;
+    --orientation: 180deg;
+    --tilt: 28deg;
+  }
+  array {
+    --id: "A3";
+    --modules: 3800;
+    --orientation: 175deg;
+    --tilt: 30deg;
+  }
+
+  /* Repeated inverter blocks */
+  inverter {
+    --id: "INV-01";
+    --rated: 2500kW;
+    --efficiency: 98.6%;
+    --mppt_channels: 12;
+  }
+  inverter {
+    --id: "INV-02";
+    --rated: 2500kW;
+    --efficiency: 98.6%;
+    --mppt_channels: 12;
+  }
+
+  /* Single-axis tracking */
+  tracking {
+    --type: "single-axis";
+    --range: -55deg 55deg;   /* space tuple of limits */
+    --backtracking: 1;
+  }
+
+  /* Grid tie-in */
+  grid_tie {
+    --voltage: 34.5kV;
+    --frequency: 60Hz;
+    --power_factor: 0.95;
+    --max_export: 50MW;
+  }
+
+  /* Battery energy storage */
+  battery_storage {
+    --chemistry: "LFP";
+    --capacity: 20MWh;
+    --power: 10MW;
+    --round_trip_efficiency: 92%;
+    --cycles: 6000;
+  }
+}

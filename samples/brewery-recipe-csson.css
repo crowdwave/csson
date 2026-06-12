@@ -1,0 +1,46 @@
+/* Craft beer recipe — an American Pale Ale. Repeated malt and hop blocks
+   form arrays; alpha acid as percent, boil times in minutes, weights in
+   grams/kilograms as string scalars. */
+cssonv1 {
+  --name: "Coastline APA";
+  --style: "American Pale Ale";
+  --batch-size: 23L;
+  --target-og: 1.052;
+  --target-fg: 1.011;
+  --target-abv: 5.4%;
+  --target-ibu: 38;
+  --efficiency: 72%;
+
+  /* Fermentables — repeated, so "malt" is an array. */
+  fermentables {
+    malt { --name: "Pale Ale Malt"; --weight: "4.5kg"; --color: 3L; }
+    malt { --name: "Munich Malt"; --weight: 500g; --color: 9L; }
+    malt { --name: "Crystal 40"; --weight: 250g; --color: 40L; }
+  }
+
+  /* Hop additions — repeated, alpha as percent, time in minutes. */
+  hops {
+    hop { --name: "Centennial"; --weight: 25g; --alpha: 10%; --boil-time: 60min; }
+    hop { --name: "Cascade"; --weight: 20g; --alpha: 6%; --boil-time: 15min; }
+    hop { --name: "Citra"; --weight: 30g; --alpha: 12%; --boil-time: 0min; }
+  }
+
+  yeast {
+    --strain: "US-05 American Ale";
+    --form: "dry";
+    --attenuation: 81%;
+    --temp-range: "18-22C";
+  }
+
+  /* Mash schedule — repeated rest steps as an array. */
+  mash {
+    rest { --name: "saccharification"; --temp: 66C; --time: 60min; }
+    rest { --name: "mash-out"; --temp: 76C; --time: 10min; }
+  }
+
+  fermentation {
+    --primary-temp: 19C;
+    --primary-days: 14days;
+    --dry-hop-days: 3days;
+  }
+}

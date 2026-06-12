@@ -1,0 +1,52 @@
+/* web-server.csson — reverse-proxy + virtual hosts (nginx/caddy style) */
+cssonv1 {
+  --service: "edge-proxy";
+  --worker-processes: auto;        /* verbatim string scalar */
+  --worker-connections: 1024;      /* integer */
+
+  /* Global TLS defaults applied to every vhost unless overridden */
+  tls {
+    --protocols: TLSv1.2, TLSv1.3;       /* comma array */
+    --ciphers: "HIGH:!aNULL:!MD5";
+    --session-timeout: 10m;              /* time unit -> string */
+    --hsts-max-age: 63072000;            /* integer */
+  }
+
+  /* First virtual host: the public website */
+  vhost {
+    --server-name: "example.com", "www.example.com";
+    --listen: 443;
+    --tls: on;
+
+    /* Static site root */
+    location {
+      --path: "/";
+      --root: "/var/www/example";
+      --index: "index.html";
+      --try-files: $uri $uri/ =404;     /* verbatim scalar */
+    }
+
+    /* Reverse proxy to the app upstream */
+    location {
+      --path: "/api/";
+      --proxy-pass: "http://app_backend";
+      --proxy-read-timeout: 30s;
+      --proxy-set-header: Host $host;   /* space tuple */
+    }
+  }
+
+  /* Second virtual host: API gateway on a different port */
+  vhost {
+    --server-name: "api.example.com";
+    --listen: 8443;
+    --tls: on;
+
+    upstream {
+      --name: "app_backend";
+      --balance: least_conn;
+      server { --address: "10.0.1.10:9000"; --weight: 5; }
+      server { --address: "10.0.1.11:9000"; --weight: 3; }
+      server { --address: "10.0.1.12:9000"; --weight: 3; --backup: on; }
+    }
+  }
+}

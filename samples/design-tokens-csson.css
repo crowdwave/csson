@@ -1,0 +1,73 @@
+/* Design system tokens — exercises many color (hex + oklch) and length
+   (px, rem) scalars, space-separated tuples for shadows, and weight
+   integers. All non-integer values stay string scalars. */
+cssonv1 {
+  --system-name: "Aurora UI";
+  --version: 2;
+
+  /* Color palette — hex and oklch values, both string scalars. */
+  colors {
+    --primary: #4f46e5;
+    --primary-oklch: oklch(0.55 0.22 277);
+    --secondary: #0ea5e9;
+    --accent: #f97316;
+    --success: oklch(0.72 0.19 145);
+    --danger: #ef4444;
+    --neutral-900: #111827;
+    --neutral-100: #f3f4f6;
+    --surface: oklch(0.98 0.005 250);
+  }
+
+  /* Spacing scale in pixels. */
+  spacing {
+    --xs: 4px;
+    --sm: 8px;
+    --md: 16px;
+    --lg: 24px;
+    --xl: 40px;
+    --2xl: 64px;
+  }
+
+  /* Typography — sizes in rem, line heights unitless, weights as integers. */
+  typography {
+    --font-family: "Inter, system-ui, sans-serif";
+    size {
+      --body: 1rem;
+      --h1: 2.5rem;
+      --h2: 2rem;
+      --h3: 1.5rem;
+      --caption: 0.875rem;
+    }
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    weight {
+      --regular: 400;
+      --medium: 500;
+      --bold: 700;
+    }
+  }
+
+  /* Border radii in pixels. */
+  radii {
+    --none: 0;
+    --sm: 4px;
+    --md: 8px;
+    --lg: 16px;
+    --pill: 9999px;
+  }
+
+  /* Shadows use space-separated tuples (offset blur spread color). */
+  shadows {
+    --sm: 0 1px 2px #00000022;
+    --md: 0 4px 8px #00000033;
+    --lg: 0 12px 24px #00000044;
+  }
+
+  /* Responsive breakpoints in pixels. */
+  breakpoints {
+    --mobile: 480px;
+    --tablet: 768px;
+    --desktop: 1024px;
+    --wide: 1440px;
+  }
+}
