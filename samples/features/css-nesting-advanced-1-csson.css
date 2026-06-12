@@ -1,0 +1,33 @@
+/* ===========================================================================
+ * FEATURE: css-nesting (the "& child" form)  ·  LEVEL: advanced (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: "& child" nesting AT DEPTH and combined with arrays, plus the
+ * key parity rule:
+ *
+ *   PARITY: a plain block  name { ... }  and an  & name { ... }  produce the
+ *   SAME key "name". Because repeated sibling blocks of the same name array
+ *   together, a plain "item" and an "& item" sitting side by side collect
+ *   into the SAME "item" array -- order preserved by source order.
+ *
+ * Structure: pipeline -> & stage (nested) -> item[] built from BOTH plain
+ * "item" blocks AND "& item" blocks, proving they array together.
+ *
+ * Resulting shape (note item[] has 3 entries, mixed forms, in source order):
+ *   pipeline[0].stage[0] = {
+ *     "name": "build",
+ *     "item": [ {"task":"compile"}, {"task":"test"}, {"task":"package"} ]
+ *   }
+ * =========================================================================== */
+cssonv1 {
+  pipeline {
+    --name: "release";
+
+    & stage {                 /* css-nesting form at depth -> key "stage" */
+      --name: "build";
+
+      item { --task: "compile"; }   /* plain block  -> item[0] */
+      & item { --task: "test"; }    /* & form, SAME key "item" -> item[1] */
+      item { --task: "package"; }   /* plain again  -> item[2] */
+    }
+  }
+}

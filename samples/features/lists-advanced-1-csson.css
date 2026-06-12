@@ -1,0 +1,69 @@
+/* =========================================================================
+   FEATURE: comma-lists  ·  LEVEL: advanced (1 of 1)
+   -------------------------------------------------------------------------
+   TEACHES: Comma-lists, records, AND real (repeated-block) arrays living
+            side by side — and HOW TO CHOOSE between a comma-list string and
+            a repeated-block array.
+
+   DECISION GUIDE
+   --------------
+   Use a COMMA-LIST (one string) when:
+     • the items are simple atomic tokens (tags, flags, ports);
+     • each item has NO sub-fields of its own;
+     • a downstream consumer is happy to split the string itself.
+
+   Use a REAL ARRAY (repeated sibling blocks) when:
+     • each item carries multiple fields (name + value + …);
+     • you need to address items individually / query them as JSON;
+     • per-item nesting (objects, further arrays) is required.
+
+   This file shows BOTH in one document so the contrast is concrete:
+     - `--tags` and `--maintainers` are comma-list STRINGS.
+     - `endpoint` is a real ARRAY of objects (repeated block), where a
+       flat string could never carry path + method + auth per item.
+     - `owner` is a nested record (still a 1-element array, as always).
+
+   Resulting shape (abbreviated):
+
+       {"app":"billing",
+        "tags":"payments, pci, critical",
+        "maintainers":"ada, grace, linus",
+        "owner":[ {"team":"finance","oncall":"ada"} ],
+        "endpoint":[ {…}, {…}, {…} ]}
+   ========================================================================= */
+cssonv1 {
+
+  --app: "billing";
+
+  /* COMMA-LIST (string): atomic tags, no per-item fields needed. */
+  --tags: payments, pci, critical;
+
+  /* COMMA-LIST (string): a flat roster of names. If you needed each
+     maintainer's email/role too, you'd switch to a repeated block instead. */
+  --maintainers: ada, grace, linus;
+
+  /* RECORD: a single nested object (which is, per CSSON, a 1-element array). */
+  owner {
+    --team: "finance";
+    --oncall: ada;
+  }
+
+  /* REAL ARRAY: each endpoint needs path + method + auth, so a comma-list
+     string can't express it — repeated `endpoint` blocks give structured,
+     individually-addressable elements, in source order. */
+  endpoint {
+    --path: "/charge";
+    --method: POST;
+    --auth: required;
+  }
+  endpoint {
+    --path: "/refund";
+    --method: POST;
+    --auth: required;
+  }
+  endpoint {
+    --path: "/health";
+    --method: GET;
+    --auth: none;
+  }
+}

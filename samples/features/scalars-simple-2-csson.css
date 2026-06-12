@@ -1,0 +1,25 @@
+/* ============================================================
+   FEATURE: scalars (value coercion)  ·  LEVEL: simple (2)
+   ------------------------------------------------------------
+   Teaches the most common GOTCHA: values that LOOK like numbers
+   or booleans but stay STRINGS. In CSSON v1 the ONLY thing that
+   becomes a JSON number is a *bare integer* (e.g. 5, -3, 0).
+   Everything else — decimals, booleans, null, exponents,
+   leading-zero forms — is a verbatim string scalar.
+   Each field notes its resulting JSON value.
+   ============================================================ */
+cssonv1 {
+  /* --- These DO become JSON numbers (bare integers) --- */
+  --int_pos: 42;        /* JSON number 42                     */
+  --int_neg: -7;        /* JSON number -7                     */
+  --int_zero: 0;        /* JSON number 0                      */
+
+  /* --- These LOOK numeric/boolean but stay STRINGS --- */
+  --decimal: 1.5;       /* JSON string "1.5"  (has a dot)     */
+  --half: 0.5;          /* JSON string "0.5"                  */
+  --is_on: true;        /* JSON string "true"  (not a bool)   */
+  --is_off: false;      /* JSON string "false"               */
+  --nothing: null;      /* JSON string "null"  (not JSON null)*/
+  --leading_zero: 007;  /* JSON string "007"  (not integer 7) */
+  --exponent: 1e3;      /* JSON string "1e3"  (not 1000)      */
+}

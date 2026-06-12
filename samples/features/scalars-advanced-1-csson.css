@@ -1,0 +1,39 @@
+/* ============================================================
+   FEATURE: scalars (value coercion)  ·  LEVEL: advanced (1)
+   ------------------------------------------------------------
+   Rich, real-world CSS values as data. The coercion rule in full:
+     - A BARE INTEGER (digits only, optional leading '-') -> JSON number.
+     - A "double-quoted" value -> JSON string (quotes stripped).
+     - EVERYTHING ELSE -> verbatim JSON string scalar, kept exactly
+       as authored: colors, functions, urls, ratios, tuples, lists.
+   The resulting JSON for several entries is restated below.
+   ============================================================ */
+cssonv1 {
+  /* --- Colors: all strings --- */
+  --hex: #ff8800;                       /* JSON string "#ff8800"          */
+  --rgb: rgb(255 136 0);                /* JSON string "rgb(255 136 0)"   */
+  --oklch: oklch(0.7 0.15 60);          /* JSON string "oklch(0.7 0.15 60)" */
+
+  /* --- URL --- */
+  --logo: url("https://ex.com/a.png");  /* JSON string 'url("https://ex.com/a.png")' */
+
+  /* --- Aspect ratio (has spaces + slash) --- */
+  --ratio: 16 / 9;                      /* JSON string "16 / 9"           */
+
+  /* --- Space-separated tuple --- */
+  --inset: 10px 20px 30px 40px;         /* JSON string "10px 20px 30px 40px" */
+
+  /* --- Comma-separated list --- */
+  --stops: red, green, blue;            /* JSON string "red, green, blue" */
+
+  /* --- Function values --- */
+  --grad: linear-gradient(90deg, #000, #fff); /* JSON string, verbatim   */
+  --shadow: 0 2px 4px rgba(0 0 0 / 0.3);       /* JSON string, verbatim   */
+
+  /* --- The ONLY numbers here: bare integers --- */
+  --zindex: 100;                        /* JSON NUMBER 100                */
+  --priority: -2;                       /* JSON NUMBER -2                 */
+
+  /* --- A quoted string keeps its text, drops the quotes --- */
+  --title: "Hello, World";              /* JSON string "Hello, World"     */
+}

@@ -1,0 +1,30 @@
+/* ===========================================================================
+ * FEATURE: nesting  ·  LEVEL: intermediate (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: a realistic 4-level hierarchy with fields at every level:
+ *   company -> department -> team -> member.
+ * Each named block becomes an array; here each appears once, so each is a
+ * one-element array nesting the next.
+ *
+ * Resulting shape:
+ *   company[0].department[0].team[0].member[0]
+ *   = { "name": "Ada", "role": "lead" }
+ * =========================================================================== */
+cssonv1 {
+  company {
+    --name: "Acme";                 /* level 1 field */
+    --founded: 1998;
+    department {
+      --name: "Engineering";        /* level 2 field */
+      --headcount: 42;
+      team {
+        --name: "Platform";         /* level 3 field */
+        --focus: "infrastructure";
+        member {
+          --name: "Ada";            /* level 4 field */
+          --role: "lead";
+        }
+      }
+    }
+  }
+}

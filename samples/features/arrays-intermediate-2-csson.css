@@ -1,0 +1,43 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: intermediate (2 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: Several DIFFERENT arrays in one document, of varying lengths,
+            intermixed with plain scalar fields.
+
+   Each distinct block name forms its own independent array:
+     - `user`   appears 3 times → array of length 3
+     - `role`   appears 2 times → array of length 2
+     - `server` appears 1 time  → array of length 1 (still an array!)
+
+   Scalar fields (`--cluster`, `--region`, `--max-connections`) live
+   directly on the top-level object alongside those arrays. Array length is
+   driven purely by how many sibling blocks of that name you write.
+
+   Shape (abbreviated):
+
+       {"cluster":"prod-east",
+        "max_connections":500,
+        "region":"us-east-1",
+        "role":[ {…}, {…} ],
+        "server":[ {…} ],
+        "user":[ {…}, {…}, {…} ]}
+   ========================================================================= */
+cssonv1 {
+
+  /* Plain scalars on the top-level object. */
+  --cluster: "prod-east";
+  --region: us-east-1;        /* unquoted, not an integer → STRING "us-east-1" */
+  --max-connections: 500;     /* bare integer → JSON number 500 */
+
+  /* The `user` array: three siblings. */
+  user { --login: "ada";  --admin: true; }
+  user { --login: "linus"; --admin: false; }
+  user { --login: "grace"; --admin: true; }
+
+  /* The `role` array: two siblings. */
+  role { --name: "reader"; --can-write: false; }
+  role { --name: "editor"; --can-write: true; }
+
+  /* The `server` array: one sibling → 1-element array. */
+  server { --host: "10.0.0.7"; --port: 5432; }
+}

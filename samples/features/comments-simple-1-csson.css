@@ -1,0 +1,21 @@
+/* ===========================================================================
+ * FEATURE: comments  ·  LEVEL: simple (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: CSS comments /* ... *\/ are a FIRST-CLASS CSSON feature.
+ *   - They may appear anywhere in the source.
+ *   - They are PRESERVED across comment-preserving edits (csson set/rm/patch).
+ *   - They do NOT appear in the canonical JSON data output — `csson canon`
+ *     emits only the data, never the comments.
+ *
+ * So comments are documentation that lives in the file and survives editing,
+ * yet never pollutes the data your program reads.
+ * =========================================================================== */
+cssonv1 {
+
+  /* The application's display name, shown in the title bar. */
+  --app-name: "Helios";
+
+  --port: 8080;        /* TCP port the server listens on (bare int -> number) */
+
+  --debug: off;        /* verbatim scalar -> string "off" */
+}

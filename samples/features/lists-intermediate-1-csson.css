@@ -1,0 +1,40 @@
+/* =========================================================================
+   FEATURE: comma-lists  ·  LEVEL: intermediate (1 of 1)
+   -------------------------------------------------------------------------
+   TEACHES: Several comma-list fields of different kinds in a realistic
+            service configuration.
+
+   REMINDER (non-negotiable): every comma-list below is a SINGLE verbatim
+   STRING. CSSON never splits on commas. So `--regions: us-east-1, eu-west-1;`
+   is the one string "us-east-1, eu-west-1" — not a two-element array.
+
+   Comma-lists are perfect for compact, order-insensitive "tags" that a
+   downstream consumer will split itself (regions, flags, ports). When you
+   instead need queryable, per-item structured data, reach for repeated
+   blocks (real arrays) — see samples/features/arrays-*.css.
+
+   Resulting shape (abbreviated):
+
+       {"service":"checkout",
+        "regions":"us-east-1, eu-west-1, ap-south-1",
+        "listen_ports":"80, 443, 8443",
+        "feature_flags":"new-cart, fast-checkout, dark-mode",
+        "allowed_methods":"GET, POST, PUT, DELETE"}
+   ========================================================================= */
+cssonv1 {
+
+  --service: "checkout";
+
+  /* Deploy regions — one string, consumer splits on ", " if it wants. */
+  --regions: us-east-1, eu-west-1, ap-south-1;
+
+  /* Ports as a comma-list → one string "80, 443, 8443"
+     (NOT numbers, NOT an array — the commas force a verbatim string). */
+  --listen-ports: 80, 443, 8443;
+
+  /* Feature flags — bare tokens, no quotes. */
+  --feature-flags: new-cart, fast-checkout, dark-mode;
+
+  /* HTTP methods — classic comma-list idiom. */
+  --allowed-methods: GET, POST, PUT, DELETE;
+}

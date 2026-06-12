@@ -1,0 +1,38 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: simple (2 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: A small, realistic list built from repeated sibling blocks.
+
+   Here a `contact` block is repeated four times, so `contact` is an array
+   of four objects. Each object holds a couple of fields (`--name`,
+   `--email`). The shape is:
+
+       {"contact":[ {…}, {…}, {…}, {…} ]}
+
+   Remember coercion: a "quoted" value stays a string; a bare integer
+   becomes a JSON number. So `--name: "Ada Lovelace";` is the string
+   "Ada Lovelace" and `--age: 36;` would be the number 36.
+   ========================================================================= */
+cssonv1 {
+
+  /* Four sibling `contact` blocks → one array with four elements. */
+  contact {
+    --name: "Ada Lovelace";
+    --email: "ada@analytical.engine";
+  }
+
+  contact {
+    --name: "Alan Turing";
+    --email: "alan@bombe.uk";
+  }
+
+  contact {
+    --name: "Grace Hopper";
+    --email: "grace@cobol.navy";
+  }
+
+  contact {
+    --name: "Edsger Dijkstra";
+    --email: "edsger@shortest.path";
+  }
+}

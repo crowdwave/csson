@@ -1,0 +1,37 @@
+/* ===========================================================================
+ * FEATURE: tuples  ·  LEVEL: intermediate (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: many common fixed-shape "tuple" values. EACH ONE is a single
+ * verbatim STRING scalar — never a JSON array — because only bare integers
+ * and "quoted" values get special coercion; every multi-token space-separated
+ * value is kept verbatim as one string.
+ *
+ * Each field below is annotated with its SHAPE (what the tuple means) and a
+ * reminder that the stored value is one string.
+ * =========================================================================== */
+cssonv1 {
+
+  /* 2D coordinate (x y) -> one string "640 480" */
+  --position: 640 480;
+
+  /* 3D point (x y z) -> one string "10 20 30" */
+  --origin: 10 20 30;
+
+  /* RGB triple (r g b) -> one string "255 128 0" (NOT [255,128,0]) */
+  --accent-rgb: 255 128 0;
+
+  /* CSS padding shorthand (top right bottom left) -> one string */
+  --padding: 8px 16px 8px 16px;
+
+  /* Semantic version triple (major minor patch) -> one string "1 4 2" */
+  --version: 1 4 2;
+
+  /* Min/max range (lo hi) -> one string "0.0 100.0" */
+  --volume-range: 0.0 100.0;
+
+  /* Aspect ratio (w h) -> one string "16 9" (NOT the number 16/9) */
+  --aspect: 16 9;
+
+  /* For contrast: a SINGLE bare integer DOES coerce to a JSON number. */
+  --max-players: 8;
+}

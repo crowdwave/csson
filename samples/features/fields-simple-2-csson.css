@@ -1,0 +1,26 @@
+/* fields-simple-2.csson — FEATURE: fields — LEVEL: simple (2/4)
+ *
+ * Teaches: field NAMING. Keys are written kebab-case with a `--` prefix; the
+ * `--` is stripped in the output but the rest of the name is kept verbatim
+ * (hyphens included). A few key -> output mappings:
+ *
+ *   --max-retries: 3;        ->   "max-retries": 3
+ *   --read-only: true;       ->   "read-only": "true"
+ *   --display-name: "...";   ->   "display-name": "..."
+ *
+ * Also shows the three simple value shapes side by side:
+ *   bare integer -> number, "quoted" -> string, anything else -> verbatim string.
+ */
+cssonv1 {
+
+  feature-flags {
+    --display-name: "Beta search";   /* quoted    -> string */
+    --enabled: true;                 /* verbatim  -> "true" */
+    --read-only: false;              /* verbatim  -> "false" */
+    --max-retries: 3;                /* integer   -> number 3 */
+    --rollout-percent: 25;           /* integer   -> number 25 */
+    --sample-rate: 0.05;             /* float     -> "0.05" (verbatim) */
+    --cache-ttl: 60s;                /* with unit -> "60s"  (verbatim) */
+    --owner-team: "search-platform"; /* quoted    -> string */
+  }
+}

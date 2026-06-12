@@ -1,0 +1,43 @@
+/* ===========================================================================
+ * FEATURE: nesting  ·  LEVEL: advanced (2)
+ * ---------------------------------------------------------------------------
+ * Teaches: nesting COMBINED with arrays at multiple depths. A repeated
+ * sibling block of the same name becomes a JSON array with one element per
+ * occurrence. Here a navigation menu nests:
+ *   menu -> section[] -> item[] -> subitem[]
+ * Arrays appear at three depths (sections, items, subitems), and objects
+ * nest inside each array element.
+ *
+ * Resulting shape (abbreviated):
+ *   menu[0].section = [ {File...}, {Edit...} ]
+ *   menu[0].section[0].item = [ {New, with subitem[]}, {Open} ]
+ * =========================================================================== */
+cssonv1 {
+  menu {
+    --label: "Main";
+
+    section {                 /* section[0] = File */
+      --label: "File";
+      item {                  /* item[0] under File */
+        --label: "New";
+        subitem { --label: "Document"; }   /* subitem[0] */
+        subitem { --label: "Folder"; }     /* subitem[1] -> array of 2 */
+      }
+      item {                  /* item[1] under File */
+        --label: "Open";
+      }
+    }
+
+    section {                 /* section[1] = Edit -> section is array of 2 */
+      --label: "Edit";
+      item {
+        --label: "Copy";
+      }
+      item {
+        --label: "Paste";
+        subitem { --label: "Plain"; }
+        subitem { --label: "Match Style"; }
+      }
+    }
+  }
+}

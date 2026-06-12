@@ -1,0 +1,44 @@
+/* ===========================================================================
+ * FEATURE: comments  ·  LEVEL: intermediate (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: comments at VARIOUS positions in a well-documented config:
+ *   - a file HEADER block comment (this one),
+ *   - SECTION-HEADER comments that introduce each named block,
+ *   - INLINE comments placed after individual fields.
+ *
+ * Every comment here is preserved by comment-preserving edits
+ * (csson set / rm / patch) and none of them appear in `csson canon` output —
+ * the JSON contains data only.
+ * =========================================================================== */
+cssonv1 {
+
+  /* -------------------------------------------------------------------------
+   * Section: server
+   * Network-facing settings for the HTTP listener.
+   * ------------------------------------------------------------------------- */
+  server {
+    --host: "0.0.0.0";    /* bind address; 0.0.0.0 = all interfaces */
+    --port: 443;          /* HTTPS port (bare int -> number) */
+    --tls: on;            /* verbatim -> string "on" */
+  }
+
+  /* -------------------------------------------------------------------------
+   * Section: logging
+   * How much we log and where it goes.
+   * ------------------------------------------------------------------------- */
+  logging {
+    --level: "info";      /* one of: debug | info | warn | error */
+    --to-file: on;        /* write logs to disk as well as stdout */
+    --max-files: 7;       /* rotate after this many daily files */
+  }
+
+  /* -------------------------------------------------------------------------
+   * Section: cache
+   * In-memory cache tuning.
+   * ------------------------------------------------------------------------- */
+  cache {
+    --enabled: on;
+    --ttl: 300s;          /* verbatim scalar -> string "300s" (has a unit) */
+    --max-entries: 10000; /* bare int -> number */
+  }
+}

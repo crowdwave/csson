@@ -1,0 +1,36 @@
+/* ===========================================================================
+ * FEATURE: nesting  ·  LEVEL: advanced (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: DEEP nesting (6 levels) modelling a filesystem tree.
+ * Depth path:
+ *   root(1) -> dir "usr"(2) -> dir "local"(3) -> dir "bin"(4)
+ *           -> file "csson"(5) -> meta(6)
+ * Each named block is an array; following the [0] of each gets you to the
+ * deepest object.
+ *
+ * Resulting (deepest) shape:
+ *   root[0].dir[0].dir[0].dir[0].file[0].meta[0]
+ *   = { "owner": "root", "mode": "0755" }
+ * =========================================================================== */
+cssonv1 {
+  root {                       /* depth 1 */
+    --mount: "/";
+    dir {                      /* depth 2: /usr */
+      --name: "usr";
+      dir {                    /* depth 3: /usr/local */
+        --name: "local";
+        dir {                  /* depth 4: /usr/local/bin */
+          --name: "bin";
+          file {               /* depth 5: the csson binary */
+            --name: "csson";
+            --size: 204800;    /* bytes, a JSON number */
+            meta {             /* depth 6: deepest object */
+              --owner: "root";
+              --mode: "0755";  /* quoted -> string, keeps leading zero */
+            }
+          }
+        }
+      }
+    }
+  }
+}

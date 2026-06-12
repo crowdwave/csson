@@ -1,0 +1,74 @@
+/* ===========================================================================
+ * FEATURE: comments  ·  LEVEL: advanced (1)
+ * ---------------------------------------------------------------------------
+ * PRODUCTION CONFIG — intensely documented.
+ *
+ *   Title   : Payments API — production runtime config
+ *   Owner    : platform-team@example.com
+ *   Status   : LIVE  (do not edit without a change ticket)
+ *
+ *   Changelog:
+ *     2026-06-01  alice  initial production cut
+ *     2026-06-08  bob    raised pool size 20 -> 32 after load test
+ *     2026-06-11  alice  enabled circuit breaker on the upstream
+ *
+ * WHY THE COMMENTS MATTER
+ *   This file documents itself. Every non-obvious value below carries an
+ *   inline note explaining the choice. CSSON treats /* ... *\/ comments as a
+ *   first-class part of the source:
+ *     - `csson set`, `csson rm`, and `csson patch` edit by splicing source
+ *       bytes, so ALL of these comments survive an automated edit intact.
+ *     - By contrast, editing the same data through the browser CSSOM
+ *       (assigning to cssText) STRIPS every comment — which is exactly why
+ *       CSSON does its edits via the lexbor core / WASM rather than cssText.
+ *     - None of these comments ever appear in `csson canon` output; the
+ *       canonical JSON is pure data.
+ * =========================================================================== */
+cssonv1 {
+
+  /* -------------------------------------------------------------------------
+   * upstream — the payment processor we proxy to.
+   * Rationale: a single primary endpoint with an aggressive timeout; the
+   * circuit breaker (below) protects us when it degrades.
+   * ------------------------------------------------------------------------- */
+  upstream {
+    --url: "https://gw.processor.example/v2";
+    --timeout: 800ms;     /* verbatim -> "800ms". Tight on purpose: p99 is */
+                          /* 410ms; anything slower is almost certainly a stall. */
+    --retries: 2;         /* bare int. 2 retries = 3 total attempts max. */
+  }
+
+  /* -------------------------------------------------------------------------
+   * pool — DB connection pool.
+   * Rationale: 32 was chosen after the 2026-06-08 load test; below 32 we
+   * saw queue wait spikes, above 32 the DB hit its own connection ceiling.
+   * ------------------------------------------------------------------------- */
+  pool {
+    --size: 32;           /* see changelog 2026-06-08; do NOT lower casually */
+    --acquire-timeout: 5s;/* verbatim -> "5s"; fail fast rather than pile up */
+    --idle-recycle: 600s; /* recycle idle conns every 10 min to dodge */
+                          /* server-side idle disconnects */
+  }
+
+  /* -------------------------------------------------------------------------
+   * circuit-breaker — protects us when `upstream` degrades.
+   * Rationale: trip quickly, recover cautiously. Half-open lets a single
+   * probe through before fully closing again.
+   * ------------------------------------------------------------------------- */
+  circuit-breaker {
+    --enabled: on;        /* added 2026-06-11; see changelog */
+    --failure-threshold: 5;  /* consecutive failures before we trip */
+    --reset-after: 30s;   /* verbatim -> "30s" cool-down before half-open */
+    --half-open-probes: 1;/* one probe request decides recovery */
+  }
+
+  /* -------------------------------------------------------------------------
+   * limits — request guardrails.
+   * NON-OBVIOUS: max-body is bytes, not kilobytes — kept as a bare int so it
+   * reads as a JSON number for the gateway's numeric comparison.
+   * ------------------------------------------------------------------------- */
+  limits {
+    --max-body: 1048576;  /* 1 MiB, in BYTES (bare int -> number) */
+    --rate-per-min: 600;  /* per-client request cap */
+  }
+}

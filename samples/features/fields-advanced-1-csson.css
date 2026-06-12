@@ -1,0 +1,43 @@
+/* fields-advanced-1.csson — FEATURE: fields — LEVEL: advanced (4/4)
+ *
+ * Teaches: fields spread across NESTED records, plus the full range of VALID
+ * field-name forms. A field key may contain letters, digits, hyphens,
+ * underscores, and non-ASCII characters.
+ *
+ * Valid key forms shown below (the `--` prefix is always stripped in output):
+ *   --metric2: ...;          digits in the name        -> "metric2"
+ *   --p99-latency-ms: ...;   multiple hyphens          -> "p99-latency-ms"
+ *   --max_retry_count: ...;  underscores               -> "max_retry_count"
+ *   --café-mode: ...;        non-ASCII identifier      -> "café-mode"
+ *   --grpc-2nd-port: ...;    digits + multiple hyphens -> "grpc-2nd-port"
+ */
+cssonv1 {
+
+  pipeline {
+    --name: "ingest";
+    --max_retry_count: 5;        /* underscores are valid */
+
+    /* Nested record: fields with digit-bearing names. */
+    stage1 {
+      --metric2: 42;             /* digit in name -> "metric2": 42 */
+      --p99-latency-ms: 120;     /* multiple hyphens -> "p99-latency-ms" */
+      --grpc-2nd-port: 50051;    /* digits + hyphens */
+    }
+
+    /* Nested record: a non-ASCII identifier and more underscore keys. */
+    stage2 {
+      --café-mode: true;         /* non-ASCII key -> "café-mode": "true" */
+      --is_enabled: false;       /* underscores */
+      --naïve-threshold: 0.8;    /* non-ASCII + float -> "naïve-threshold": "0.8" */
+    }
+
+    /* Two more levels deep — names stay valid at any depth. */
+    output {
+      sink {
+        --uri: "s3://bucket/ingest";
+        --part_size_mb: 64;
+        --région: "eu-west-1";   /* non-ASCII key */
+      }
+    }
+  }
+}

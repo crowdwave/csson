@@ -1,0 +1,58 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: advanced (1 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: NESTED arrays — arrays inside arrays, several levels deep.
+
+   The rule "repeated sibling block name → array" applies at EVERY nesting
+   depth, independently. So you can put an array inside an object that is
+   itself an element of an array, and so on.
+
+   Structure here (3 levels of arrays):
+     team[]                         (2 teams)
+       └─ member[]                  (each team has several members)
+            └─ skill[]              (each member has several skills)
+
+   Resulting shape (abbreviated):
+
+       {"team":[
+          {"name":"Platform",
+           "member":[
+             {"name":"Ada",
+              "skill":[ {"label":"rust"}, {"label":"wasm"} ]},
+             … ]},
+          … ]}
+
+   Each `skill` array is scoped to ITS member; each `member` array is scoped
+   to ITS team. Nesting never leaks across siblings.
+   ========================================================================= */
+cssonv1 {
+
+  /* team[] — level 1 array (two elements). */
+  team {
+    --name: "Platform";
+
+    /* member[] — level 2 array, scoped to the Platform team. */
+    member {
+      --name: "Ada";
+      /* skill[] — level 3 array, scoped to Ada. */
+      skill { --label: rust; }
+      skill { --label: wasm; }
+    }
+    member {
+      --name: "Linus";
+      skill { --label: c; }
+      skill { --label: kernel; }
+      skill { --label: git; }
+    }
+  }
+
+  team {
+    --name: "Design";
+
+    member {
+      --name: "Grace";
+      skill { --label: typography; }
+      skill { --label: color; }
+    }
+  }
+}

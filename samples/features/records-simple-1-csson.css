@@ -1,0 +1,19 @@
+/* records-simple-1.csson — FEATURE: records (named blocks) — LEVEL: simple (1/4)
+ *
+ * Teaches: the most basic CSSON structure — a single RECORD.
+ * A named block becomes an OBJECT KEY in the output, and each `--field`
+ * inside it becomes a field of that object.
+ *
+ *   server { --host: ...; }   ->   { "server": [ { "host": ... } ] }
+ *
+ * (A block always maps to an array of objects, even when it appears once.)
+ */
+cssonv1 {
+
+  /* The block name `server` becomes the key; its `--fields` become fields. */
+  server {
+    --host: "localhost";   /* quoted -> string  */
+    --port: 8080;          /* bare integer -> JSON number */
+    --enabled: on;         /* verbatim -> string "on" */
+  }
+}

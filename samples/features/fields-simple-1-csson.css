@@ -1,0 +1,20 @@
+/* fields-simple-1.csson — FEATURE: fields (custom-property data) — LEVEL: simple (1/4)
+ *
+ * Teaches: the `--key: value;` basics. ONLY `--`-prefixed declarations are
+ * data fields. The leading `--` is stripped in the output key:
+ *
+ *   --port: 8080;   ->   "port": 8080
+ *
+ * A plain CSS declaration (e.g. `color: red;`) is NOT data and must not be
+ * used here — every data line below begins with `--`.
+ */
+cssonv1 {
+
+  connection {
+    --host: "db.example.com";   /* "host"    : string  */
+    --port: 5432;               /* "port"    : number  */
+    --user: "app";              /* "user"    : string  */
+    --ssl: true;                /* "ssl"     : "true" (verbatim string) */
+    --timeout: 30s;             /* "timeout" : "30s"  (verbatim string) */
+  }
+}

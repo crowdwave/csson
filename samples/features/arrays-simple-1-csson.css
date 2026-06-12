@@ -1,0 +1,24 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: simple (1 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: The single most important array rule in CSSON.
+
+   Repeating a block name makes an array.
+
+   When two (or more) sibling blocks share the SAME name, CSSON collects
+   them into a JSON array — in source order. Below there are two `item`
+   blocks, so the canonical JSON is:
+
+       {"item":[{"n":1},{"n":2}]}
+
+   That is a REAL array of two objects. No special syntax is needed: the
+   repetition of the block name IS the array.
+   ========================================================================= */
+cssonv1 {
+
+  /* first sibling — becomes element [0] */
+  item { --n: 1; }
+
+  /* second sibling with the SAME name — becomes element [1] */
+  item { --n: 2; }
+}

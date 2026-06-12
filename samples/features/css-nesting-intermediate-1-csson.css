@@ -1,0 +1,36 @@
+/* ===========================================================================
+ * FEATURE: css-nesting (the "& child" form)  ·  LEVEL: intermediate (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: "& child" blocks and plain "child" blocks COEXIST in one record,
+ * and both become child objects. Below, the "server" record contains:
+ *   - "& tls"    (css-nesting form)  -> key "tls"
+ *   - "logging"  (plain block)       -> key "logging"
+ *   - "& limits" (css-nesting form)  -> key "limits"
+ * The two forms are interchangeable; mixing them is purely stylistic.
+ *
+ * Resulting shape:
+ *   server[0] = {
+ *     "host": "0.0.0.0",
+ *     "tls":     [ { "enabled": "true", "minVersion": "1.3" } ],
+ *     "logging": [ { "level": "info" } ],
+ *     "limits":  [ { "maxConnections": 1024 } ]
+ *   }
+ * =========================================================================== */
+cssonv1 {
+  server {
+    --host: "0.0.0.0";
+
+    & tls {                    /* css-nesting form -> key "tls" */
+      --enabled: true;
+      --minVersion: "1.3";
+    }
+
+    logging {                  /* plain block -> key "logging" */
+      --level: "info";
+    }
+
+    & limits {                 /* css-nesting form -> key "limits" */
+      --maxConnections: 1024;
+    }
+  }
+}

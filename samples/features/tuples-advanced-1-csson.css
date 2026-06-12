@@ -1,0 +1,67 @@
+/* ===========================================================================
+ * FEATURE: tuples  ·  LEVEL: advanced (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: how tuples combine with RECORDS and ARRAYS, and — importantly —
+ * WHEN to reach for each representation:
+ *
+ *   1. TUPLE STRING  (--coord: 12 48 5;)
+ *        Use for a FIXED-SHAPE, atomic value you treat as a unit and rarely
+ *        index into (coordinates, RGB, version, padding). Stored as ONE
+ *        verbatim string, e.g. "12 48 5" — never a JSON array.
+ *
+ *   2. SEPARATE FIELDS (--x: 12; --y: 48; --z: 5;)
+ *        Use when each component needs its own NUMBER type, or you want to
+ *        set/read one axis independently with `csson set ... --x`.
+ *
+ *   3. NESTED OBJECT  (coord { --x: 12; --y: 48; --z: 5; })
+ *        Use when the group is itself a named thing with several attributes,
+ *        or will grow more fields later.
+ *
+ * Repeated sibling blocks of the same name (`waypoint` below) collect into a
+ * JSON ARRAY — that is the real array mechanism in CSSON. A space-separated
+ * tuple is NOT how you make an array.
+ * =========================================================================== */
+cssonv1 {
+
+  route {
+
+    /* --- Style 1: each waypoint carries a fixed-shape coordinate TUPLE. */
+    /* Three `waypoint` siblings -> a JSON array of three objects.        */
+    waypoint {
+      --name: "start";
+      --coord: 12 48 5;      /* ONE string "12 48 5" (x y z), atomic */
+    }
+    waypoint {
+      --name: "mid";
+      --coord: 60 120 5;     /* ONE string "60 120 5" */
+    }
+    waypoint {
+      --name: "end";
+      --coord: 200 90 0;     /* ONE string "200 90 0" */
+    }
+  }
+
+  /* --- Style 2 vs 3: the SAME point, shown two other ways for comparison. */
+
+  /* Style 2 — separate fields: each axis is its own JSON NUMBER, and each */
+  /* can be edited independently (e.g. `csson set ... home-base --x 15`).  */
+  home-base {
+    --x: 12;                 /* bare int -> number 12 */
+    --y: 48;                 /* bare int -> number 48 */
+    --z: 5;                  /* bare int -> number 5  */
+  }
+
+  /* Style 3 — nested object: a named group that may grow more attributes. */
+  landing-zone {
+    coord {
+      --x: 200;
+      --y: 90;
+      --z: 0;
+    }
+    --radius: 25;            /* extra attribute the tuple form couldn't hold */
+    --surface: "concrete";
+  }
+
+  /* Reminder: --coord above is "12 48 5" (a string), whereas home-base.x is */
+  /* the number 12. Choose the shape that matches how you USE the value.     */
+}

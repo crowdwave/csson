@@ -1,0 +1,20 @@
+/* ===========================================================================
+ * FEATURE: nesting  ·  LEVEL: simple (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: ONE level of nesting. A named block placed inside another named
+ * block becomes a nested object. In CSSON, every named block is collected
+ * into a JSON array (even when it appears only once), so a single child
+ * block becomes a one-element array.
+ *
+ * Resulting shape (conceptually {parent:{child:{...}}}, but blocks array):
+ *   {
+ *     "parent": [ { "child": [ { "label": "leaf" } ] } ]
+ *   }
+ * =========================================================================== */
+cssonv1 {
+  parent {            /* a named block -> key "parent" (an array) */
+    child {           /* nested named block -> key "child" inside parent */
+      --label: "leaf";   /* a field -> "label": "leaf" */
+    }
+  }
+}

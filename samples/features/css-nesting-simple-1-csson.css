@@ -1,0 +1,23 @@
+/* ===========================================================================
+ * FEATURE: css-nesting (the "& child" form)  ·  LEVEL: simple (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: the CSS Nesting selector form. "& child { ... }" produces a child
+ * object named "child" -- it means exactly the same as a plain "child { ... }"
+ * block. Use a BARE identifier after "&" (here "settings"); a leading dot
+ * would make the key ".settings", which is not what we want.
+ *
+ * Resulting shape (identical to writing  settings { ... }  plainly):
+ *   {
+ *     "config": [ {
+ *       "settings": [ { "theme": "dark", "volume": 7 } ]
+ *     } ]
+ *   }
+ * =========================================================================== */
+cssonv1 {
+  config {
+    & settings {          /* CSS-nesting form -> child object key "settings" */
+      --theme: "dark";
+      --volume: 7;
+    }
+  }
+}

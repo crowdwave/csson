@@ -1,0 +1,45 @@
+/* records-intermediate-1.csson — FEATURE: records — LEVEL: intermediate (3/4)
+ *
+ * Teaches: RECORDS NESTED INSIDE RECORDS — records are the organising
+ * structure of a document. A realistic small service config: a `service`
+ * record holds nested `http`, `tls`, and `cache` records, and `http` holds
+ * a `cors` record of its own.
+ *
+ *   service { http { cors {...} } tls {...} cache {...} }
+ *     -> { "service": [ { "http": [ { "cors": [...] } ], "tls": [...], ... } ] }
+ *
+ * Nesting blocks nests objects; this is how you group related settings.
+ */
+cssonv1 {
+
+  service {
+    --name: "checkout-api";
+    --version: "2.4.0";
+
+    /* Nested record: HTTP server settings for this service. */
+    http {
+      --listen: 8080;
+      --read-timeout: 15s;     /* time unit -> verbatim string */
+
+      /* A record nested two levels deep. */
+      cors {
+        --allow-origin: "https://app.example.com";
+        --allow-credentials: true;
+        --max-age: 600;
+      }
+    }
+
+    /* Nested record: TLS material for this service. */
+    tls {
+      --cert: "/etc/ssl/checkout.crt";
+      --key: "/etc/ssl/checkout.key";
+      --min-version: "1.2";
+    }
+
+    /* Nested record: response cache. */
+    cache {
+      --backend: "redis";
+      --ttl: 300;
+    }
+  }
+}

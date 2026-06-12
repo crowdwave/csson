@@ -1,0 +1,40 @@
+/* fields-intermediate-1.csson — FEATURE: fields — LEVEL: intermediate (3/4)
+ *
+ * Teaches: (a) fields of VARIED value types in a realistic object, and
+ * (b) the DUPLICATE-FIELD LAST-WINS rule.
+ *
+ * THE CASCADE RULE: if the same `--field` appears twice in one block, the
+ * LAST declaration wins — exactly like the CSS cascade. Earlier values are
+ * overridden, not merged and not turned into an array.
+ *
+ *   --x: 1; --x: 2;   ->   "x": 2     (last wins)
+ *
+ * Verify with:  csson canon fields-intermediate-1-csson.css
+ *   - "log-level" is declared "info" then "debug"  ->  expect "debug"
+ *   - "max-connections" is declared 50 then 200    ->  expect 200
+ *   - "x" is declared 1 then 2                      ->  expect 2
+ */
+cssonv1 {
+
+  server {
+    --name: "api-gateway";        /* string */
+    --port: 8443;                 /* number */
+    --tls: true;                  /* verbatim "true" */
+    --timeout: 30s;               /* verbatim "30s" */
+    --weight: 1.5;                /* verbatim "1.5" */
+
+    /* --- duplicate-field cascade demonstrations --- */
+
+    /* declared twice: "info" is overridden by the later "debug". */
+    --log-level: "info";
+    --log-level: "debug";         /* LAST WINS -> "log-level": "debug" */
+
+    /* declared twice: 50 is overridden by the later 200. */
+    --max-connections: 50;
+    --max-connections: 200;       /* LAST WINS -> "max-connections": 200 */
+
+    /* minimal textbook example. */
+    --x: 1;
+    --x: 2;                       /* LAST WINS -> "x": 2 */
+  }
+}

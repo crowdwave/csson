@@ -1,0 +1,36 @@
+/* ============================================================
+   FEATURE: scalars (value coercion)  ·  LEVEL: intermediate (1)
+   ------------------------------------------------------------
+   A catalogue of CSS unit values used as data fields.
+   KEY POINT: a value carrying ANY unit is NOT a bare integer,
+   so it is a verbatim STRING scalar in the JSON output — the
+   unit travels with the value, untouched. None of the fields
+   below become JSON numbers.
+   ============================================================ */
+cssonv1 {
+  /* Lengths — all verbatim string scalars */
+  --len_px: 16px;       /* string "16px"   */
+  --len_rem: 1.5rem;    /* string "1.5rem" */
+  --len_em: 2em;        /* string "2em"    */
+  --len_vw: 50vw;       /* string "50vw"   */
+
+  /* Percentage */
+  --pct: 75%;           /* string "75%"    */
+
+  /* Time */
+  --dur_s: 30s;         /* string "30s"    */
+  --dur_ms: 250ms;      /* string "250ms"  */
+
+  /* Angles */
+  --ang_deg: 45deg;     /* string "45deg"  */
+  --ang_rad: 1.57rad;   /* string "1.57rad"*/
+  --ang_turn: 0.25turn; /* string "0.25turn" */
+
+  /* Frequency */
+  --freq_hz: 440Hz;     /* string "440Hz"  */
+  --freq_khz: 2.5kHz;   /* string "2.5kHz" */
+
+  /* Resolution */
+  --res_dpi: 96dpi;     /* string "96dpi"  */
+  --res_dppx: 2dppx;    /* string "2dppx"  */
+}

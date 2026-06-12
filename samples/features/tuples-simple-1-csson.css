@@ -1,0 +1,19 @@
+/* ===========================================================================
+ * FEATURE: tuples  ·  LEVEL: simple (1)
+ * ---------------------------------------------------------------------------
+ * Teaches: a SPACE-SEPARATED value is ONE verbatim STRING scalar — a
+ * fixed-shape "tuple" idiom. It is NOT split into a JSON array.
+ *
+ *   --size:  1920px 1080px;   ->   "size":  "1920px 1080px"   (one string)
+ *   --range: 1 100;            ->   "range": "1 100"           (one string)
+ *
+ * Coercion rule: only a BARE integer becomes a JSON number and only a
+ * "quoted" value becomes a JSON string by quoting; EVERYTHING ELSE —
+ * including any multi-token, space-separated value — is kept verbatim as a
+ * single string scalar. So a tuple is always exactly one string.
+ * =========================================================================== */
+cssonv1 {
+
+  --size: 1920px 1080px;   /* ONE string "1920px 1080px", NOT ["1920px","1080px"] */
+  --range: 1 100;          /* ONE string "1 100", NOT [1, 100] */
+}

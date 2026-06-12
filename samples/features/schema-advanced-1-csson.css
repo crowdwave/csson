@@ -1,0 +1,59 @@
+/* ============================================================
+   FEATURE: schema (@property typing)  ·  LEVEL: advanced (1)
+   ------------------------------------------------------------
+   A FULLY-schema'd config: every data field has a matching
+   @property. Beyond the basic types this shows MULTIPLIER and
+   COMBINATOR syntaxes, which are exactly the grammar the
+   browser's @property registration accepts:
+     · <custom-ident>#   — a comma-separated LIST of idents (# = comma list)
+     · <length>+         — a space-separated LIST of lengths (+ = one or more)
+     · <integer> | auto  — EITHER an integer OR the keyword 'auto' (| = union)
+   These match the browser's native @property validation, so a
+   value accepted here is accepted by a real CSS engine.
+   @property blocks remain metadata — none appear in the JSON.
+   ============================================================ */
+cssonv1 {
+
+  /* simple integer */
+  @property --worker-count {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 4;
+  }
+  --worker-count: 8;                      /* JSON NUMBER 8 */
+
+  /* multiplier '#' : a comma-separated list of custom idents.
+     VALID: api, web, worker             INVALID: api web (no commas) */
+  @property --service-tags {
+    syntax: "<custom-ident>#";
+    inherits: false;
+    initial-value: default;
+  }
+  --service-tags: api, web, worker;       /* JSON string "api, web, worker" */
+
+  /* multiplier '+' : one or more space-separated lengths.
+     VALID: 10px 20px 30px               INVALID: 10px, 20px (commas) */
+  @property --padding-track {
+    syntax: "<length>+";
+    inherits: false;
+    initial-value: 0px;
+  }
+  --padding-track: 10px 20px 30px;        /* JSON string "10px 20px 30px" */
+
+  /* combinator '|' : an integer OR the keyword 'auto'.
+     VALID: 64  or  auto                 INVALID: "64", 64px */
+  @property --pool-size {
+    syntax: "<integer> | auto";
+    inherits: false;
+    initial-value: auto;
+  }
+  --pool-size: auto;                      /* JSON string "auto" */
+
+  /* color, schema'd */
+  @property --brand-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #000000;
+  }
+  --brand-color: oklch(0.7 0.15 250);     /* JSON string, verbatim */
+}

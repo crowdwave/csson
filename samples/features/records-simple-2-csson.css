@@ -1,0 +1,32 @@
+/* records-simple-2.csson — FEATURE: records (named blocks) — LEVEL: simple (2/4)
+ *
+ * Teaches: MULTIPLE DISTINCT records at the top level.
+ * Each differently-named block becomes its own key in the output object.
+ *
+ *   server {...} database {...} logging {...}
+ *     -> { "server": [...], "database": [...], "logging": [...] }
+ *
+ * Distinct names = distinct keys (unlike repeated same-name blocks, which
+ * would form an array — see the records-intermediate/advanced files).
+ */
+cssonv1 {
+
+  /* Record #1 — network listener settings. */
+  server {
+    --host: "0.0.0.0";
+    --port: 443;
+  }
+
+  /* Record #2 — datastore connection. */
+  database {
+    --engine: "postgres";
+    --port: 5432;
+    --max-connections: 20;
+  }
+
+  /* Record #3 — logging configuration. */
+  logging {
+    --level: "info";
+    --json: true;        /* verbatim -> string "true" */
+  }
+}

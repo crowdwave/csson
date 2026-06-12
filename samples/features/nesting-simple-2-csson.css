@@ -1,0 +1,31 @@
+/* ===========================================================================
+ * FEATURE: nesting  ·  LEVEL: simple (2)
+ * ---------------------------------------------------------------------------
+ * Teaches: TWO levels of nesting with a small realistic example:
+ *   app -> database -> pool.
+ * Fields ("--key: value;") live alongside the nested blocks at each level.
+ *
+ * Resulting shape:
+ *   {
+ *     "app": [ {
+ *       "name": "billing",
+ *       "database": [ {
+ *         "host": "db.internal",
+ *         "pool": [ { "min": 2, "max": 20 } ]
+ *       } ]
+ *     } ]
+ *   }
+ * =========================================================================== */
+cssonv1 {
+  app {
+    --name: "billing";        /* field at level 1 */
+    database {                /* level-1 nested block */
+      --host: "db.internal";  /* field at level 2 */
+      --port: 5432;           /* bare integer -> JSON number */
+      pool {                  /* level-2 nested block */
+        --min: 2;             /* field at level 3 */
+        --max: 20;
+      }
+    }
+  }
+}

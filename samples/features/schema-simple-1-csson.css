@@ -1,0 +1,27 @@
+/* ============================================================
+   FEATURE: schema (@property typing)  ·  LEVEL: simple (1)
+   ------------------------------------------------------------
+   Teaches ONE @property block typing ONE field.
+   An @property block declares the SCHEMA (the type) of a custom
+   property. It has three descriptors:
+     · syntax        — the grammar the value must match (here "<integer>")
+     · inherits      — whether the property inherits (data: always false)
+     · initial-value — the default used when the field is absent
+   IMPORTANT: @property is SCHEMA METADATA. It is NOT data and
+   does NOT appear in the canonical JSON output — only the
+   --port data field below does.
+   Verify with:  ./core/build/csson validate "<integer>" "5"  -> true
+   ============================================================ */
+cssonv1 {
+  /* Schema for --port: must be an integer; defaults to 8080. */
+  @property --port {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 8080;
+  }
+
+  /* The actual data field. Bare integer -> JSON number 9090. */
+  --port: 9090;
+}
+/* Canonical JSON is exactly:  {"port":9090}
+   The @property block contributes NOTHING to the data output. */

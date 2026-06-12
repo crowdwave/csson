@@ -1,0 +1,46 @@
+/* =========================================================================
+   FEATURE: comma-lists  ·  LEVEL: simple (1 of 1)
+   -------------------------------------------------------------------------
+   TEACHES: A comma-separated value is ONE verbatim STRING — NOT a JSON array.
+
+   This is the single most common misconception in CSSON, so read carefully:
+
+       --tags: red, green, blue;
+
+   does NOT become ["red","green","blue"]. It becomes the single string
+
+       "red, green, blue"
+
+   CSSON does not split on commas. A comma-list is just an idiom: a human-
+   readable list packed into one string scalar. (It is a verbatim string
+   because the value is neither a bare integer nor a single "quoted" token.)
+
+   ► WANT A REAL JSON ARRAY INSTEAD? Use repeated sibling blocks:
+         tag { --name: red; }
+         tag { --name: green; }
+         tag { --name: blue; }
+     → {"tag":[{"name":"red"},{"name":"green"},{"name":"blue"}]}
+     See the samples/features/arrays-*.css files for that.
+
+   TIP: keep comma-list items as BARE tokens (red, green) — do NOT quote them
+   ("red", "green"), because the quote characters would be embedded literally
+   inside the resulting string.
+
+   Resulting shape:
+
+       {"colors":"red, green, blue",
+        "sizes":"small, medium, large",
+        "ports":"80, 443, 8080"}
+   ========================================================================= */
+cssonv1 {
+
+  /* One string "red, green, blue" — a comma-list idiom, NOT a JSON array. */
+  --colors: red, green, blue;
+
+  /* Likewise one string "small, medium, large". */
+  --sizes: small, medium, large;
+
+  /* Even all-numeric items stay one string "80, 443, 8080"
+     (the commas make it verbatim, so the digits are NOT coerced to numbers). */
+  --ports: 80, 443, 8080;
+}

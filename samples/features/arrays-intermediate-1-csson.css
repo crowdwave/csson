@@ -1,0 +1,51 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: intermediate (1 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: Richer array elements, source-order preservation, AND the
+            surprising-but-important rule that even a SINGLE block is an array.
+
+   Two things to notice:
+
+   1. SOURCE ORDER IS PRESERVED. The `book` array below comes out in exactly
+      the order written — element [0] is the 1937 entry, element [1] the
+      1949 entry, and so on. CSSON never reorders array elements.
+
+   2. A SINGLE BLOCK IS STILL A 1-ELEMENT ARRAY. The `librarian` block
+      appears only once, yet it becomes `"librarian":[ {…} ]` — an array of
+      length one, NOT a bare object. In CSSON, any named block is array-
+      valued; the count of siblings just sets the array's length.
+
+   Resulting shape (abbreviated):
+
+       {"book":[ {…}, {…}, {…} ], "librarian":[ {…} ]}
+   ========================================================================= */
+cssonv1 {
+
+  /* Three `book` blocks → a 3-element array, kept in this exact order. */
+  book {
+    --title: "The Hobbit";
+    --author: "J.R.R. Tolkien";
+    --year: 1937;            /* bare integer → JSON number 1937 */
+    --rating: 4.7;           /* has a dot → verbatim STRING "4.7" */
+  }
+
+  book {
+    --title: "Nineteen Eighty-Four";
+    --author: "George Orwell";
+    --year: 1949;
+    --rating: 4.9;
+  }
+
+  book {
+    --title: "Dune";
+    --author: "Frank Herbert";
+    --year: 1965;
+    --rating: 4.8;
+  }
+
+  /* Only ONE `librarian` block — but it is STILL an array: [ {…} ]. */
+  librarian {
+    --name: "Marian Paroo";
+    --desk: 3;
+  }
+}

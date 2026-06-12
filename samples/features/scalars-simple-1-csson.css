@@ -1,0 +1,20 @@
+/* ============================================================
+   FEATURE: scalars (value coercion)  ·  LEVEL: simple (1)
+   ------------------------------------------------------------
+   Teaches the THREE core coercion cases in CSSON v1:
+     1. A bare integer          -> JSON number
+     2. A "quoted" string       -> JSON string
+     3. A bare identifier       -> JSON string (verbatim scalar)
+   Each field below notes the JSON type it produces.
+   Remember: ONLY a bare integer becomes a JSON number.
+   ============================================================ */
+cssonv1 {
+  /* Bare integer -> JSON number  ->  "count": 5            */
+  --count: 5;
+
+  /* Quoted text -> JSON string    ->  "label": "widget"    */
+  --label: "widget";
+
+  /* Bare identifier -> JSON string ->  "mode": "active"    */
+  --mode: active;
+}

@@ -1,0 +1,60 @@
+/* ============================================================
+   FEATURE: schema (@property typing)  ·  LEVEL: advanced (2)
+   ------------------------------------------------------------
+   Schema applied to a document WITH nested records and arrays,
+   alongside a comprehensive catalogue of @property syntaxes:
+     <integer> <number> <percentage> <length> <time> <angle>
+     <color> <url> <string>, keyword unions, and the list form
+     <number>#.
+   NOTE: the universal syntax "*" accepts ANY value (no validation).
+   @property blocks are metadata: they NEVER appear in the JSON.
+   A named record block becomes a JSON ARRAY of objects — even when
+   it appears once (e.g. 'controller'); repeated sibling blocks of
+   the same name (e.g. 'sensor') add more elements to that array.
+   ============================================================ */
+cssonv1 {
+
+  /* ---- @property catalogue (all metadata, none in JSON) ---- */
+  @property --device-id   { syntax: "<integer>";    inherits: false; initial-value: 0; }
+  @property --gain        { syntax: "<number>";     inherits: false; initial-value: 1; }
+  @property --duty        { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+  @property --spacing     { syntax: "<length>";     inherits: false; initial-value: 0px; }
+  @property --interval    { syntax: "<time>";       inherits: false; initial-value: 1s; }
+  @property --heading     { syntax: "<angle>";      inherits: false; initial-value: 0deg; }
+  @property --led-color   { syntax: "<color>";      inherits: false; initial-value: #fff; }
+  @property --firmware-url{ syntax: "<url>";        inherits: false; initial-value: url(""); }
+  @property --site-name   { syntax: "<string>";     inherits: false; initial-value: ""; }
+  @property --mode        { syntax: "auto | manual | off"; inherits: false; initial-value: auto; }
+  @property --thresholds  { syntax: "<number>#";    inherits: false; initial-value: 0; }
+  /* '*' is the universal syntax — it accepts literally anything. */
+  @property --freeform    { syntax: "*";            inherits: false; initial-value: none; }
+
+  /* ---- data: top-level scalars ---- */
+  --site-name: "north-field";     /* JSON string "north-field" */
+  --device-id: 7;                 /* JSON NUMBER 7             */
+  --mode: manual;                 /* JSON string "manual"     */
+  --freeform: anything-goes(1px); /* JSON string (universal *) */
+
+  /* ---- nested record -> JSON array "controller" (one element) ---- */
+  controller {
+    --gain: 1.25;                 /* JSON string "1.25"       */
+    --interval: 500ms;            /* JSON string "500ms"      */
+    --firmware-url: url("https://fw.example/v2.bin"); /* string */
+  }
+
+  /* ---- repeated 'sensor' blocks -> JSON ARRAY "sensor" ---- */
+  sensor {
+    --device-id: 1;               /* JSON NUMBER 1            */
+    --led-color: #00ff88;         /* JSON string "#00ff88"    */
+    --duty: 25%;                  /* JSON string "25%"        */
+    --heading: 90deg;             /* JSON string "90deg"      */
+    --thresholds: 0.2, 0.5, 0.8;  /* JSON string, list        */
+  }
+  sensor {
+    --device-id: 2;               /* JSON NUMBER 2            */
+    --led-color: #ff0044;         /* JSON string "#ff0044"    */
+    --duty: 75%;                  /* JSON string "75%"        */
+    --heading: 270deg;            /* JSON string "270deg"     */
+    --thresholds: 0.1, 0.4;       /* JSON string, list        */
+  }
+}

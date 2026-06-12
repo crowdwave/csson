@@ -1,0 +1,52 @@
+/* ============================================================
+   FEATURE: schema (@property typing)  ·  LEVEL: intermediate (1)
+   ------------------------------------------------------------
+   A small but realistic config where MOST fields are schema-typed.
+   Demonstrates enums plus the dimension types <length>, <time>,
+   <percentage>. Each schema note shows which values are VALID and
+   which would be INVALID for that syntax.
+   As always, the @property blocks are metadata and are absent from
+   the JSON output — only the data fields appear.
+   ============================================================ */
+cssonv1 {
+
+  /* enum: environment must be one of these three idents.
+     VALID: dev | staging | prod      INVALID: "test", 1 */
+  @property --environment {
+    syntax: "dev | staging | prod";
+    inherits: false;
+    initial-value: dev;
+  }
+  --environment: prod;            /* JSON string "prod" */
+
+  /* <length>: a number WITH a length unit.
+     VALID: 16px, 1.5rem, 2em      INVALID: 16 (no unit), 50% */
+  @property --gutter {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 8px;
+  }
+  --gutter: 24px;                 /* JSON string "24px" */
+
+  /* <time>: a number WITH a time unit.
+     VALID: 30s, 250ms            INVALID: 30 (no unit), 30sec */
+  @property --request-timeout {
+    syntax: "<time>";
+    inherits: false;
+    initial-value: 30s;
+  }
+  --request-timeout: 5s;          /* JSON string "5s" */
+
+  /* <percentage>: a number followed by '%'.
+     VALID: 75%, 0%, 100%         INVALID: 0.75 (no %), 75 */
+  @property --cpu-threshold {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 80%;
+  }
+  --cpu-threshold: 90%;           /* JSON string "90%" */
+
+  /* A plain (un-schemaed) field is allowed too.
+     Bare integer -> JSON number. */
+  --replicas: 3;                  /* JSON NUMBER 3 */
+}

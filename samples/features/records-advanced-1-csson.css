@@ -1,0 +1,80 @@
+/* records-advanced-1.csson — FEATURE: records — LEVEL: advanced (4/4)
+ *
+ * Teaches: a sophisticated multi-record document — a whole application
+ * config. It combines everything records can do:
+ *   - many distinct top-level records (distinct keys),
+ *   - records nested several levels deep (grouping),
+ *   - REPEATED same-name sibling records, which collapse into a JSON ARRAY.
+ *
+ * Watch the repeated blocks:
+ *   - two `service` blocks under `services`  -> "service": [ {...}, {...} ]
+ *   - three `route` blocks under `gateway`   -> "route":   [ {...}, {...}, {...} ]
+ *   - two `replica` blocks under `database`  -> "replica": [ {...}, {...} ]
+ * Records organise the data; repetition of a name turns siblings into an array.
+ */
+cssonv1 {
+
+  /* Top-level metadata record. */
+  app {
+    --name: "orders-platform";
+    --environment: "production";
+    --region: "ap-southeast-2";
+  }
+
+  /* A container record holding REPEATED `service` records -> array. */
+  services {
+    service {
+      --name: "orders-api";
+      --replicas: 4;
+      resources {            /* nested record inside an array element */
+        --cpu: "500m";
+        --memory: "512Mi";
+      }
+    }
+    service {
+      --name: "orders-worker";
+      --replicas: 2;
+      resources {
+        --cpu: "250m";
+        --memory: "256Mi";
+      }
+    }
+  }
+
+  /* API gateway with REPEATED `route` records -> array, plus a nested tls record. */
+  gateway {
+    --listen: 443;
+    tls {
+      --cert: "/etc/ssl/gw.crt";
+      --min-version: "1.3";
+    }
+    route { --path: "/orders";   --upstream: "orders-api";    --methods: GET, POST; }
+    route { --path: "/health";   --upstream: "orders-api";    --methods: GET; }
+    route { --path: "/internal"; --upstream: "orders-worker"; --auth: required; }
+  }
+
+  /* Database record: a primary plus REPEATED `replica` records -> array. */
+  database {
+    --engine: "postgres";
+    --version: "16";
+    primary {
+      --host: "db-primary.internal";
+      --port: 5432;
+    }
+    replica { --host: "db-replica-1.internal"; --port: 5432; --lag-max: 5s; }
+    replica { --host: "db-replica-2.internal"; --port: 5432; --lag-max: 5s; }
+  }
+
+  /* Observability record nesting two more records. */
+  observability {
+    metrics {
+      --enabled: true;
+      --scrape-interval: 15s;
+    }
+    tracing {
+      --enabled: true;
+      --sampler: "ratio";
+      --ratio: 0.1;          /* float -> verbatim string */
+    }
+  }
+}

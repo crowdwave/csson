@@ -1,0 +1,46 @@
+/* ============================================================
+   FEATURE: schema (@property typing)  ·  LEVEL: simple (2)
+   ------------------------------------------------------------
+   A few @property blocks for different BASIC types, each paired
+   with a matching data field:
+     · <integer>          — whole number
+     · <number>           — number with optional decimals
+     · <color>            — any CSS color
+     · "low | medium | high" — a keyword ENUM (union of idents)
+   Reminder: @property blocks are schema metadata; NONE of them
+   appear in the JSON. Only the four data fields below do.
+   Each value is annotated with its resulting JSON type.
+   ============================================================ */
+cssonv1 {
+  /* ---- integer ---- */
+  @property --max-connections {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 100;
+  }
+  --max-connections: 250;     /* JSON NUMBER 250 (bare integer) */
+
+  /* ---- number (decimals allowed) ---- */
+  @property --load-factor {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0.75;
+  }
+  --load-factor: 0.9;         /* JSON string "0.9" (has a dot) */
+
+  /* ---- color ---- */
+  @property --accent {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #000000;
+  }
+  --accent: #3366ff;          /* JSON string "#3366ff"         */
+
+  /* ---- keyword enum: one of low | medium | high ---- */
+  @property --log-level {
+    syntax: "low | medium | high";
+    inherits: false;
+    initial-value: medium;
+  }
+  --log-level: high;          /* JSON string "high"            */
+}

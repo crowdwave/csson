@@ -1,0 +1,41 @@
+/* =========================================================================
+   FEATURE: arrays  ·  LEVEL: advanced (2 of 2)
+   -------------------------------------------------------------------------
+   TEACHES: An intense, realistic array — a 14-track music playlist where
+            each element is rich, and ORDER IS PRESERVED.
+
+   `track` is repeated 14 times, so it is a JSON array of length 14. Because
+   CSSON keeps source order, the playlist plays in the order you wrote it:
+   element [0] is track 1, element [13] is track 14. This is exactly why
+   repeated blocks (real arrays) — not comma-lists — are the right tool when
+   ORDER and PER-ITEM FIELDS matter.
+
+   Note the coercion mix per track:
+     --no:       bare integer  → JSON number
+     --title:    "quoted"      → JSON string
+     --length:   like 3:42     → verbatim STRING (has a colon)
+     --bpm:      bare integer  → JSON number
+     --explicit: true/false    → verbatim STRING ("true"/"false"),
+                                  because CSSON only numbers bare integers.
+   ========================================================================= */
+cssonv1 {
+
+  --playlist: "Late Night Coding";
+  --tracks-total: 14;          /* bare integer → number 14 */
+
+  /* 14 sibling `track` blocks → a 14-element array, in playing order. */
+  track { --no: 1;  --title: "Midnight Compile";   --length: 3:42; --bpm: 120; --explicit: false; }
+  track { --no: 2;  --title: "Stack Trace Blues";  --length: 4:05; --bpm: 95;  --explicit: false; }
+  track { --no: 3;  --title: "Null Pointer";       --length: 2:58; --bpm: 128; --explicit: true;  }
+  track { --no: 4;  --title: "Garbage Collected";  --length: 5:11; --bpm: 110; --explicit: false; }
+  track { --no: 5;  --title: "Race Condition";     --length: 3:33; --bpm: 140; --explicit: true;  }
+  track { --no: 6;  --title: "Heap Overflow";      --length: 4:48; --bpm: 105; --explicit: false; }
+  track { --no: 7;  --title: "Deadlock Waltz";     --length: 3:21; --bpm: 132; --explicit: false; }
+  track { --no: 8;  --title: "Segfault Sunset";    --length: 6:02; --bpm: 88;  --explicit: false; }
+  track { --no: 9;  --title: "Recursion";          --length: 3:03; --bpm: 124; --explicit: false; }
+  track { --no: 10; --title: "Async Await";        --length: 4:19; --bpm: 118; --explicit: false; }
+  track { --no: 11; --title: "Big O Notation";     --length: 2:44; --bpm: 150; --explicit: false; }
+  track { --no: 12; --title: "Merge Conflict";     --length: 3:57; --bpm: 100; --explicit: true;  }
+  track { --no: 13; --title: "Tail Call";          --length: 4:31; --bpm: 112; --explicit: false; }
+  track { --no: 14; --title: "Final Commit";       --length: 5:50; --bpm: 80;  --explicit: false; }
+}
