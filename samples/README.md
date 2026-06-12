@@ -20,5 +20,5 @@ CSSON used for real.**
 Read any file:
 ```sh
 csson canon samples/showcase/spacecraft-mission-csson.css   # → canonical JSON
-csson check samples/features/arrays-simple-1-csson.css      # validate (exit 0 = valid)
+csson check samples/features/feature-arrays-simple-1-csson.css      # validate (exit 0 = valid)
 ```
