@@ -1,6 +1,8 @@
 # CSSON
 
-CSSON is a proposed **configuration/data format that uses a strict subset of CSS syntax** instead of inventing a new syntax.
+**CSSON is a data format which is a strict subset of CSS.**
+
+It is a configuration/data format that reuses a strict subset of CSS syntax instead of inventing a new one.
 
 The core idea is:
 
