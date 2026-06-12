@@ -81,6 +81,27 @@ Nothing is *infeasible*. Three things are **parity-gated** and one is a known
 browser** for both the read path and `@property`. If yes, the rest is engineering.
 If no, we abort and keep the C core.
 
+### Risk resolution status (after the spikes + integration prototype)
+All risks have been spiked. See `spikes/{s1,s2,nesting,integration}/RESULTS.md`.
+
+| Risk | Status |
+|---|---|
+| R1 read parity | ✅ byte-identical (PostCSS, all fixtures) |
+| R2 @property | ✅ csstree.lexer == browser |
+| R3 engines in QuickJS | ✅ PostCSS + csstree both run in QuickJS |
+| R4 edits / nesting | ✅ PostCSS native nesting + comment-preserving edits |
+| R5 size | ✅ measured 938 KB (~840 KB bytecode) |
+| R6 thread-safety | ✅ thread-local runtimes, 400 concurrent calls clean |
+| R7 startup | ✅ 44 ms cold |
+| R8 perf | ✅ width ~10× (fine for config); ⚠️ deep nesting → clean RangeError, **needs a C-side depth guard** |
+| R9 memory | ✅ valgrind clean |
+| N1/N2 edge parity | ✅ UTF-8 + duplicate-key match; ⚠️ **CRLF needs a 5-line §3.3 normaliser in JS** |
+| R10/R12 build/supply | ✅ pipeline demonstrated; stub fragility noted |
+
+**Verdict: viable end-to-end.** Two small mitigations remain (depth guard,
+§3.3 normaliser); the rest are accepted cost tradeoffs (size ~1.6×, ~10× on
+pathological width, 44 ms CLI startup).
+
 ---
 
 ## 4. Phase 0 — the go/no-go spikes (do these FIRST, on this branch)
