@@ -113,9 +113,53 @@ run "from-json bad (err)"  from-json "$d/fjbad"
 run "from-json array (err)" from-json "$d/fjarr"
 run "set-json scalar"      set-json "$d/flat.csson" /x '"hi"'
 run "set-json object (err)" set-json "$d/flat.csson" /x '{"a":1}'
+# validate (@property syntax checking — no file)
+run "validate match"       validate "<integer>" 5
+run "validate no-match"    validate "<integer>" 5.5
+run "validate color"       validate "<color>" red
+run "validate universal"   validate "*" "anything here"
+run "validate bad syntax"  validate "<nonsense" x
 # CLI surface
 run "versions"             versions
 run "missing args"         set "$d/flat.csson"
+
+# fuzz sweep: seeded, mutated/malformed inputs must never crash or trip a
+# sanitizer/valgrind — only ever a clean error exit. Deterministic (fixed seed).
+FUZZ_N="${FUZZ_N:-200}"
+python3 - "$d" "$FUZZ_N" <<'PY'
+import sys, os, random
+d, n = sys.argv[1], int(sys.argv[2])
+random.seed(1234)
+seeds = [
+  b'cssonv1{ --x: 1; dept { --name: "Eng"; --n: 3; } }',
+  b'cssonv1{ --a: 1, 2, 3; --b: 10px 20px; --t: 30s; }',
+  b'@property --x { syntax: "<integer>"; inherits: false; }',
+  b'cssonv1{ --u: url("http://x"); --c: #fff; --k: oklch(0.6 0.1 20); }',
+  b'body { color: red }',
+]
+inj = [b'{', b'}', b';', b'"', b'/*', b'*/', b'\\', b'\x00', b'cssonv1', b'--', b'(', b')', b':']
+os.makedirs(d+'/fuzz', exist_ok=True)
+for i in range(n):
+    b = bytearray(random.choice(seeds))
+    for _ in range(random.randint(1, 8)):
+        if not b: b += b'cssonv1{}'
+        op, p = random.random(), random.randrange(len(b))
+        if op < 0.4:                    b[p] ^= 1 << random.randrange(8)  # bit flip
+        elif op < 0.7:                  b[p:p] = random.choice(inj)       # inject
+        elif op < 0.85 and len(b) > 1:  del b[p]                          # delete
+        else:                           b += random.choice(inj)          # append
+    open(f'{d}/fuzz/{i}.csson', 'wb').write(b)
+PY
+fz=0
+for f in "$d"/fuzz/*.csson; do
+  "${VG[@]}" "$CS" canon "$f" >/dev/null 2>"$d/e"; rc=$?
+  if [ "$rc" -ge 128 ] || [ "$rc" -eq 42 ] || \
+     grep -qiE "AddressSanitizer|LeakSanitizer|runtime error|UndefinedBehavior" "$d/e"; then
+    echo "FAIL (fuzz): $f rc=$rc"; sed 's/^/    /' "$d/e" | head -8; fz=$((fz+1))
+  fi
+done
+[ "$fz" -eq 0 ] && pass=$((pass+1)) || fail=$((fail+1))
+echo "fuzz: $FUZZ_N inputs, $fz crashes/errors"
 
 echo "memcheck: $pass clean, $fail with leaks/errors${MEMCHECK_VALGRIND:+ (valgrind)}"
 [ "$fail" -eq 0 ]

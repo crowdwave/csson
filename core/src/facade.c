@@ -62,11 +62,25 @@ static void arm_deadline(void) {
     g_armed = true;
 }
 
+/* Tear the persistent singleton down at process exit so nothing is left in use
+ * (memcheck target: 0 bytes in use at exit). Registered with atexit in init. */
+static void facade_shutdown(void) {
+    if (CTX) {
+        JS_FreeContext(CTX);
+        CTX = nullptr;
+    }
+    if (RT) {
+        JS_FreeRuntime(RT);
+        RT = nullptr;
+    }
+}
+
 static void facade_init(void) {
     RT = JS_NewRuntime();
     JS_SetMemoryLimit(RT, CSSON_HEAP_LIMIT);   /* limit 1: heap cap */
     JS_SetMaxStackSize(RT, CSSON_STACK_LIMIT); /* limit 2: stack (deep input -> RangeError) */
     JS_SetInterruptHandler(RT, on_interrupt, nullptr); /* limit 3: wall-clock deadline */
+    atexit(facade_shutdown);
     CTX = JS_NewContext(RT);
     JSValue v = JS_Eval(CTX, (const char *)csson_bundle, csson_bundle_len, "<csson>",
                         JS_EVAL_TYPE_GLOBAL);

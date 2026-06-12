@@ -106,3 +106,7 @@ add_test(NAME canon_edge COMMAND ${CMAKE_COMMAND}
   -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/edge.csson -DEXP=${CONF}/fixtures/edge.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TARGET_FILE:csson_cli>)
+# memcheck (quality-check cycle 5): drives every path incl. error/cleanup + a fuzz
+# sweep. Bare here, so on a -DCSSON_SANITIZE=ON build it runs under ASan/UBSan/LSan;
+# set MEMCHECK_VALGRIND=1 to wrap a non-sanitized binary under valgrind instead.
+add_test(NAME memcheck COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/memcheck.sh $<TARGET_FILE:csson_cli>)
