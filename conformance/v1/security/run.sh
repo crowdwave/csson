@@ -77,14 +77,24 @@ printf 'cssonv1{ --x: 1; }\n' > "$tmp/s3b.csson"
 [ "$("$CS" set "$tmp/s3b.csson" /x 42 2>/dev/null | "$CS" canon - 2>/dev/null)" = '{"x":42}' ] \
   && ok "S3 benign set still works" || { report "REGRESSED" "benign set broke"; open=$((open+1)); }
 
-# S5 — algorithmic complexity: many same-type siblings should stay near-linear
-python3 -c "open('$tmp/s5.csson','w').write('cssonv1{'+('it{--a:1;}'*40000)+'}')"
-t0=$(python3 -c "import time;print(time.time())")
-"$CS" canon "$tmp/s5.csson" >/dev/null 2>&1
-t1=$(python3 -c "import time;print(time.time())")
-secs=$(python3 -c "print(f'{$t1-$t0:.2f}')")
-if python3 -c "exit(0 if $t1-$t0 < 1.0 else 1)"; then ok "S5 40k siblings in ${secs}s (linear)"
-else vuln "S5 O(N^2) read amplification: 40k siblings took ${secs}s" "node_json strcat"; fi
+# S5 — algorithmic complexity: many same-type siblings must stay near-linear.
+# Architecture-independent test: compare wall time at N vs 2N. Linear -> ~2x;
+# quadratic -> ~4x. A fixed wall-time threshold would just flag a slower engine,
+# so we assert the SCALING RATIO instead.
+s5_time() { # $1 = sibling count -> prints seconds
+  python3 -c "open('$tmp/s5.csson','w').write('cssonv1{'+('it{--a:1;}'*$1)+'}')"
+  python3 -c "
+import subprocess,time
+t=time.monotonic()
+subprocess.run(['$CS','canon','$tmp/s5.csson'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+print(f'{time.monotonic()-t:.3f}')"
+}
+s5a=$(s5_time 20000); s5b=$(s5_time 40000)
+s5ratio=$(python3 -c "print(f'{($s5b)/max($s5a,1e-3):.2f}')")
+# linear doubling is ~2.0; allow up to 3.0 for noise. >=3.0 => super-linear.
+if python3 -c "exit(0 if ($s5b)/max($s5a,1e-3) < 3.0 else 1)"; then
+  ok "S5 read scaling linear (20k->40k = ${s5ratio}x, ${s5a}s->${s5b}s)"
+else vuln "S5 O(N^2) read amplification: 20k->40k scaled ${s5ratio}x (${s5a}s->${s5b}s)" "super-linear JSON build"; fi
 
 # S7 — RFC 6901 ~0/~1 decoding. CSSON keys are CSS identifiers, so '/' and '~'
 # cannot occur in a real field name; the practical check is that a tilde token is

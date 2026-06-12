@@ -105,8 +105,16 @@ add_test(NAME canon_numeric COMMAND ${CMAKE_COMMAND}
 add_test(NAME canon_edge COMMAND ${CMAKE_COMMAND}
   -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/edge.csson -DEXP=${CONF}/fixtures/edge.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
+add_test(NAME canon_preprocess COMMAND ${CMAKE_COMMAND}
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/preprocess.csson -DEXP=${CONF}/fixtures/preprocess.expected.json
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TARGET_FILE:csson_cli>)
 # memcheck (quality-check cycle 5): drives every path incl. error/cleanup + a fuzz
 # sweep. Bare here, so on a -DCSSON_SANITIZE=ON build it runs under ASan/UBSan/LSan;
 # set MEMCHECK_VALGRIND=1 to wrap a non-sanitized binary under valgrind instead.
 add_test(NAME memcheck COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/memcheck.sh $<TARGET_FILE:csson_cli>)
+# security suite: the S1-S9 findings must stay closed (core-only here; set
+# WITH_BROWSER=1 to also run the Chrome parser-differential checks).
+add_test(NAME security COMMAND bash ${CONF}/security/run.sh)
+set_tests_properties(security PROPERTIES
+  ENVIRONMENT "CSSON=$<TARGET_FILE:csson_cli>" FAIL_REGULAR_EXPRESSION "still present: [1-9]")

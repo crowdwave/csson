@@ -1,0 +1,4 @@
+cssonv1 {
+  --a: one;
+  --b: two;  --c: three;  --d: four;
+}
