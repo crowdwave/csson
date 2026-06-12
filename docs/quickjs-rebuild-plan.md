@@ -1,9 +1,45 @@
 # CSSON rebuild on QuickJS + csstree — risk-driven plan
 
-**The bet:** replace the lexbor/C reference core with **one JavaScript implementation**
-(csstree for CSS + CSSON logic) running in **QuickJS**, behind the *same* C ABI
+> **DECISION (2026-06-12): GO. Engine = QuickJS-ng.** All spikes green
+> (`spikes/{s1,s2,nesting,integration}/`). Stack: **QuickJS-ng** + **PostCSS**
+> (parse/edit) + **csstree.lexer** (`@property`); our code in **TypeScript**;
+> C facade implements `csson.h`; native + WASM. See "Path forward" below.
+
+**The bet:** replace the lexbor/C reference core with **one (TypeScript→JS) implementation**
+(PostCSS + csstree + our TS) running in **QuickJS**, behind the *same* C ABI
 (`csson.h`), also compilable to **WASM**. One implementation for every environment;
 `@property` validation for free.
+
+## Path forward (post-decision)
+
+**Strategic call to settle first — replace vs coexist:** the rebuild's whole value
+is *one implementation everywhere*; coexisting with the lexbor core reintroduces the
+"two impls that must match" problem it was meant to kill. **Recommendation: replace** —
+QuickJS becomes the reference; keep the lexbor/C core tagged for one release as a
+fallback + a parity oracle. Cutover gate = passes every existing test byte-identical.
+
+**Build sequence (each ends green on the existing harness):**
+- **P0 — Pipeline + facade.** TS project (tsconfig, src layout); vendor pinned
+  QuickJS-ng + PostCSS + csstree; build chain `tsc/esbuild → bundle → qjsc bytecode
+  → #embed → CMake (native + wasm)`; C facade with the **4 limits**
+  (`JS_SetMemoryLimit`, `JS_SetMaxStackSize`, interrupt/time, input byte cap).
+- **P1 — Read path.** TS PostCSS reader → canonical JSON **+ the §3.3 normaliser**;
+  wire `csson_to_canonical_json`; pass conformance on 4 engines (C, Chrome, Firefox,
+  QuickJS) byte-identical, incl. new CRLF/NUL fixtures.
+- **P2 — Edits + the security guards.** set/remove/patch via PostCSS AST + toString;
+  RFC 6901 pointer + RFC 6902 op-dispatch (hand-written TS); **re-implement S1/S3
+  injection guards** (scalar + safe-ident validation, round-trip) — *mandatory*.
+  Pass `edits.sh` + the security suite.
+- **P3 — @property + get + handle API.** `csson_validate` via `csstree.lexer.match`
+  (+ universal `*` case); `csson_get`; CSSOM-style handle API over the AST.
+- **P4 — Hardening + packaging.** ReDoS audit of bundled regexes; valgrind/ASan on
+  the facade; WASM artifact; browser + Node bindings run the **same TS natively**.
+- **P5 — Cutover.** Pass *every* gate (`verify.sh` 4-engine, `ctest`
+  canon/edits/security/api/sheet/memcheck) byte-identical; flip the default.
+
+**Acceptance spec:** the existing conformance + security + memcheck harness — the
+rebuild is "done" exactly when it passes the same gates the lexbor core passes today,
+byte-for-byte. That harness is engine-independent and is what makes the swap safe.
 
 This document's job is **not** to cheer the idea — it is to find every way it can
 fail and to gate the rebuild behind **go/no-go spikes** that prove it can do
