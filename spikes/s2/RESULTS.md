@@ -49,6 +49,30 @@ return r.matched !== null;   // valid iff matched
 - This validates *values against a syntax*; it does not yet read the `@property`
   rules out of a CSSON document — that's the parser side (S1 path), trivial to add.
 
+## Full type-set sweep (follow-up to the 17 cases)
+
+Swept **62 cases** across every `@property` type (length, number, percentage,
+length-percentage, color, image, url, integer, angle, time, resolution,
+transform-function, transform-list, custom-ident, string) + unions + multipliers
++ calc + invalid descriptors, csstree vs Chrome.
+
+- **Field-value validation: 61/62 == browser.** The full grammar is covered.
+- The 2 apparent "misses" (`2em`, `calc(10px+2em)` as `<length>`) were **oracle
+  artifacts**: I used `registerProperty(initialValue)` which also enforces the
+  `@property` **computationally-independent initial-value rule** (font-relative
+  units rejected). Confirmed via `CSSStyleValue.parse`: `2em` *is* a valid `<length>`
+  **value** (browser true) — only invalid as an **initial-value**. csstree was right.
+- The **one real gap**: the **universal `*`** syntax — csstree returns no-match;
+  the browser accepts anything. **Fix: 2-line special-case** (`if (syntax==='*') return true`).
+
+### Two `@property` behaviors beyond field-value matching
+1. **Universal `*`** → trivial special-case (above).
+2. **`initial-value` must be computationally independent** (no font/viewport-relative
+   units, no `var()`/`env()`) — a real `@property` constraint the browser enforces
+   and csstree's grammar match does not. Only affects validating the `@property`
+   declaration's *own* initial-value (optional/advisory in CSSON), not field values.
+   The browser is the only exact oracle for it.
+
 ## Repro
 `spikes/s2/` cases; `css-tree@3.2.1` `dist/csstree.js` concatenated with the test
 harness, run in `quickjs-ng` `qjs`; browser oracle via headless Chrome (CDP)
