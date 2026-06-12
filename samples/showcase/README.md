@@ -1,4 +1,4 @@
-# CSSON showcase — real-world examples
+# CSSON practical examples
 
 50 example files spanning many domains, from the trivial
 (`hello-minimal-csson.css`) to deeply-nested, schema-typed configs. Every file is

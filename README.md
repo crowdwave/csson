@@ -7,6 +7,8 @@
 
 > **Is CSSON ready for production?** NO, but it is ready for experimentation and fun.
 
+> **Who do I blame for the abomination of CSS as data?** andrew.stuart@supercoders.com.au
+
 ## Implementations
 
 Read, edit and validate CSSON from any of these — they all share one core, so every one gives identical results. Each ships a prebuilt artifact, so **there's nothing to compile**. Full guides in [`docs/`](docs/):
@@ -35,6 +37,23 @@ Want to build CSSON from source instead? See **[Building from source](docs/build
 **CSSON is CSS used as a typed, comment-friendly, browser-loadable config format, where records are CSS blocks and fields are custom properties.**
 
 ## Main rules
+
+Every CSSON document is a **single root rule named `cssonv1`** — it is required
+(it's how a reader knows the stylesheet is CSSON, and which version), and
+everything else nests inside it. The structure is just three things: **records**
+(named blocks → objects), **fields** (`--custom` properties → key/values), and
+**nesting** (a block inside a block → a nested object):
+
+```css
+cssonv1 {              /* the mandatory root — without it, reading fails */
+  app {                /* a record: a named block becomes an object */
+    --port: 8080;      /* a field: a --custom property becomes a key/value */
+    database { … }     /* a nested record becomes a nested object */
+  }
+}
+```
+
+The rest of this section is the detail.
 
 ### Records are CSS blocks
 
