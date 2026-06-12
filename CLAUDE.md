@@ -40,6 +40,17 @@ If a target environment has no usable CSS parser, the answer is to bind one
 
 ## Browser-parity invariant (non-negotiable)
 
+**The governing rule: CSSON must reproduce what a developer gets reading the
+stylesheet from a browser with ordinary API calls** (`document.styleSheets` →
+`cssRules` → `selectorText` / `style` / nested `cssRules`). The browser is the
+**oracle**: when CSSON's output and a browser's ordinary API calls disagree, the
+browser is right and CSSON must be changed to match — never the reverse. CSSON
+must not invent behaviour the browser does not have (e.g. rejecting or rewriting
+inputs the browser would simply expose). Where two real browsers (Blink, Gecko)
+themselves disagree, that input is genuinely non-portable and marks the boundary
+of what the format can faithfully represent — handle it explicitly, do not paper
+over it.
+
 **Anything CSSON does must work precisely the same when done via browser
 JavaScript/CSS.** The browser's native CSS engine (`document.styleSheets` →
 `cssRules`, read off the authored rule tree) is a first-class conformance target,
