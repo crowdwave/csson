@@ -33,7 +33,44 @@ function coerce(raw: string): string | number {
   return s;
 }
 
-const seltype = (sel: string): string => sel.replace(/^[&\s]+/, "").trim();
+// Split a selector list on TOP-LEVEL commas only (commas inside ()/[] — e.g.
+// :is(a, b) — are not list separators). Operates on the already-parsed selector
+// token PostCSS handed us, not on raw CSS source.
+function splitTopLevel(sel: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < sel.length; i++) {
+    const c = sel[i];
+    if (c === "(" || c === "[") depth++;
+    else if (c === ")" || c === "]") depth--;
+    else if (c === "," && depth === 0) {
+      out.push(sel.slice(start, i));
+      start = i + 1;
+    }
+  }
+  out.push(sel.slice(start));
+  return out;
+}
+
+// Reproduce the browser's nested-rule `selectorText`: CSS Nesting prepends "& "
+// to each selector-list item that doesn't already reference the nesting selector,
+// exactly as Blink and Gecko serialize cssRules (e.g. `a, b` -> `& a, & b`). The
+// browser readers get this for free from the live CSSOM; the core must match it
+// so every engine derives the same node key (governing rule: the browser is the
+// oracle — see ../../CLAUDE.md).
+function browserNestSelector(sel: string): string {
+  return splitTopLevel(sel)
+    .map((s) => {
+      const t = s.trim();
+      return t.startsWith("&") ? t : "& " + t;
+    })
+    .join(", ");
+}
+
+// Node type/key: the browser's serialized selector with the leading "&" stripped
+// (the same strip the browser readers apply to selectorText).
+const seltype = (sel: string): string => browserNestSelector(sel).replace(/^[&\s]+/, "").trim();
 
 // A field key / node type written into CSS must be identifier-safe (the S1/S3
 // injection guard): [A-Za-z0-9_-] and non-ASCII only.

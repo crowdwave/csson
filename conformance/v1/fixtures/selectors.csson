@@ -1,0 +1,12 @@
+/* Node-name (selector) edge cases — must be byte-identical across every engine.
+   The key each block yields is the browser's serialized selectorText with the
+   leading "&" stripped: plain names stay clean; CSS Nesting prepends "& " to
+   each selector-list item, so `a, b` keys as "a, & b" (browser-faithful). */
+cssonv1 {
+  database { --x: 1; }
+  & .cache { --x: 1; }
+  & > child { --x: 1; }
+  a, b { --x: 1; }
+  & :hover { --x: 1; }
+  #main { --x: 1; }
+}

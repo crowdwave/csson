@@ -115,6 +115,9 @@ add_test(NAME canon_edge COMMAND ${CMAKE_COMMAND}
 add_test(NAME canon_preprocess COMMAND ${CMAKE_COMMAND}
   -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/preprocess.csson -DEXP=${CONF}/fixtures/preprocess.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
+add_test(NAME canon_selectors COMMAND ${CMAKE_COMMAND}
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/selectors.csson -DEXP=${CONF}/fixtures/selectors.expected.json
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TARGET_FILE:csson_cli>)
 add_test(NAME handle_api COMMAND handle_test)
 # memcheck (quality-check cycle 5): drives every path incl. error/cleanup + a fuzz

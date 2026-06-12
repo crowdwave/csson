@@ -31,6 +31,7 @@ run_doc csson_v1.csson            expected.json                     "c browser f
 run_doc fixtures/numeric.csson    fixtures/numeric.expected.json    "c browser firefox wasm"
 run_doc fixtures/edge.csson       fixtures/edge.expected.json       "c browser firefox wasm"
 run_doc fixtures/preprocess.csson fixtures/preprocess.expected.json "c browser firefox wasm"
+run_doc fixtures/selectors.csson     fixtures/selectors.expected.json  "c browser firefox wasm"
 
 echo
 [ $fail = 0 ] && echo "RESULT: all checked readers match expected" || echo "RESULT: mismatch (see above)"
