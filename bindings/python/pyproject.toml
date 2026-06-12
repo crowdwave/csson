@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csson"
+version = "0.2.0"
+description = "CSSON for Python — structured data that is also valid CSS (ctypes binding over libcsson)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "CSSON" }]
+keywords = ["csson", "css", "config", "json", "data-format"]
+# No third-party dependencies: ctypes is in the standard library. The native
+# libcsson shared library must be available (see README — build it or ship it
+# beside csson.py / set $CSSON_LIB).
+
+[tool.setuptools]
+py-modules = ["csson"]

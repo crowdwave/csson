@@ -1,0 +1,26 @@
+{
+  "name": "@csson/js",
+  "version": "0.2.0",
+  "description": "CSSON for JavaScript/TypeScript — structured data that is also valid CSS (runs the wasm core)",
+  "type": "module",
+  "exports": {
+    ".": {
+      "node": { "types": "./dist/node.d.ts", "default": "./dist/node.js" },
+      "browser": { "types": "./dist/browser.d.ts", "default": "./dist/browser.js" },
+      "default": { "types": "./dist/node.d.ts", "default": "./dist/node.js" }
+    },
+    "./browser": { "types": "./dist/browser.d.ts", "default": "./dist/browser.js" }
+  },
+  "files": ["dist", "csson.wasm"],
+  "scripts": {
+    "wasm": "bash ../wasm/build.sh && cp ../wasm/csson.wasm ./csson.wasm",
+    "build": "tsc && cp ../wasm/csson.wasm ./csson.wasm",
+    "test": "node test.mjs"
+  },
+  "keywords": ["csson", "css", "config", "json", "data-format", "wasm"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "5.7.3",
+    "@types/node": "22.10.5"
+  }
+}

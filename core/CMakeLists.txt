@@ -45,7 +45,8 @@ add_library(quickjs STATIC
 target_include_directories(quickjs SYSTEM PUBLIC "${QJS_DIR}")
 target_compile_options(quickjs PRIVATE -Os -w)
 target_compile_definitions(quickjs PRIVATE _GNU_SOURCE)
-set_target_properties(quickjs PROPERTIES C_STANDARD 11 C_EXTENSIONS ON)
+# PIC so the static engine can be linked into the shared libcsson (FFI bindings).
+set_target_properties(quickjs PROPERTIES C_STANDARD 11 C_EXTENSIONS ON POSITION_INDEPENDENT_CODE ON)
 
 # --- the JS bundle: our TypeScript + PostCSS + csstree -> a C byte array ------
 # Build-time deps (package.json): installed automatically if node_modules is absent.
@@ -76,6 +77,18 @@ target_include_directories(csson
 target_compile_definitions(csson PRIVATE _POSIX_C_SOURCE=200809L)
 target_link_libraries(csson PUBLIC quickjs PRIVATE m)
 target_compile_options(csson PRIVATE ${CSSON_STRICT})
+
+# --- libcsson.so: SHARED build of the same ABI (for FFI bindings, e.g. Python) -
+add_library(csson_shared SHARED src/facade.c)
+add_dependencies(csson_shared csson_bundle)
+set_target_properties(csson_shared PROPERTIES OUTPUT_NAME csson)
+target_include_directories(csson_shared
+  PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_BINARY_DIR}/gen")
+target_compile_definitions(csson_shared PRIVATE _POSIX_C_SOURCE=200809L)
+target_link_libraries(csson_shared PRIVATE quickjs m)
+target_compile_options(csson_shared PRIVATE ${CSSON_STRICT})
+install(TARGETS csson_shared LIBRARY DESTINATION lib)
 
 # --- csson CLI ---------------------------------------------------------------
 add_executable(csson_cli cli/csson.c)

@@ -28,3 +28,9 @@ bindings/wasm/csson.wasm
 
 # Local maintainer notes (machine-specific gh/git workarounds; not published)
 docs/maintainers/
+
+# Binding build artifacts (regenerated)
+bindings/javascript/dist/
+bindings/javascript/csson.wasm
+bindings/python/__pycache__/
+bindings/python/*.egg-info/
