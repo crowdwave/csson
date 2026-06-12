@@ -83,11 +83,18 @@ set_target_properties(csson_cli PROPERTIES OUTPUT_NAME csson)
 target_link_libraries(csson_cli PRIVATE csson)
 target_compile_options(csson_cli PRIVATE ${CSSON_STRICT})
 
+# --- handle-API test (C, links libcsson) -------------------------------------
+add_executable(handle_test tests/handle_test.c)
+target_link_libraries(handle_test PRIVATE csson)
+target_compile_options(handle_test PRIVATE ${CSSON_STRICT})
+
 if(CSSON_SANITIZE)
   set(SAN -fsanitize=address,undefined -fno-omit-frame-pointer)
   target_compile_options(csson PRIVATE ${SAN})
   target_compile_options(csson_cli PRIVATE ${SAN})
   target_link_options(csson_cli PRIVATE ${SAN})
+  target_compile_options(handle_test PRIVATE ${SAN})
+  target_link_options(handle_test PRIVATE ${SAN})
 endif()
 
 install(TARGETS csson csson_cli ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
@@ -109,6 +116,7 @@ add_test(NAME canon_preprocess COMMAND ${CMAKE_COMMAND}
   -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/preprocess.csson -DEXP=${CONF}/fixtures/preprocess.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TARGET_FILE:csson_cli>)
+add_test(NAME handle_api COMMAND handle_test)
 # memcheck (quality-check cycle 5): drives every path incl. error/cleanup + a fuzz
 # sweep. Bare here, so on a -DCSSON_SANITIZE=ON build it runs under ASan/UBSan/LSan;
 # set MEMCHECK_VALGRIND=1 to wrap a non-sanitized binary under valgrind instead.

@@ -100,10 +100,10 @@ static void ensure(void) {
         facade_init();
 }
 
-/* Call csson.<method>(arg0[, arg1, arg2]); arg0 is (src,len), the rest NUL-term.
+/* Call csson.<method>(arg0[, a1, a2, a3]); arg0 is (src,len), the rest NUL-term.
  * Returns the JS result string (owned, via strdup) or nullptr with *err set. */
-static char *invoke(const char *method, const char *src, size_t len, const char *a1,
-                    const char *a2, char **err) {
+static char *invoke3(const char *method, const char *src, size_t len, const char *a1,
+                     const char *a2, const char *a3, char **err) {
     if (len > CSSON_MAX_INPUT) { /* limit 4: reject before it reaches the engine */
         if (err)
             *err = strdup("input exceeds the maximum size");
@@ -113,13 +113,15 @@ static char *invoke(const char *method, const char *src, size_t len, const char 
     JSValue g = JS_GetGlobalObject(CTX);
     JSValue csson = JS_GetPropertyStr(CTX, g, "csson");
     JSValue fn = JS_GetPropertyStr(CTX, csson, method);
-    JSValue argv[3];
+    JSValue argv[4];
     int n = 0;
     argv[n++] = JS_NewStringLen(CTX, src, len); /* binary-safe (embedded NUL ok) */
     if (a1)
         argv[n++] = JS_NewString(CTX, a1);
     if (a2)
         argv[n++] = JS_NewString(CTX, a2);
+    if (a3)
+        argv[n++] = JS_NewString(CTX, a3);
     arm_deadline();
     JSValue r = JS_Call(CTX, fn, csson, n, argv);
     g_armed = false;
@@ -144,6 +146,12 @@ static char *invoke(const char *method, const char *src, size_t len, const char 
     JS_FreeValue(CTX, csson);
     JS_FreeValue(CTX, g);
     return out;
+}
+
+/* Two- and one-extra-arg shims over invoke3. */
+static char *invoke(const char *method, const char *src, size_t len, const char *a1, const char *a2,
+                    char **err) {
+    return invoke3(method, src, len, a1, a2, nullptr, err);
 }
 
 char *csson_to_canonical_json(const char *src, size_t len, char **err) {
@@ -177,6 +185,243 @@ int csson_validate(const char *syntax, const char *value, char **err) {
     int ok = strcmp(r, "true") == 0;
     free(r);
     return ok;
+}
+
+/* ---- CSSOM-style handle API ------------------------------------------------
+ * A csson_sheet owns the current source bytes; a csson_rule is (sheet, index
+ * path) addressing the raw rule tree. Read/edit ops re-parse in TS via invoke3;
+ * edit ops get the new source back and store it on the sheet, so comments
+ * survive and existing handles stay valid (indices may shift, like the CSSOM).
+ */
+struct csson_sheet {
+    char *src;
+    size_t len;
+    csson_rule **rules; /* owned handles, freed at close */
+    size_t nrules, caprules;
+};
+struct csson_rule {
+    csson_sheet *sheet;
+    char *path; /* JSON index array, e.g. "[]" or "[0,2,1]" */
+};
+
+static csson_rule *sheet_track(csson_sheet *s, char *path) {
+    if (!path)
+        return nullptr;
+    if (s->nrules == s->caprules) {
+        size_t cap = s->caprules ? s->caprules * 2 : 8;
+        csson_rule **r = realloc(s->rules, cap * sizeof *r);
+        if (!r) {
+            free(path);
+            return nullptr;
+        }
+        s->rules = r;
+        s->caprules = cap;
+    }
+    csson_rule *rule = malloc(sizeof *rule);
+    if (!rule) {
+        free(path);
+        return nullptr;
+    }
+    rule->sheet = s;
+    rule->path = path;
+    s->rules[s->nrules++] = rule;
+    return rule;
+}
+
+/* Append index `i` to a parent path string: "[]"+1 -> "[1]"; "[0,2]"+1 -> "[0,2,1]". */
+static char *path_append(const char *parent, size_t i) {
+    char num[32];
+    int nn = snprintf(num, sizeof num, "%zu", i);
+    if (nn < 0)
+        return nullptr;
+    size_t plen = strlen(parent);
+    bool empty = (plen == 2); /* "[]" */
+    char *out = malloc(plen + (size_t)nn + 2);
+    if (!out)
+        return nullptr;
+    char *p = out;
+    *p++ = '[';
+    if (!empty) {                          /* copy existing indices (without the [ ]) */
+        memcpy(p, parent + 1, plen - 2);
+        p += plen - 2;
+        *p++ = ',';
+    }
+    memcpy(p, num, (size_t)nn);
+    p += nn;
+    *p++ = ']';
+    *p = 0;
+    return out;
+}
+
+csson_sheet *csson_open(const char *src, size_t len, char **err) {
+    /* Validate it parses + has a root by running a canon read once. */
+    char *probe = csson_to_canonical_json(src, len, err);
+    if (!probe)
+        return nullptr;
+    free(probe);
+    csson_sheet *s = calloc(1, sizeof *s);
+    if (!s) {
+        if (err)
+            *err = strdup("out of memory");
+        return nullptr;
+    }
+    s->src = malloc(len ? len : 1);
+    if (!s->src) {
+        free(s);
+        if (err)
+            *err = strdup("out of memory");
+        return nullptr;
+    }
+    memcpy(s->src, src, len);
+    s->len = len;
+    return s;
+}
+
+char *csson_sheet_text(const csson_sheet *sheet) {
+    if (!sheet)
+        return nullptr;
+    char *out = malloc(sheet->len + 1);
+    if (!out)
+        return nullptr;
+    memcpy(out, sheet->src, sheet->len);
+    out[sheet->len] = 0;
+    return out;
+}
+
+void csson_close(csson_sheet *sheet) {
+    if (!sheet)
+        return;
+    for (size_t i = 0; i < sheet->nrules; i++) {
+        free(sheet->rules[i]->path);
+        free(sheet->rules[i]);
+    }
+    free(sheet->rules);
+    free(sheet->src);
+    free(sheet);
+}
+
+csson_rule *csson_root(csson_sheet *sheet) {
+    if (!sheet)
+        return nullptr;
+    return sheet_track(sheet, strdup("[]"));
+}
+
+/* read-side helpers: call the TS handle op against the sheet's current source. */
+static char *rule_call(csson_rule *rule, const char *method, const char *a2, const char *a3,
+                       char **err) {
+    return invoke3(method, rule->sheet->src, rule->sheet->len, rule->path, a2, a3, err);
+}
+
+size_t csson_rule_count(csson_rule *rule) {
+    if (!rule)
+        return 0;
+    char *r = rule_call(rule, "hRuleCount", nullptr, nullptr, nullptr);
+    size_t n = r ? strtoul(r, nullptr, 10) : 0;
+    free(r);
+    return n;
+}
+
+csson_rule *csson_rule_at(csson_rule *rule, size_t i) {
+    if (!rule)
+        return nullptr;
+    return sheet_track(rule->sheet, path_append(rule->path, i));
+}
+
+char *csson_selector_text(csson_rule *rule) {
+    if (!rule)
+        return nullptr;
+    return rule_call(rule, "hSelector", nullptr, nullptr, nullptr);
+}
+
+size_t csson_property_count(csson_rule *rule) {
+    if (!rule)
+        return 0;
+    char *r = rule_call(rule, "hPropCount", nullptr, nullptr, nullptr);
+    size_t n = r ? strtoul(r, nullptr, 10) : 0;
+    free(r);
+    return n;
+}
+
+char *csson_property_name_at(csson_rule *rule, size_t i) {
+    if (!rule)
+        return nullptr;
+    char idx[32];
+    snprintf(idx, sizeof idx, "%zu", i);
+    return rule_call(rule, "hPropNameAt", idx, nullptr, nullptr);
+}
+
+char *csson_get_property(csson_rule *rule, const char *name) {
+    if (!rule || !name)
+        return nullptr;
+    return rule_call(rule, "hGetProp", name, nullptr, nullptr); /* NULL = absent */
+}
+
+char *csson_get_property_value(csson_rule *rule, const char *name) {
+    if (!rule || !name)
+        return nullptr;
+    return rule_call(rule, "hGetPropValue", name, nullptr, nullptr);
+}
+
+/* edit-side helper: run the TS edit, store the returned new source on the sheet. */
+static int rule_edit(csson_rule *rule, const char *method, const char *a2, const char *a3,
+                     char **err) {
+    char *out = rule_call(rule, method, a2, a3, err);
+    if (!out)
+        return -1;
+    char *dup = malloc(strlen(out) + 1);
+    if (!dup) {
+        free(out);
+        if (err)
+            *err = strdup("out of memory");
+        return -1;
+    }
+    size_t n = strlen(out);
+    memcpy(dup, out, n + 1);
+    free(out);
+    free(rule->sheet->src);
+    rule->sheet->src = dup;
+    rule->sheet->len = n;
+    return 0;
+}
+
+int csson_set_property(csson_rule *rule, const char *name, const char *json_value, char **err) {
+    if (!rule || !name || !json_value) {
+        if (err)
+            *err = strdup("null argument");
+        return -1;
+    }
+    return rule_edit(rule, "hSetProp", name, json_value, err);
+}
+
+int csson_remove_property(csson_rule *rule, const char *name, char **err) {
+    if (!rule || !name) {
+        if (err)
+            *err = strdup("null argument");
+        return -1;
+    }
+    return rule_edit(rule, "hRemoveProp", name, nullptr, err);
+}
+
+int csson_insert_rule(csson_rule *parent, const char *text, long index, char **err) {
+    if (!parent || !text) {
+        if (err)
+            *err = strdup("null argument");
+        return -1;
+    }
+    char idx[32];
+    snprintf(idx, sizeof idx, "%ld", index);
+    return rule_edit(parent, "hInsertRule", text, idx, err);
+}
+
+int csson_delete_rule(csson_rule *parent, size_t index, char **err) {
+    if (!parent) {
+        if (err)
+            *err = strdup("null argument");
+        return -1;
+    }
+    char idx[32];
+    snprintf(idx, sizeof idx, "%zu", index);
+    return rule_edit(parent, "hDeleteRule", idx, nullptr, err);
 }
 
 const char *csson_supported_versions(void) {

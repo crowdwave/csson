@@ -328,6 +328,109 @@ export function patch(text: string, patchJson: string): string {
   return root.toString();
 }
 
+/* ------------------------------------------------- CSSOM-style handle API -- */
+// Rule handles address the raw CSS rule tree by child-rule INDEX PATH in source
+// order (mirroring the C csson_rule, and ≈ a browser walking cssRules). The TS is
+// stateless: each op re-parses the source the C sheet holds; edit ops return the
+// new full source for the sheet to store, so comments/formatting survive.
+
+function childNodesOf(rule: Rule): Rule[] {
+  const out: Rule[] = [];
+  rule.each((c: AnyNode) => {
+    if (c.type === "rule") out.push(c);
+  });
+  return out;
+}
+
+function fieldDecls(rule: Rule): Declaration[] {
+  const out: Declaration[] = [];
+  rule.each((c: AnyNode) => {
+    if (c.type === "decl" && c.prop.startsWith("--")) out.push(c as Declaration);
+  });
+  return out;
+}
+
+// Walk from the `cssonv1` root down child rules by index; returns root + node.
+function resolvePath(text: string, pathJson: string): { root: Root; rule: Rule } {
+  const root = postcss.parse(text);
+  let rule = rootRule(root);
+  for (const idx of JSON.parse(pathJson) as number[]) {
+    const kids = childNodesOf(rule);
+    if (!Number.isInteger(idx) || idx < 0 || idx >= kids.length)
+      throw new Error("rule handle: index out of range");
+    rule = kids[idx];
+  }
+  return { root, rule };
+}
+
+const propKey = (name: string): string => (name.startsWith("--") ? name.slice(2) : name);
+
+export function hRuleCount(text: string, path: string): string {
+  return String(childNodesOf(resolvePath(text, path).rule).length);
+}
+export function hSelector(text: string, path: string): string {
+  return seltype(resolvePath(text, path).rule.selector);
+}
+export function hPropCount(text: string, path: string): string {
+  return String(fieldDecls(resolvePath(text, path).rule).length);
+}
+export function hPropNameAt(text: string, path: string, iStr: string): string {
+  const decls = fieldDecls(resolvePath(text, path).rule);
+  const i = Number(iStr);
+  if (!Number.isInteger(i) || i < 0 || i >= decls.length)
+    throw new Error("property index out of range");
+  return decls[i].prop; // e.g. "--org"
+}
+export function hGetProp(text: string, path: string, name: string): string {
+  const d = findField(resolvePath(text, path).rule, propKey(name));
+  if (!d) throw new Error("property absent"); // C maps the exception to NULL
+  return d.value; // verbatim CSSON token
+}
+export function hGetPropValue(text: string, path: string, name: string): string {
+  const d = findField(resolvePath(text, path).rule, propKey(name));
+  if (!d) throw new Error("property absent");
+  return JSON.stringify(coerce(d.value)); // coerced JSON scalar
+}
+export function hSetProp(text: string, path: string, name: string, jsonValue: string): string {
+  const key = propKey(name);
+  if (!isSafeName(key)) throw new Error("set: unsafe field key");
+  const token = scalarToken(JSON.parse(jsonValue) as Json); // throws on object/array
+  const { root, rule } = resolvePath(text, path);
+  const d = findField(rule, key);
+  if (d) d.value = token;
+  else rule.append({ prop: "--" + key, value: token });
+  return root.toString();
+}
+export function hRemoveProp(text: string, path: string, name: string): string {
+  const { root, rule } = resolvePath(text, path);
+  const d = findField(rule, propKey(name));
+  if (!d) throw new Error("remove: property not found");
+  d.remove();
+  return root.toString();
+}
+export function hInsertRule(text: string, path: string, ruleText: string, idxStr: string): string {
+  const { root, rule } = resolvePath(text, path);
+  const frag = postcss.parse(ruleText);
+  if (frag.nodes.length !== 1 || frag.first?.type !== "rule")
+    throw new Error("insert: text must be exactly one CSSON node");
+  const node = frag.first as Rule;
+  if (!isSafeName(seltype(node.selector))) throw new Error("insert: unsafe node type");
+  const kids = childNodesOf(rule);
+  const idx = Number(idxStr);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= kids.length) rule.append(node); // -1 = append
+  else kids[idx].before(node);
+  return root.toString();
+}
+export function hDeleteRule(text: string, path: string, idxStr: string): string {
+  const { root, rule } = resolvePath(text, path);
+  const kids = childNodesOf(rule);
+  const idx = Number(idxStr);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= kids.length)
+    throw new Error("delete: index out of range");
+  kids[idx].remove();
+  return root.toString();
+}
+
 /* ------------------------------------------------------------ expose ------- */
 
 (globalThis as any).csson = {
@@ -339,5 +442,16 @@ export function patch(text: string, patchJson: string): string {
   remove,
   fromJson,
   patch,
+  // CSSOM-style handle API (driven by the C csson_sheet / csson_rule layer)
+  hRuleCount,
+  hSelector,
+  hPropCount,
+  hPropNameAt,
+  hGetProp,
+  hGetPropValue,
+  hSetProp,
+  hRemoveProp,
+  hInsertRule,
+  hDeleteRule,
   version: "1",
 };
