@@ -8,25 +8,23 @@ browsers: the canonical JSON is byte-identical across every CSSON engine.
 - **No third-party dependencies** — `ctypes` is in the standard library.
 - **In-process** — no subprocess; direct calls into `libcsson`.
 
-## Install
+## Install — nothing to compile
 
-You need the native shared library `libcsson.so` (`.dylib` on macOS, `csson.dll`
-on Windows). Two ways:
+A **prebuilt `libcsson.so` ships right next to `csson.py`** (Linux x86-64), so the
+module works out of the box — no CMake, no compiler, no build step. Just put
+`csson.py` (and the `libcsson.so` beside it) on your path, or `pip install .` from
+this directory.
 
-**A. Build it from the repo** (needs CMake, a C23 compiler, Node):
-```sh
-cmake -S core -B core/build -DCMAKE_BUILD_TYPE=Release
-cmake --build core/build --target csson_shared
-```
-The module auto-discovers `core/build/libcsson.so` when run from the repo.
-
-**B. Ship the library** with your app: copy `libcsson.so` next to `csson.py`, or
-point `$CSSON_LIB` at it:
-```sh
-export CSSON_LIB=/path/to/libcsson.so
+```python
+import csson
+csson.loads("cssonv1{ --x: 1; }")   # works immediately
 ```
 
-Then put `csson.py` on your path (or `pip install .` from this directory).
+**Other platforms / your own build.** The shipped `.so` is Linux x86-64. On macOS
+(`libcsson.dylib`) or Windows (`csson.dll`), drop a matching prebuilt library next
+to `csson.py` or point `$CSSON_LIB` at it (`export CSSON_LIB=/path/to/lib`). To
+build one yourself: `cmake -S core -B core/build -DCMAKE_BUILD_TYPE=Release &&
+cmake --build core/build --target csson_shared`.
 
 ## Usage
 

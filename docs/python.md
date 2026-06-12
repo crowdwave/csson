@@ -6,30 +6,26 @@
 
 **No third-party dependencies** — `ctypes` is in the standard library. It runs **in-process** (no subprocess; direct calls into `libcsson`), and because it uses the same native core as the CLI and the browsers, its output is **byte-identical to every other CSSON engine**. Files use the `.css` extension, named `<name>-csson.css`.
 
-## Install & configure
+## Install — nothing to compile
 
-You need the native shared library: `libcsson.so` on Linux, `libcsson.dylib` on macOS, `csson.dll` on Windows. There are two ways to get it.
+A **prebuilt `libcsson.so` ships next to `csson.py`** (Linux x86-64), so the module works out of the box — no CMake, no compiler, no build step. Put `csson.py` (with its `libcsson.so`) on your path, or `pip install .` from [`../bindings/python`](../bindings/python/README.md). Requires Python ≥ 3.9.
 
-### Build it from the repo
+**Verify it works** — you should see exactly this:
 
-Needs CMake, a C23 compiler, and Node:
+```python
+import csson
+print(csson.version())                     # 1
+print(csson.loads("cssonv1{ --x: 1; }"))   # {'x': 1}
+```
+
+### Other platforms / your own build
+
+The shipped library is Linux x86-64. On macOS (`libcsson.dylib`) or Windows (`csson.dll`), drop a matching prebuilt library next to `csson.py` or point `$CSSON_LIB` at it (`export CSSON_LIB=/path/to/lib`). To build one yourself (needs CMake, a C23 compiler, Node):
 
 ```sh
 cmake -S core -B core/build -DCMAKE_BUILD_TYPE=Release
 cmake --build core/build --target csson_shared
 ```
-
-The module auto-discovers `core/build/libcsson.so` when run from the repo.
-
-### Ship the library
-
-Copy `libcsson.so` next to `csson.py`, or point `$CSSON_LIB` at it:
-
-```sh
-export CSSON_LIB=/path/to/libcsson.so
-```
-
-Then put `csson.py` on your path, or `pip install .` from [`../bindings/python`](../bindings/python/README.md). Requires Python ≥ 3.9.
 
 > The native library is located via, in order: `$CSSON_LIB`, a copy next to `csson.py`, the in-repo build (`core/build`), then the system loader. If none is found, importing raises `csson.CssonError`.
 

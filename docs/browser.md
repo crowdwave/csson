@@ -4,6 +4,22 @@
 
 In the browser, **read** CSSON with the native CSSOM — no dependencies, no wasm — and **edit** it (set / remove / patch) with the same wasm core as everywhere else, byte-identical.
 
+## Verify it works
+
+Copy the prebuilt `browser.js` and `csson.wasm` from [`bindings/javascript/`](../bindings/javascript/) next to this page, serve the folder over HTTP (ES modules and wasm don't load from `file://` — e.g. `npx serve`), and open it. The console should print exactly `1` and `{ x: 1 }`:
+
+```html
+<!-- verify.html -->
+<script type="module">
+  import { init } from "./browser.js";
+  const csson = await init(new URL("./csson.wasm", import.meta.url));
+  console.log(csson.version());                    // 1
+  console.log(csson.parse("cssonv1{ --x: 1; }"));  // { x: 1 }
+</script>
+```
+
+For **reading only** you don't even need the wasm — the browser parses CSSON natively; see [Read via the native CSSOM](#read-via-the-native-cssom-no-wasm-no-deps) below.
+
 ## Serve it as CSS
 
 A CSSON file *is* valid CSS, so the browser parses it natively — but only when the server hands it over as a stylesheet. A CSSON file is named `<name>-csson.css` and must be served with `Content-Type: text/css`. Once it is, you can load it like any stylesheet:

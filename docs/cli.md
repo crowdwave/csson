@@ -6,29 +6,27 @@
 
 Point it at a `<name>-csson.css` file (or pipe one in) to get canonical JSON, read a single value by JSON Pointer, set or remove scalars, apply an RFC 6902 patch, or check a value against a CSS `@property` syntax. Edits splice the original source, so comments and formatting survive.
 
-## Install
+## Install — nothing to compile
 
-Building from source is the only current method. From the repository root:
-
-```sh
-cmake -S core -B core/build -DCMAKE_BUILD_TYPE=Release
-cmake --build core/build
-```
-
-The binary lands at `core/build/csson`. Copy it onto your `$PATH` to run it as `csson` from anywhere:
+A prebuilt, self-contained `csson` (Linux x86-64) ships in [`bin/`](../bin). Put it on your `$PATH`:
 
 ```sh
-cp core/build/csson /usr/local/bin/csson
+cp bin/csson /usr/local/bin/csson
 ```
 
-Requirements: CMake ≥ 3.28, a C23 compiler (gcc ≥ 14 or clang ≥ 18), and Node — used to build the embedded core.
-
-Verify the build:
+**Verify it works** — you should see exactly this:
 
 ```sh
 csson --version
 # csson 0.2.0 (CSSON standard v1)
+
+echo 'cssonv1{ --x: 1; }' | csson canon -
+# {"x":1}
 ```
+
+### Other platforms / your own build
+
+The prebuilt binary is Linux x86-64. On macOS/Windows or another arch, build from source (see **[Building from source](building.md)**) — the binary lands at `core/build/csson`.
 
 ## Usage basics
 

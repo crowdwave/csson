@@ -9,22 +9,30 @@ The package runs the CSSON core (QuickJS + PostCSS + csstree) compiled to
 C library, Python and the browsers. Written in TypeScript; ships its types. Files use the
 `.css` extension, named `<name>-csson.css`.
 
-## Install / build
+## Install — nothing to compile
 
-The package runs `csson.wasm` (the portable core). In this repo:
+The compiled `dist/` and the portable `csson.wasm` are **shipped in the package**, so
+there is no build step and no native toolchain — just import it:
 
-```sh
-cd bindings/javascript
-npm install
-npm run build       # compiles TS -> dist/ and copies ../wasm/csson.wasm here
+```js
+import csson from "@csson/js";   // works immediately
 ```
 
-`npm run wasm` rebuilds `csson.wasm` from source first (needs wasi-sdk); `npm run build`
-alone reuses the prebuilt wasm.
+> The package is **ESM** (`"type": "module"`), targets **Node ≥ 18** (which provides the
+> built-in `node:wasi` used to load the core), and has **no runtime dependencies**. No
+> native addon, no compiler toolchain, no build at install time.
 
-> The package is **ESM** (`"type": "module"`) and targets **Node ≥ 18**, which provides
-> the built-in `node:wasi` used to load the core. No native addon, no compiler toolchain
-> at install time.
+(Only if you edit the TypeScript source do you rebuild: `cd bindings/javascript && npm
+install && npm run build`. `npm run wasm` rebuilds `csson.wasm` from source, which needs
+wasi-sdk.)
+
+**Verify it works** — you should see exactly this:
+
+```js
+import csson from "@csson/js";
+console.log(csson.version());                    // 1
+console.log(csson.parse("cssonv1{ --x: 1; }"));  // { x: 1 }
+```
 
 ## Usage
 

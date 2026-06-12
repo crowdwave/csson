@@ -6,16 +6,18 @@ PostCSS + csstree) compiled to **WebAssembly**, so it needs no native build and
 its output is byte-identical to the C library and the browsers. Written in
 TypeScript; ships types.
 
-## Install / build
+## Install — nothing to compile
 
-The package runs `csson.wasm` (the portable core). In this repo:
+The compiled `dist/` and the portable `csson.wasm` are **shipped in the package**,
+so there is no build step and no native toolchain — just import it. The package
+has no runtime dependencies (it uses Node's built-in `node:wasi`).
 
-```sh
-cd bindings/javascript
-npm install
-npm run build       # compiles TS -> dist/ and copies ../wasm/csson.wasm here
-# (npm run wasm rebuilds csson.wasm from source first; needs wasi-sdk)
+```js
+import csson from "@csson/js";   // works immediately
 ```
+
+(Only if you change the TypeScript source do you rebuild: `npm install && npm run
+build`; `npm run wasm` rebuilds `csson.wasm` from source, which needs wasi-sdk.)
 
 ## Use — Node.js
 

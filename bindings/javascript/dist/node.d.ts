@@ -1,0 +1,24 @@
+import { type Json } from "./core.js";
+export declare const parse: (text: string) => Json;
+export declare const get: (text: string, pointer: string) => Json;
+export declare const set: (text: string, pointer: string, value: Json) => string;
+export declare const setRaw: (text: string, pointer: string, token: string) => string;
+export declare const remove: (text: string, pointer: string) => string;
+export declare const patch: (text: string, ops: Json[]) => string;
+export declare const stringify: (obj: Json) => string;
+export declare const validate: (syntax: string, value: string) => boolean;
+export declare const version: () => string;
+export { CssonError } from "./core.js";
+export type { Csson, Json } from "./core.js";
+declare const _default: {
+    parse: (text: string) => Json;
+    get: (text: string, pointer: string) => Json;
+    set: (text: string, pointer: string, value: Json) => string;
+    setRaw: (text: string, pointer: string, token: string) => string;
+    remove: (text: string, pointer: string) => string;
+    patch: (text: string, ops: Json[]) => string;
+    stringify: (obj: Json) => string;
+    validate: (syntax: string, value: string) => boolean;
+    version: () => string;
+};
+export default _default;

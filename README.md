@@ -1,13 +1,15 @@
-# CSSON
+# CSSON — could CSS be used as a data format? YES!
 
 **CSSON is a data format which is a strict subset of CSS.**
 
 > **Is this for real?** Sort of — it's a bit of fun: a thought experiment, a
 > weekend project that got out of hand.
 
+> **Is CSSON ready for production?** NO, but it is ready for experimentation and fun.
+
 ## Implementations
 
-Read, edit and validate CSSON from any of these — they all share one core, so every one gives identical results. Full guides in [`docs/`](docs/):
+Read, edit and validate CSSON from any of these — they all share one core, so every one gives identical results. Each ships a prebuilt artifact, so **there's nothing to compile**. Full guides in [`docs/`](docs/):
 
 | | |
 |---|---|
@@ -15,6 +17,8 @@ Read, edit and validate CSSON from any of these — they all share one core, so 
 | **[Node.js / TypeScript](docs/nodejs.md)** | [`@csson/js`](bindings/javascript) — runs the WebAssembly core; no native build |
 | **[Python](docs/python.md)** | [`csson`](bindings/python) — `ctypes` over `libcsson`; zero dependencies |
 | **[Browser](docs/browser.md)** | read via the native CSSOM, edit via the WebAssembly core |
+
+Want to build CSSON from source instead? See **[Building from source](docs/building.md)**.
 
 ## Examples
 
