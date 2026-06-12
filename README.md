@@ -4,6 +4,17 @@
 
 It is a configuration/data format that reuses a strict subset of CSS syntax instead of inventing a new one.
 
+## Implementations
+
+Read, edit and validate CSSON from any of these — they all share one core, so every one gives identical results. Full guides on the **[documentation site](https://crowdwave.github.io/csson/)**:
+
+| | |
+|---|---|
+| **[CLI](https://crowdwave.github.io/csson/cli.html)** | the `csson` command — read / edit / validate from a shell |
+| **[Node.js / TypeScript](https://crowdwave.github.io/csson/nodejs.html)** | [`@csson/js`](bindings/javascript) — runs the WebAssembly core; no native build |
+| **[Python](https://crowdwave.github.io/csson/python.html)** | [`csson`](bindings/python) — `ctypes` over `libcsson`; zero dependencies |
+| **[Browser](https://crowdwave.github.io/csson/browser.html)** | read via the native CSSOM, edit via the WebAssembly core |
+
 > **94 ready-to-read CSSON examples** live in [`samples/`](samples/) — from one-liners to deeply-nested, schema-typed configs. Browse them all:
 
 <details>
@@ -20,40 +31,71 @@ It is a configuration/data format that reuses a strict subset of CSS syntax inst
 
 </details>
 
-The core idea is:
+## CSSON is CSS *rules*, not CSS *styles*
+
+This is the key idea. A stylesheet is a set of **rules** — `selector { property: value }`
+blocks — which a browser then *applies* to a page, resolving the cascade,
+specificity and inheritance into the **computed styles** on each element.
+
+**CSSON only ever uses the rules as written** — the authored block-and-declaration
+tree, the exact thing the browser exposes as `document.styleSheets` → `cssRules`.
+It never applies them to anything: there is no page, no element, no cascade, no
+computed value. A CSSON document is the *shape* of a stylesheet, read as data.
+
+That single choice explains everything:
+
+- **A selector is a name, not a match.** `database { … }` is a record *called*
+  "database", not a rule that targets `<database>` elements.
+- **A declaration is a field, not a style.** `--port: 8080` is data, not paint.
+- **Every block is a list item → a JSON array.** A stylesheet's rules are an
+  ordered *list*, so each block becomes an array; a single `database { }` is a
+  one-element array `[{…}]`, and repeating the block name just adds items. This is
+  exactly how `cssRules` behaves — CSSON matches the browser, byte for byte.
+- **No cascade ⇒ deterministic.** No specificity, no `!important`, no inheritance;
+  order is literal. A duplicate field is plain last-wins by source order, and the
+  result is identical on every engine.
+
+The core idea is (every document is wrapped in a single `cssonv1` root):
 
 ```css
-app {
-  --environment: production;
-  --port: 8080;
-  --timeout: 30s;
-  --regions: us, eu, apac;
+cssonv1 {
+  app {
+    --environment: production;
+    --port: 8080;
+    --timeout: 30s;
+    --regions: us, eu, apac;
 
-  database {
-    --engine: postgres;
-    --pool-min: 2;
-    --pool-max: 10;
-  }
-}
-```
-
-which parses to something like:
-
-```json
-{
-  "app": {
-    "environment": "production",
-    "port": 8080,
-    "timeout": { "value": 30, "unit": "s" },
-    "regions": ["us", "eu", "apac"],
-    "database": {
-      "engine": "postgres",
-      "pool-min": 2,
-      "pool-max": 10
+    database {
+      --engine: postgres;
+      --pool-min: 2;
+      --pool-max: 10;
     }
   }
 }
 ```
+
+which reads as this canonical JSON:
+
+```json
+{
+  "app": [
+    {
+      "environment": "production",
+      "port": 8080,
+      "timeout": "30s",
+      "regions": "us, eu, apac",
+      "database": [
+        { "engine": "postgres", "pool-min": 2, "pool-max": 10 }
+      ]
+    }
+  ]
+}
+```
+
+Note the two consequences of *rules, not styles* (above): every block is an
+**array** (`app` and `database` are one-element lists), and only a bare integer
+is a JSON number — `8080` stays `8080`, but `30s` and `us, eu, apac` are kept as
+exact **strings**. (Canonical output also sorts keys; shown here in source order.)
 
 ## CSSON in one sentence
 
@@ -109,20 +151,17 @@ server {
 }
 ```
 
-This becomes:
+This becomes (each block an array, per *rules, not styles*):
 
 ```json
 {
-  "server": {
-    "host": "api.example.com",
-    "database": {
-      "engine": "postgres",
-      "pool-max": 10
-    },
-    "cache": {
-      "ttl": { "value": 30, "unit": "s" }
+  "server": [
+    {
+      "host": "api.example.com",
+      "database": [ { "engine": "postgres", "pool-max": 10 } ],
+      "cache": [ { "ttl": "30s" } ]
     }
-  }
+  ]
 }
 ```
 
@@ -136,23 +175,29 @@ You can also allow CSS-nesting-style child forms:
 
 but the meaning is still just “child object named `database`”.
 
-### Arrays are comma-separated values
+### Repeating a block makes an array
+
+The real way to get a JSON array is to **repeat a block** — each occurrence is one
+element (exactly how `cssRules` lists rules):
 
 ```css
---regions: us, eu, apac;
---ports: 5432, 6432, 7432;
+server { --host: "a"; }
+server { --host: "b"; }
 ```
 
-These become arrays.
+```json
+{ "server": [ { "host": "a" }, { "host": "b" } ] }
+```
 
-### Tuples are space-separated values
+### Comma and space lists are single string values
+
+A comma- or space-separated value is **not** split — it is kept verbatim as one
+string, a compact idiom you split where you consume it:
 
 ```css
---capture-size: 1920px 1080px;
---range: 1 100;
+--regions: us, eu, apac;        /* -> "us, eu, apac"   (one string, not an array) */
+--capture-size: 1920px 1080px;  /* -> "1920px 1080px"  (a fixed-shape tuple)      */
 ```
-
-These are fixed-shape tuples, ideally validated by schema.
 
 ### Comments are native
 
@@ -206,6 +251,11 @@ app {
   --docs: url("https://example.com/docs");
 }
 ```
+
+In the JSON, **only `--port: 8080` becomes a number** — every other value above is
+kept as its exact string (`"1.5"`, `"25%"`, `"30s"`, `"#ff6a3d"`,
+`"oklch(0.6 0.15 250)"`, …). The CSS *type* each value claims is what `@property`
+validates, below; CSSON stores the value, not a parsed breakdown of it.
 
 ## Schema with `@property`
 
@@ -278,6 +328,11 @@ app, server {}
 
 The aim is not “all CSS as config”. The aim is **a small, safe, deterministic data subset of CSS**.
 
+> **Status:** this is the strict-mode *goal* and what the spec defines. The
+> current reader is lenient — it keeps such values as plain strings and treats
+> such selectors as record names rather than erroring; an enforcing strict-mode
+> validator is planned.
+
 ## Browser loading
 
 A CSSON file can be loaded by the browser as a stylesheet if it is valid CSS and served as:
@@ -332,18 +387,6 @@ JSON with different punctuation
 The strongest version of CSSON is a **CSS-syntax config format**.
 
 ---
-
-## Documentation
-
-**[crowdwave.github.io/csson](https://crowdwave.github.io/csson/)** — the docs
-site: a live overview plus a guide for each way to use CSSON.
-
-| | |
-|---|---|
-| [CLI](https://crowdwave.github.io/csson/cli.html) | the `csson` command — read, edit, validate from a shell |
-| [Node.js](https://crowdwave.github.io/csson/nodejs.html) | `@csson/js` — runs the WebAssembly core; no native build |
-| [Python](https://crowdwave.github.io/csson/python.html) | `ctypes` over `libcsson`; no third-party dependencies |
-| [Browser](https://crowdwave.github.io/csson/browser.html) | read with the native CSSOM, edit with the WebAssembly core |
 
 ## Quick taste
 
