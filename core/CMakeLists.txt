@@ -17,16 +17,28 @@ option(CSSON_SANITIZE "Build with ASan + UBSan (test builds)" OFF)
 set(CSSON_STRICT
   -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wcast-qual -Wstrict-prototypes -Werror)
 
-# --- QuickJS-ng (fetched, built as a size-optimised SYSTEM dep) ---------------
+# --- QuickJS-ng (fetched at a PINNED tag, built as a size-optimised SYSTEM dep)
+# Pinned for reproducibility + CVE tracking: bump both together, never float.
+set(QJS_TAG "v0.15.1")
+set(QJS_SHA "fd0a0210b7be00957751871e7e01b8291268fc29")
 set(QJS_DIR "${CMAKE_BINARY_DIR}/quickjs")
 if(NOT EXISTS "${QJS_DIR}/quickjs.c")
-  message(STATUS "Cloning quickjs-ng…")
+  message(STATUS "Cloning quickjs-ng ${QJS_TAG}…")
   execute_process(
-    COMMAND bash -c "git clone --depth 1 https://github.com/quickjs-ng/quickjs.git '${QJS_DIR}'"
+    COMMAND git clone --depth 1 --branch "${QJS_TAG}"
+            https://github.com/quickjs-ng/quickjs.git "${QJS_DIR}"
     RESULT_VARIABLE rc)
   if(NOT rc EQUAL 0 OR NOT EXISTS "${QJS_DIR}/quickjs.c")
     message(FATAL_ERROR "quickjs-ng clone failed")
   endif()
+endif()
+# Verify the checkout is the exact pinned commit (guards against a moved tag).
+execute_process(COMMAND git -C "${QJS_DIR}" rev-parse HEAD
+                OUTPUT_VARIABLE QJS_HEAD OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(NOT QJS_HEAD STREQUAL QJS_SHA)
+  message(FATAL_ERROR
+    "quickjs-ng pin mismatch: expected ${QJS_SHA}, got ${QJS_HEAD}.\n"
+    "Delete ${QJS_DIR} to re-clone, or update QJS_TAG/QJS_SHA together.")
 endif()
 add_library(quickjs STATIC
   "${QJS_DIR}/quickjs.c" "${QJS_DIR}/libregexp.c" "${QJS_DIR}/libunicode.c" "${QJS_DIR}/dtoa.c")
