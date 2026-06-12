@@ -225,7 +225,20 @@ Meaning:
 --regions must be a comma-separated list of identifiers
 ```
 
-For CSSON, invalid values should be **hard validation errors**, not silently ignored or replaced.
+`@property` blocks are **schema, not data**: they declare each field's type (and
+an optional default) but do **not** appear in the canonical JSON output. You check
+a value against a CSS `@property` syntax with the `validate` operation — it matches
+the browser's own `@property` validation:
+
+```sh
+csson validate '<integer>' 8080      # true
+csson validate '<integer>' 8080.5    # false
+csson validate '<time>' 30s          # true
+```
+
+In strict CSSON an invalid value is meant to be a **hard error**. Today the reader
+exposes validation through `validate` but does not yet auto-reject a field that
+violates its `@property`; that enforcing strict mode is planned (see below).
 
 ## What strict CSSON rejects
 
