@@ -16,9 +16,15 @@ everything CSSON needs *before* we throw away a working C core.
 
 ## 1. Target architecture
 
+> **Engine split (refined after nesting research — `spikes/nesting/`):**
+> **PostCSS** for parse + comment-preserving edits (nests CSSON's bare type
+> selectors natively = the browser; `raws`/offsets give clean source-preserving
+> edits → **resolves S1's nesting caveat and R4**), and **csstree's `lexer.match`**
+> for `@property` (S2-proven browser parity). Both MIT, pure JS, QuickJS-embeddable.
+
 ```
 libcsson  =  QuickJS (C, ~490 KB native / ~720 KB wasm)
-           +  csstree + CSSON.js  (bundled, compiled to bytecode via qjsc)
+           +  PostCSS (parse/edit) + csstree.lexer (@property) + CSSON.js  (bytecode)
            +  C facade (~200 lines) implementing csson.h
 Browser   =  the SAME .wasm (native WebAssembly) — or the JS run directly
 Node      =  the SAME JS, native
