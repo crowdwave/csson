@@ -1,0 +1,16 @@
+{
+  "name": "csson-core",
+  "private": true,
+  "description": "CSSON reference core: TypeScript (PostCSS + csstree) bundled for QuickJS",
+  "type": "module",
+  "scripts": {
+    "bundle": "node tools/build-bundle.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "postcss": "8.5.15",
+    "css-tree": "3.2.1",
+    "esbuild": "0.25.5",
+    "typescript": "5.7.3"
+  }
+}

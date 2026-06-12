@@ -71,8 +71,8 @@ static int fail(char *err) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr,
-                "usage: csson canon|get|check|set|set-json|rm|patch|from-json|versions ...\n");
+        fprintf(stderr, "usage: csson "
+                        "canon|get|check|set|set-json|rm|patch|from-json|validate|versions ...\n");
         return 2;
     }
     const char *cmd = argv[1];
@@ -80,6 +80,21 @@ int main(int argc, char **argv) {
     if (strcmp(cmd, "versions") == 0) {
         printf("%s\n", csson_supported_versions());
         return 0;
+    }
+    if (strcmp(cmd, "validate") == 0) { /* validate <syntax> <value> (no file) */
+        if (argc < 4) {
+            fprintf(stderr, "csson validate <syntax> <value>\n");
+            return 2;
+        }
+        char *verr = nullptr;
+        int ok = csson_validate(argv[2], argv[3], &verr);
+        if (ok < 0) {
+            fprintf(stderr, "csson: %s\n", verr ? verr : "error");
+            csson_free_string(verr);
+            return 2;
+        }
+        printf("%s\n", ok ? "true" : "false");
+        return ok ? 0 : 1;
     }
     if (argc < 3) {
         fprintf(stderr, "csson %s: needs <file>\n", cmd);
