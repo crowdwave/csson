@@ -1,0 +1,31 @@
+/* ===========================================================================
+   FEATURE: floating point   ·   LEVEL: simple (1 of 4)
+   ---------------------------------------------------------------------------
+   The one rule to remember: in CSSON v1 a bare INTEGER becomes a JSON number,
+   but a value with a decimal point (a "float") becomes a JSON STRING.
+
+   Only `0` and `-?[1-9][0-9]*` (a plain integer) coerce to a JSON number.
+   Anything with a `.`, an exponent, or a sign+dot is kept as its exact,
+   verbatim text — a string.
+
+   Why? The browser-parity guarantee: CSSON must emit byte-identical JSON from
+   every engine (the C core, Chrome, Firefox, the WASM build). Different engines
+   can re-serialize the same float differently (1.10 vs 1.1, 1e3 vs 1000), so
+   CSSON never re-serializes a float — it pins the exact authored token. The
+   safe, portable way to do that in JSON is a string.
+   =========================================================================== */
+cssonv1 {
+  --integer: 42;        /* JSON number  42      — a plain integer coerces      */
+  --negative: -7;       /* JSON number  -7      — sign is fine for integers    */
+  --zero: 0;            /* JSON number  0                                      */
+
+  --float: 1.5;         /* JSON string  "1.5"   — has a dot -> stays a string  */
+  --price: 19.99;       /* JSON string  "19.99" — likewise                     */
+  --ratio: 0.25;        /* JSON string  "0.25"                                 */
+
+  /* So: `csson canon` on this file yields
+       {"float":"1.5","integer":42,"negative":-7,"price":"19.99",
+        "ratio":"0.25","zero":0}
+     Note the quotes around every decimal, and none around the integers.
+     Your application reads the string and calls parseFloat/Number itself. */
+}

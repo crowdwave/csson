@@ -1,0 +1,31 @@
+/* ===========================================================================
+   FEATURE: floating point   ·   LEVEL: simple (2 of 4)
+   ---------------------------------------------------------------------------
+   Every shape of floating-point value stays a verbatim STRING — and the exact
+   characters you wrote are preserved unchanged. CSSON does not normalise,
+   round, or reformat them. This file catalogues the common forms.
+   =========================================================================== */
+cssonv1 {
+  --plain: 3.14;        /* "3.14"                                              */
+  --negative: -0.5;     /* "-0.5"                                              */
+
+  /* Leading / trailing dots are valid CSS number tokens and kept as-is: */
+  --no-leading-zero: .5;   /* ".5"   — not rewritten to "0.5"                  */
+  --trailing-dot: 1.;      /* "1."   — kept exactly                           */
+
+  /* Scientific / exponent notation is a float too -> string, verbatim: */
+  --exponent: 1e3;         /* "1e3"   — NOT 1000, NOT a number                 */
+  --exp-decimal: 1.5e-3;   /* "1.5e-3"                                         */
+  --exp-caps: 1E10;        /* "1E10"  — the capital E is preserved            */
+
+  /* Signed zero and trailing zeros survive — they carry meaning (precision,
+     direction) that a JSON number would silently discard: */
+  --signed-zero: -0.0;     /* "-0.0"  — a JSON number would collapse to 0      */
+  --trailing-zeros: 100.00;/* "100.00"— two decimal places kept (e.g. money)  */
+
+  /* Contrast: the only values here that become JSON NUMBERS are bare ints. */
+  --count: 7;              /* number 7                                        */
+
+  /* `csson canon` -> every --x above is a quoted string except --count:7.
+     Takeaway: what you type is what you get back, character for character. */
+}

@@ -1,0 +1,44 @@
+/* ===========================================================================
+   FEATURE: floating point   ·   LEVEL: intermediate (3 of 4)
+   ---------------------------------------------------------------------------
+   Floats in a realistic config, and the two patterns for working with them.
+   Remember: every decimal below is a JSON string; your app parses it. Integers
+   stay JSON numbers.
+   =========================================================================== */
+cssonv1 {
+
+  /* A weather sensor reading: physical measurements are naturally decimal,
+     so they come back as strings — parse them where you consume them. */
+  reading {
+    --temperature: 21.4;     /* "21.4"  (degrees C)                           */
+    --humidity: 57.8;        /* "57.8"  (percent)                             */
+    --pressure: 1013.25;     /* "1013.25" (hPa)                              */
+    --samples: 240;          /* number 240 — a count, so a real JSON number   */
+  }
+
+  /* GPS coordinates need full decimal precision and must NOT be rounded —
+     strings preserve every digit exactly. */
+  location {
+    --lat: -33.8688;         /* "-33.8688"                                    */
+    --lon: 151.2093;         /* "151.2093"                                    */
+    --altitude: 19.5;        /* "19.5"  (metres)                              */
+  }
+
+  /* PATTERN A — money as an integer of minor units (cents). This stays a real
+     JSON number and avoids binary-float rounding entirely. Prefer this for
+     anything you do arithmetic on. */
+  pricing {
+    --amount-cents: 1999;    /* number 1999  -> format as $19.99 in the app   */
+    --currency: "USD";       /* quoted string                                 */
+    --tax-rate: 0.0825;      /* "0.0825" — a rate you read and multiply by    */
+  }
+
+  /* PATTERN B — keep the decimal as authored when exactness/formatting matters
+     (e.g. you want to display "4.50", not "4.5"). The string keeps it. */
+  product {
+    --name: "Flat White";
+    --price: 4.50;           /* "4.50" — trailing zero preserved for display  */
+    --rating: 4.7;           /* "4.7"                                         */
+    --reviews: 318;          /* number 318                                    */
+  }
+}

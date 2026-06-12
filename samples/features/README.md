@@ -33,6 +33,9 @@ csson canon samples/features/feature-arrays-simple-1-csson.css
 ## scalars — value coercion / types
 `feature-scalars-simple-1` (int→number, "quoted"→string, ident→string) · `feature-scalars-simple-2` (gotchas: `1.5`/`true`/`null` stay **strings**) · `feature-scalars-intermediate-1` (unit catalogue) · `feature-scalars-advanced-1` (colors, url, ratios, tuples)
 
+## floats — floating-point values (a decimal is a **string**, not a JSON number)
+`feature-floats-simple-1` (integer→number vs decimal→string) · `feature-floats-simple-2` (every float form: `.5`, `1.`, `1e3`, `-0.0`, exact text kept) · `feature-floats-intermediate-1` (real config + the integer-cents pattern for money) · `feature-floats-advanced-1` (precision guarantee: arbitrary precision, trailing zeros, signed zero; the cross-engine reason)
+
 ## schema — `@property` typing (metadata, absent from data output)
 `feature-schema-simple-1` · `feature-schema-simple-2` · `feature-schema-intermediate-1` · `feature-schema-advanced-1` (multiplier/combinator syntaxes) · `feature-schema-advanced-2` (full type catalogue + nested/arrays)
 
@@ -46,5 +49,6 @@ csson canon samples/features/feature-arrays-simple-1-csson.css
 `feature-lists-simple-1` · `feature-lists-intermediate-1` · `feature-lists-advanced-1` (when to use a comma-list string vs a repeated-block array)
 
 ---
-**40 files** spanning 10 features. The two idiom features (`tuples`, `lists`) are
+**44 files** spanning 11 features. The two idiom features (`tuples`, `lists`) are
 single string scalars by design — for true arrays use repeated blocks (`arrays`).
+Decimals are strings too (`floats`) — for a JSON number use a bare integer.

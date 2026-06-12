@@ -1,0 +1,56 @@
+/* ===========================================================================
+   FEATURE: floating point   ·   LEVEL: advanced (4 of 4)
+   ---------------------------------------------------------------------------
+   The decimal-as-string rule is not a limitation — it is a precision GUARANTEE.
+   Because CSSON returns the exact authored characters, it preserves things an
+   IEEE-754 double (what JSON numbers are) would silently corrupt: arbitrary
+   precision, significant trailing zeros, signed zero, and exact scientific
+   notation. This file stress-tests that, then explains the cross-engine reason.
+   =========================================================================== */
+cssonv1 {
+
+  /* 1. ARBITRARY PRECISION — more significant digits than a 64-bit double can
+        represent. As a JSON number these would be rounded; as strings they are
+        exact. */
+  constants {
+    --pi-50: 3.14159265358979323846264338327950288419716939937510; /* exact   */
+    --planck: 6.62607015e-34;   /* "6.62607015e-34" — exact, not reparsed     */
+    --avogadro: 6.02214076e23;  /* "6.02214076e23"                            */
+  }
+
+  /* 2. SIGNIFICANT TRAILING ZEROS — "1.50" and "1.5" are equal as numbers but
+        differ in meaning (measured precision, currency display). Strings keep
+        the distinction a JSON number would erase. */
+  measurements {
+    --length-mm: 12.300;        /* "12.300" — three-decimal precision kept    */
+    --voltage: 5.00;            /* "5.00"   — not collapsed to 5              */
+    --tolerance: 0.0010;        /* "0.0010"                                   */
+  }
+
+  /* 3. SIGNED ZERO and tiny magnitudes — direction/underflow information that a
+        plain JSON 0 would drop. */
+  signals {
+    --bias: -0.0;               /* "-0.0"                                      */
+    --epsilon: 1e-300;          /* "1e-300" — kept verbatim, no underflow      */
+  }
+
+  /* 4. Floats compose with records and arrays like any scalar. Here each
+        repeated `point` block carries exact coordinates (an array of objects),
+        and tuples pack several decimals into one verbatim string. */
+  path {
+    --space-tuple: 0.125 0.250 0.375;  /* ONE string "0.125 0.250 0.375"      */
+    point { --t: 0.0;  --value: 100.000; }
+    point { --t: 0.5;  --value: 99.985; }
+    point { --t: 1.0;  --value: 99.970; }
+  }
+
+  /* WHY strings, restated for the record:
+     CSSON's prime guarantee is byte-identical JSON from every engine — the C
+     core, Chrome (Blink), Firefox (Gecko), and the WASM build. Re-serializing a
+     float is engine-dependent (1.10 -> "1.1", 1e3 -> "1000", rounding of long
+     decimals all vary), which would break that guarantee. So CSSON NEVER
+     re-serializes a float: it returns the exact source token as a string. The
+     cost is one parseFloat in your code; the payoff is exactness + portability.
+     If you want a JSON number, use a bare integer (e.g. cents, basis points,
+     micro-units) — see feature-floats-intermediate-1 Pattern A. */
+}

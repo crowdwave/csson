@@ -6,8 +6,8 @@ Example `.csson` documents — all valid CSSON v1, all using a `.css` extension
 ## [`features/`](features/) — learn the format
 Feature-by-feature demonstrations at graduated complexity
 (`<feature>-simple|intermediate|advanced-<n>-csson.css`), each heavily commented
-to explain what it teaches and the canonical JSON it produces. 40 files covering
-records, fields, arrays, nesting, css-nesting, scalars, schema (`@property`),
+to explain what it teaches and the canonical JSON it produces. 44 files covering
+records, fields, arrays, nesting, css-nesting, scalars, floats, schema (`@property`),
 comments, tuples, and comma-lists. **Start here to learn CSSON.**
 
 ## [`showcase/`](showcase/) — see it in the wild
