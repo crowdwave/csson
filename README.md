@@ -26,72 +26,6 @@ Read, edit and validate CSSON from any of these — they all share one core, so 
 
 [feature-arrays-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-advanced-1-csson.css) · [feature-arrays-advanced-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-advanced-2-csson.css) · [feature-arrays-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-intermediate-1-csson.css) · [feature-arrays-intermediate-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-intermediate-2-csson.css) · [feature-arrays-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-simple-1-csson.css) · [feature-arrays-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-arrays-simple-2-csson.css) · [feature-comments-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-comments-advanced-1-csson.css) · [feature-comments-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-comments-intermediate-1-csson.css) · [feature-comments-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-comments-simple-1-csson.css) · [feature-css-nesting-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-css-nesting-advanced-1-csson.css) · [feature-css-nesting-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-css-nesting-intermediate-1-csson.css) · [feature-css-nesting-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-css-nesting-simple-1-csson.css) · [feature-fields-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-fields-advanced-1-csson.css) · [feature-fields-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-fields-intermediate-1-csson.css) · [feature-fields-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-fields-simple-1-csson.css) · [feature-fields-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-fields-simple-2-csson.css) · [feature-floats-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-floats-advanced-1-csson.css) · [feature-floats-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-floats-intermediate-1-csson.css) · [feature-floats-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-floats-simple-1-csson.css) · [feature-floats-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-floats-simple-2-csson.css) · [feature-lists-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-lists-advanced-1-csson.css) · [feature-lists-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-lists-intermediate-1-csson.css) · [feature-lists-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-lists-simple-1-csson.css) · [feature-nesting-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-nesting-advanced-1-csson.css) · [feature-nesting-advanced-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-nesting-advanced-2-csson.css) · [feature-nesting-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-nesting-intermediate-1-csson.css) · [feature-nesting-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-nesting-simple-1-csson.css) · [feature-nesting-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-nesting-simple-2-csson.css) · [feature-records-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-records-advanced-1-csson.css) · [feature-records-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-records-intermediate-1-csson.css) · [feature-records-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-records-simple-1-csson.css) · [feature-records-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-records-simple-2-csson.css) · [feature-scalars-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-scalars-advanced-1-csson.css) · [feature-scalars-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-scalars-intermediate-1-csson.css) · [feature-scalars-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-scalars-simple-1-csson.css) · [feature-scalars-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-scalars-simple-2-csson.css) · [feature-schema-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-schema-advanced-1-csson.css) · [feature-schema-advanced-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-schema-advanced-2-csson.css) · [feature-schema-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-schema-intermediate-1-csson.css) · [feature-schema-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-schema-simple-1-csson.css) · [feature-schema-simple-2](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-schema-simple-2-csson.css) · [feature-tuples-advanced-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-tuples-advanced-1-csson.css) · [feature-tuples-intermediate-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-tuples-intermediate-1-csson.css) · [feature-tuples-simple-1](https://raw.githubusercontent.com/crowdwave/csson/refs/heads/main/samples/features/feature-tuples-simple-1-csson.css)
 
-## CSSON is CSS *rules*, not CSS *styles*
-
-This is the key idea. A stylesheet is a set of **rules** — `selector { property: value }`
-blocks — which a browser then *applies* to a page, resolving the cascade,
-specificity and inheritance into the **computed styles** on each element.
-
-**CSSON only ever uses the rules as written** — the authored block-and-declaration
-tree, the exact thing the browser exposes as `document.styleSheets` → `cssRules`.
-It never applies them to anything: there is no page, no element, no cascade, no
-computed value. A CSSON document is the *shape* of a stylesheet, read as data.
-
-That single choice explains everything:
-
-- **A selector is a name, not a match.** `database { … }` is a record *called*
-  "database", not a rule that targets `<database>` elements.
-- **A declaration is a field, not a style.** `--port: 8080` is data, not paint.
-- **Every block is a list item → a JSON array.** A stylesheet's rules are an
-  ordered *list*, so each block becomes an array; a single `database { }` is a
-  one-element array `[{…}]`, and repeating the block name just adds items. This is
-  exactly how `cssRules` behaves — CSSON matches the browser, byte for byte.
-- **No cascade ⇒ deterministic.** No specificity, no `!important`, no inheritance;
-  order is literal. A duplicate field is plain last-wins by source order, and the
-  result is identical on every engine.
-
-The core idea is (every document is wrapped in a single `cssonv1` root):
-
-```css
-cssonv1 {
-  app {
-    --environment: production;
-    --port: 8080;
-    --timeout: 30s;
-    --regions: us, eu, apac;
-
-    database {
-      --engine: postgres;
-      --pool-min: 2;
-      --pool-max: 10;
-    }
-  }
-}
-```
-
-which reads as this canonical JSON:
-
-```json
-{
-  "app": [
-    {
-      "environment": "production",
-      "port": 8080,
-      "timeout": "30s",
-      "regions": "us, eu, apac",
-      "database": [
-        { "engine": "postgres", "pool-min": 2, "pool-max": 10 }
-      ]
-    }
-  ]
-}
-```
-
-Note the two consequences of *rules, not styles* (above): every block is an
-**array** (`app` and `database` are one-element lists), and only a bare integer
-is a JSON number — `8080` stays `8080`, but `30s` and `us, eu, apac` are kept as
-exact **strings**. (Canonical output also sorts keys; shown here in source order.)
-
 ## CSSON in one sentence
 
 **CSSON is CSS used as a typed, comment-friendly, browser-loadable config format, where records are CSS blocks and fields are custom properties.**
@@ -404,3 +338,69 @@ import csson
 csson.loads(text)                   # -> dict
 csson.patch(text, [{"op": "replace", "path": "/env", "value": "prod"}])
 ```
+
+## CSSON is CSS *rules*, not CSS *styles*
+
+This is the key idea. A stylesheet is a set of **rules** — `selector { property: value }`
+blocks — which a browser then *applies* to a page, resolving the cascade,
+specificity and inheritance into the **computed styles** on each element.
+
+**CSSON only ever uses the rules as written** — the authored block-and-declaration
+tree, the exact thing the browser exposes as `document.styleSheets` → `cssRules`.
+It never applies them to anything: there is no page, no element, no cascade, no
+computed value. A CSSON document is the *shape* of a stylesheet, read as data.
+
+That single choice explains everything:
+
+- **A selector is a name, not a match.** `database { … }` is a record *called*
+  "database", not a rule that targets `<database>` elements.
+- **A declaration is a field, not a style.** `--port: 8080` is data, not paint.
+- **Every block is a list item → a JSON array.** A stylesheet's rules are an
+  ordered *list*, so each block becomes an array; a single `database { }` is a
+  one-element array `[{…}]`, and repeating the block name just adds items. This is
+  exactly how `cssRules` behaves — CSSON matches the browser, byte for byte.
+- **No cascade ⇒ deterministic.** No specificity, no `!important`, no inheritance;
+  order is literal. A duplicate field is plain last-wins by source order, and the
+  result is identical on every engine.
+
+The core idea is (every document is wrapped in a single `cssonv1` root):
+
+```css
+cssonv1 {
+  app {
+    --environment: production;
+    --port: 8080;
+    --timeout: 30s;
+    --regions: us, eu, apac;
+
+    database {
+      --engine: postgres;
+      --pool-min: 2;
+      --pool-max: 10;
+    }
+  }
+}
+```
+
+which reads as this canonical JSON:
+
+```json
+{
+  "app": [
+    {
+      "environment": "production",
+      "port": 8080,
+      "timeout": "30s",
+      "regions": "us, eu, apac",
+      "database": [
+        { "engine": "postgres", "pool-min": 2, "pool-max": 10 }
+      ]
+    }
+  ]
+}
+```
+
+Note the two consequences of *rules, not styles* (above): every block is an
+**array** (`app` and `database` are one-element lists), and only a bare integer
+is a JSON number — `8080` stays `8080`, but `30s` and `us, eu, apac` are kept as
+exact **strings**. (Canonical output also sorts keys; shown here in source order.)
