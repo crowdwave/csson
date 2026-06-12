@@ -22,8 +22,7 @@ removed).
 **Single reader, two browsers.** Both browser drivers inject the exact same
 dependency-free reader, `readers/browser/reader.js` (browser built-ins only). So
 Chrome and Firefox are tested with identical reader code; any difference is a
-genuine engine difference, not a code difference. `packages/typescript` ships the
-same reader for end users.
+genuine engine difference, not a code difference.
 
 ## Prerequisites (per engine; each is optional — `verify.sh` skips what's absent)
 

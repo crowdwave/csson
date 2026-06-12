@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSSON for Python — documentation</title>
+<meta name="description" content="Use CSSON from Python: a thin ctypes binding over the native libcsson C library — no third-party dependencies, in-process, output byte-identical to every other CSSON engine. Read, edit, patch and validate CSSON.">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div class="wrap">
+  <span class="brand">CSSON</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cli.html">CLI</a>
+    <a href="nodejs.html">Node.js</a>
+    <a href="python.html" class="active">Python</a>
+    <a href="browser.html">Browser</a>
+    <a href="css-data-complete-guide.html">Guide</a>
+    <a href="https://github.com/crowdwave/csson">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+  <section class="hero">
+    <h1>CSSON for Python</h1>
+    <p class="tagline"><b>A thin <code>ctypes</code> binding over the native <code>libcsson</code> C library.</b></p>
+    <p class="sub"><b>No third-party dependencies</b> — <code>ctypes</code> is in the standard library.
+    It runs <b>in-process</b> (no subprocess; direct calls into <code>libcsson</code>), and because it
+    uses the same native core as the CLI and the browsers, its output is
+    <b>byte-identical to every other CSSON engine</b>. Files use the <code>.css</code> extension,
+    named <code>&lt;name&gt;-csson.css</code>.</p>
+  </section>
+
+  <h2 id="install">Install &amp; configure</h2>
+  <p>You need the native shared library: <code>libcsson.so</code> on Linux,
+  <code>libcsson.dylib</code> on macOS, <code>csson.dll</code> on Windows. There are two ways to get it.</p>
+
+  <h3>Build it from the repo</h3>
+  <p>Needs CMake, a C23 compiler, and Node:</p>
+  <pre><code>cmake -S core -B core/build -DCMAKE_BUILD_TYPE=Release
+cmake --build core/build --target csson_shared</code></pre>
+  <p>The module auto-discovers <code>core/build/libcsson.so</code> when run from the repo.</p>
+
+  <h3>Ship the library</h3>
+  <p>Copy <code>libcsson.so</code> next to <code>csson.py</code>, or point <code>$CSSON_LIB</code> at it:</p>
+  <pre><code>export CSSON_LIB=/path/to/libcsson.so</code></pre>
+  <p>Then put <code>csson.py</code> on your path, or <code>pip install .</code> from
+  <code>bindings/python</code>. Requires Python ≥ 3.9.</p>
+
+  <div class="note">The native library is located via, in order: <code>$CSSON_LIB</code>, a copy next
+  to <code>csson.py</code>, the in-repo build (<code>core/build</code>), then the system loader. If none
+  is found, importing raises <code>csson.CssonError</code>.</div>
+
+  <h2 id="usage">Usage</h2>
+  <p>Given a CSSON document (e.g. <code>org-csson.css</code>), every function takes the source text
+  as its first argument:</p>
+  <pre><code>import csson
+
+text = """cssonv1 {
+  --org: "Acme";          /* comments are preserved by edits */
+  dept { --name: "Eng"; --n: 3; }
+}"""
+
+csson.loads(text)                 # {'org': 'Acme', 'dept': [{'n': 3, 'name': 'Eng'}]}
+csson.get(text, "/dept/0/n")      # 3
+csson.set(text, "/org", "Beta")   # new source text, comment intact
+csson.patch(text, [{"op": "replace", "path": "/org", "value": "Z"}])
+csson.dumps({"app": {"port": 8080}})        # object -> CSSON document
+csson.validate("&lt;integer&gt;", "5")           # True   (CSS @property check)</code></pre>
+  <p class="muted">Pointers are RFC 6901 JSON Pointers (<code>""</code> selects the whole document);
+  <code>patch</code> takes an RFC 6902 JSON Patch and is applied atomically.
+  Invalid input raises <code>csson.CssonError</code>.</p>
+
+  <h2 id="api">API</h2>
+  <table>
+    <tr><th>Function</th><th>Returns</th><th>Notes</th></tr>
+    <tr><td><code>loads(text)</code></td><td><code>dict</code>/value</td><td>parse to canonical JSON</td></tr>
+    <tr><td><code>get(text, pointer)</code></td><td>value</td><td>RFC 6901 pointer; <code>""</code> = whole doc</td></tr>
+    <tr><td><code>set(text, pointer, value)</code></td><td><code>str</code></td><td>edit from a Python value (comment-preserving)</td></tr>
+    <tr><td><code>set_raw(text, pointer, token)</code></td><td><code>str</code></td><td>edit from a raw CSSON token (advanced)</td></tr>
+    <tr><td><code>remove(text, pointer)</code></td><td><code>str</code></td><td>delete a field/node</td></tr>
+    <tr><td><code>patch(text, ops)</code></td><td><code>str</code></td><td>RFC 6902 JSON Patch (atomic)</td></tr>
+    <tr><td><code>dumps(obj)</code></td><td><code>str</code></td><td>object → CSSON</td></tr>
+    <tr><td><code>validate(syntax, value)</code></td><td><code>bool</code></td><td><code>@property</code> value check</td></tr>
+    <tr><td><code>version()</code></td><td><code>str</code></td><td>supported standard version</td></tr>
+  </table>
+  <p class="muted">Edit functions (<code>set</code>, <code>set_raw</code>, <code>remove</code>,
+  <code>patch</code>) return new source text and preserve comments and formatting. Any invalid input
+  — a parse error, a bad pointer, a failed patch — raises <code>csson.CssonError</code>.</p>
+
+  <div class="note">A bare integer becomes a JSON <b>number</b>; a quoted string becomes a
+  <b>string</b>; <b>everything else</b> (decimals like <code>1.5</code>, units like <code>30s</code>,
+  colors, <code>url(...)</code>) is kept as an <b>exact string</b> — lossless. Every named block is a
+  JSON <b>array</b> (a single block is a one-element list), mirroring the browser CSSOM. See the
+  <a href="css-data-complete-guide.html">complete guide</a>.</div>
+</main>
+
+<footer class="site">CSSON — a data format which is a strict subset of CSS · <a href="https://github.com/crowdwave/csson">crowdwave/csson</a></footer>
+</body>
+</html>

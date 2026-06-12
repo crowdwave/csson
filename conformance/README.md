@@ -28,8 +28,7 @@ read path (and carried the same bugs); it was removed so the suite checks the on
 real reference core.
 `readers/browser/reader.js` is the single, dependency-free reader (walks the
 built-in CSSOM); **both** the Chrome and Firefox drivers inject it verbatim, so
-the two browsers run identical reader code. `packages/typescript` ships the same
-reader for end users.
+the two browsers run identical reader code.
 
 ## The contract
 For `v1/csson_v1-csson.css`, every conforming reader emits exactly:

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSSON — a data format which is a strict subset of CSS</title>
+<meta name="description" content="CSSON is a data format which is a strict subset of CSS. Configuration data that is also a valid stylesheet — read, edit and validate it from the CLI, Node.js, Python or the browser.">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div class="wrap">
+  <span class="brand">CSSON</span>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="cli.html">CLI</a>
+    <a href="nodejs.html">Node.js</a>
+    <a href="python.html">Python</a>
+    <a href="browser.html">Browser</a>
+    <a href="css-data-complete-guide.html">Guide</a>
+    <a href="https://github.com/crowdwave/csson">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+  <section class="hero">
+    <h1>CSSON</h1>
+    <p class="tagline"><b>CSSON is a data format which is a strict subset of CSS.</b></p>
+    <p class="sub">Your configuration <em>is</em> a valid stylesheet: records are CSS blocks,
+    fields are custom properties (<code>--key</code>), schema is <code>@property</code>, and comments
+    are native. Every CSSON engine — the C library, the browser, Node.js, Python — reads it the same
+    way, byte for byte. Files use the <code>.css</code> extension, named <code>&lt;name&gt;-csson.css</code>.</p>
+  </section>
+
+  <h2 id="examples">Six examples</h2>
+  <p class="muted">Copied verbatim from the <a href="https://github.com/crowdwave/csson/tree/main/samples">samples</a> — simple to sophisticated.</p>
+  <div class="examples">
+      <figure class="example">
+        <figcaption class="cap"><b>hello-minimal-csson.css</b> — the smallest valid CSSON</figcaption>
+        <pre><code>/* The simplest possible CSSON — the "hello world". */
+cssonv1 {
+  --name: "hello";
+  --port: 8080;
+  --enabled: true;
+}</code></pre>
+      </figure>
+      <figure class="example">
+        <figcaption class="cap"><b>recipe-lasagna-csson.css</b> — a cooking recipe</figcaption>
+        <pre><code>/* Classic lasagna recipe — repeated ingredient and step blocks become
+   arrays. Amounts with units stay string scalars; bare integers (servings,
+   step numbers) become JSON numbers. */
+cssonv1 {
+  --title: "Beef &amp; Ricotta Lasagna";
+  --cuisine: "Italian";
+  --servings: 8;
+  --prep-time: 40min;
+  --cook-time: 55min;
+  --oven-temp: 190C;
+  --difficulty: "medium";
+
+  /* Ingredients — repeated, so "ingredient" is an array. */
+  ingredients {
+    ingredient { --name: "lasagna sheets"; --amount: "12 sheets"; }
+    ingredient { --name: "ground beef"; --amount: 500g; }
+    ingredient { --name: "ricotta cheese"; --amount: 250g; }
+    ingredient { --name: "mozzarella"; --amount: 200g; }
+    ingredient { --name: "tomato passata"; --amount: "700ml"; }
+    ingredient { --name: "onion"; --amount: "1 large"; }
+    ingredient { --name: "garlic"; --amount: "3 cloves"; }
+    ingredient { --name: "olive oil"; --amount: "2 tbsp"; }
+  }
+
+  /* Steps — repeated, durations in minutes. */
+  method {
+    step { --order: 1; --instruction: "Soften onion and garlic in oil."; --duration: 5min; }
+    step { --order: 2; --instruction: "Brown the beef, then add passata and simmer."; --duration: 25min; }
+    step { --order: 3; --instruction: "Layer sauce, sheets, ricotta; repeat."; --duration: 10min; }
+    step { --order: 4; --instruction: "Top with mozzarella and bake until golden."; --duration: 40min; }
+    step { --order: 5; --instruction: "Rest before slicing."; --duration: 10min; }
+  }
+
+  /* Per-serving nutrition — gram units stay strings. */
+  nutrition {
+    --calories: 540;
+    --protein: 32g;
+    --carbs: 38g;
+    --fat: 27g;
+  }
+
+  --allergens: dairy, gluten;
+}</code></pre>
+      </figure>
+      <figure class="example">
+        <figcaption class="cap"><b>web-server-csson.css</b> — reverse proxy + virtual hosts</figcaption>
+        <pre><code>/* web-server-csson.css — reverse-proxy + virtual hosts (nginx/caddy style) */
+cssonv1 {
+  --service: "edge-proxy";
+  --worker-processes: auto;        /* verbatim string scalar */
+  --worker-connections: 1024;      /* integer */
+
+  /* Global TLS defaults applied to every vhost unless overridden */
+  tls {
+    --protocols: TLSv1.2, TLSv1.3;       /* comma array */
+    --ciphers: "HIGH:!aNULL:!MD5";
+    --session-timeout: 10m;              /* time unit -&gt; string */
+    --hsts-max-age: 63072000;            /* integer */
+  }
+
+  /* First virtual host: the public website */
+  vhost {
+    --server-name: "example.com", "www.example.com";
+    --listen: 443;
+    --tls: on;
+
+    /* Static site root */
+    location {
+      --path: "/";
+      --root: "/var/www/example";
+      --index: "index.html";
+      --try-files: $uri $uri/ =404;     /* verbatim scalar */
+    }
+
+    /* Reverse proxy to the app upstream */
+    location {
+      --path: "/api/";
+      --proxy-pass: "http://app_backend";
+      --proxy-read-timeout: 30s;
+      --proxy-set-header: Host $host;   /* space tuple */
+    }
+  }
+
+  /* Second virtual host: API gateway on a different port */
+  vhost {
+    --server-name: "api.example.com";
+    --listen: 8443;
+    --tls: on;
+
+    upstream {
+      --name: "app_backend";
+      --balance: least_conn;
+      server { --address: "10.0.1.10:9000"; --weight: 5; }
+      server { --address: "10.0.1.11:9000"; --weight: 3; }
+      server { --address: "10.0.1.12:9000"; --weight: 3; --backup: on; }
+    }
+  }
+}</code></pre>
+      </figure>
+      <figure class="example">
+        <figcaption class="cap"><b>rpg-character-csson.css</b> — a game character sheet</figcaption>
+        <pre><code>/* RPG character sheet — demonstrates @property typing, repeated inventory
+   blocks (array), nested equipment slots, and abilities with cooldowns. */
+cssonv1 {
+  /* Type the hit-point stat so readers know it is an integer. */
+  @property --hp {
+    syntax: "&lt;integer&gt;";
+    inherits: false;
+    initial-value: 100;
+  }
+
+  --name: "Thalia Brightblade";
+  --class: "Paladin";
+  --level: 14;
+  --alignment: "lawful good";
+
+  stats {
+    --hp: 142;
+    --mp: 60;
+    --strength: 18;
+    --dexterity: 12;
+    --constitution: 16;
+    --intelligence: 10;
+    --wisdom: 14;
+    --charisma: 17;
+  }
+
+  /* Equipment slots — a single nested object, each slot a child. */
+  equipment {
+    head { --item: "Helm of Valor"; --armor: 8; }
+    chest { --item: "Sunforged Plate"; --armor: 22; }
+    main-hand { --item: "Dawnbreaker"; --damage: "2d8"; }
+    off-hand { --item: "Aegis Shield"; --block: 30%; }
+  }
+
+  /* Repeated inventory blocks collapse into a JSON array. */
+  inventory {
+    item { --name: "Healing Potion"; --quantity: 5; --weight: 0.5; }
+    item { --name: "Antidote"; --quantity: 2; --weight: 0.3; }
+    item { --name: "Torch"; --quantity: 8; --weight: 1.0; }
+    item { --name: "Rope (50ft)"; --quantity: 1; --weight: 5.0; }
+  }
+
+  --skills: athletics, persuasion, religion, intimidation;
+
+  /* Abilities use time-unit scalars for cooldowns. */
+  abilities {
+    ability { --name: "Lay on Hands"; --heal: 50; --cooldown: 30s; }
+    ability { --name: "Divine Smite"; --damage: "4d8"; --cooldown: 6s; }
+    ability { --name: "Aura of Courage"; --range: 30; --cooldown: 0s; }
+  }
+}</code></pre>
+      </figure>
+      <figure class="example">
+        <figcaption class="cap"><b>design-tokens-csson.css</b> — a design-system token set</figcaption>
+        <pre><code>/* Design system tokens — exercises many color (hex + oklch) and length
+   (px, rem) scalars, space-separated tuples for shadows, and weight
+   integers. All non-integer values stay string scalars. */
+cssonv1 {
+  --system-name: "Aurora UI";
+  --version: 2;
+
+  /* Color palette — hex and oklch values, both string scalars. */
+  colors {
+    --primary: #4f46e5;
+    --primary-oklch: oklch(0.55 0.22 277);
+    --secondary: #0ea5e9;
+    --accent: #f97316;
+    --success: oklch(0.72 0.19 145);
+    --danger: #ef4444;
+    --neutral-900: #111827;
+    --neutral-100: #f3f4f6;
+    --surface: oklch(0.98 0.005 250);
+  }
+
+  /* Spacing scale in pixels. */
+  spacing {
+    --xs: 4px;
+    --sm: 8px;
+    --md: 16px;
+    --lg: 24px;
+    --xl: 40px;
+    --2xl: 64px;
+  }
+
+  /* Typography — sizes in rem, line heights unitless, weights as integers. */
+  typography {
+    --font-family: "Inter, system-ui, sans-serif";
+    size {
+      --body: 1rem;
+      --h1: 2.5rem;
+      --h2: 2rem;
+      --h3: 1.5rem;
+      --caption: 0.875rem;
+    }
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    weight {
+      --regular: 400;
+      --medium: 500;
+      --bold: 700;
+    }
+  }
+
+  /* Border radii in pixels. */
+  radii {
+    --none: 0;
+    --sm: 4px;
+    --md: 8px;
+    --lg: 16px;
+    --pill: 9999px;
+  }
+
+  /* Shadows use space-separated tuples (offset blur spread color). */
+  shadows {
+    --sm: 0 1px 2px #00000022;
+    --md: 0 4px 8px #00000033;
+    --lg: 0 12px 24px #00000044;
+  }
+
+  /* Responsive breakpoints in pixels. */
+  breakpoints {
+    --mobile: 480px;
+    --tablet: 768px;
+    --desktop: 1024px;
+    --wide: 1440px;
+  }
+}</code></pre>
+      </figure>
+      <figure class="example">
+        <figcaption class="cap"><b>spacecraft-mission-csson.css</b> — a deep-space mission profile</figcaption>
+        <pre><code>/* spacecraft-mission-csson.css — deep-space mission profile for an outer-planet flyby */
+cssonv1 {
+  /* Schema: typed property so altitude/length fields validate as &lt;length&gt; */
+  @property --delta-v {
+    syntax: "&lt;length&gt;";        /* expressed here as a velocity-like length token */
+    inherits: false;
+    initial-value: 0kms;
+  }
+
+  --mission: "Helios Probe";
+  --designation: "HP-7";
+  --launch-date: "2027-09-14";
+  --target: "Neptune";
+  --duration: 12y;                 /* time-ish unit -&gt; verbatim string */
+
+  /* The spacecraft bus */
+  spacecraft {
+    --name: "Helios";
+    --dry-mass: 2400kg;
+    --wet-mass: 5600kg;
+    --dimensions: 4.2m 3.1m 3.1m;  /* space tuple */
+    --pointing-accuracy: 0.01deg;
+
+    /* Power subsystem: dual RTGs this far from the sun */
+    power {
+      --source: "RTG";
+      --rtg-count: 2;
+      --bol-output: 470W;          /* beginning-of-life */
+      --eol-output: 290W;          /* end-of-life */
+      --battery: "Li-ion";
+      --battery-capacity: 50Ah;
+    }
+  }
+
+  /* Science instruments — repeated siblings form a JSON array */
+  instrument {
+    --name: "Wide-Angle Camera";
+    --type: "imager";
+    --mass: 12kg;
+    --power-draw: 18W;
+    --resolution: "2048x2048";
+  }
+  instrument {
+    --name: "Magnetometer";
+    --type: "fields";
+    --mass: 3kg;
+    --power-draw: 4W;
+    --range: 16000nT;
+  }
+  instrument {
+    --name: "Plasma Spectrometer";
+    --type: "particles";
+    --mass: 7kg;
+    --power-draw: 9W;
+    --energy-range: "10eV-30keV";
+  }
+
+  /* Mission phases */
+  phase {
+    --name: "launch";
+    --vehicle: "Falcon Heavy";
+    --c3: 80km2s2;
+    --duration: 35m;
+  }
+  phase {
+    --name: "cruise";
+    --duration: 11y;
+    --hibernation: on;
+    --course-corrections: 6;
+  }
+  phase {
+    --name: "orbit";
+    --insertion-burn: 1.2kms;
+    --orbit-period: 14d;
+    --periapsis: 4000km;
+  }
+
+  /* Propulsion delta-v budget */
+  delta-v-budget {
+    --total: 4.8kms;
+    --launch-injection: 3.1kms;
+    --course-correction: 0.4kms;
+    --orbit-insertion: 1.2kms;
+    --margin: 0.1kms;
+  }
+
+  /* Communications */
+  comms {
+    --antenna: "high-gain";
+    --dish-diameter: 2.5m;
+    --bands: x, ka;                /* comma array */
+    --downlink-rate: 250kbps;
+    --uplink-rate: 2kbps;
+    --network: "Deep Space Network";
+  }
+}</code></pre>
+      </figure>
+  </div>
+
+  <h2 id="use">Use it from your language</h2>
+  <div class="cards">
+    <a class="card" href="cli.html"><h3>CLI →</h3><p>The <code>csson</code> command: canon, get, set, patch, validate.</p></a>
+    <a class="card" href="nodejs.html"><h3>Node.js →</h3><p><code>@csson/js</code> — runs the wasm core, no native build.</p></a>
+    <a class="card" href="python.html"><h3>Python →</h3><p><code>ctypes</code> FFI over <code>libcsson</code>, zero dependencies.</p></a>
+    <a class="card" href="browser.html"><h3>Browser →</h3><p>Read via the native CSSOM; edit via the wasm core.</p></a>
+  </div>
+
+  <h2 id="what">What CSSON is (and isn't)</h2>
+  <p>CSSON reuses a real CSS parser everywhere instead of inventing a new format. From CSS it
+  inherits comments, a typed value grammar, <code>@property</code> schema, and — crucially —
+  browser-loadability: a CSSON file served as <code>text/css</code> parses natively in any browser.</p>
+  <table>
+    <tr><th>CSSON is</th><th>CSSON is not</th></tr>
+    <tr><td>a config/data format that is valid CSS</td><td>a styling language or cascade system</td></tr>
+    <tr><td>records (blocks) + fields (<code>--props</code>)</td><td>a full CSS engine</td></tr>
+    <tr><td>deterministic + byte-identical across engines</td><td>JSON with different punctuation</td></tr>
+  </table>
+  <div class="note">A bare integer becomes a JSON number; a quoted string becomes a string;
+  <b>everything else</b> (decimals like <code>1.5</code>, units like <code>30s</code>, colors,
+  <code>url(...)</code>) is kept as an exact string. Every named block is a JSON <b>array</b> (a
+  single block is a one-element list), mirroring the browser CSSOM. See the
+  <a href="css-data-complete-guide.html">complete guide</a>.</div>
+</main>
+
+<footer class="site">CSSON — a data format which is a strict subset of CSS · <a href="https://github.com/crowdwave/csson">crowdwave/csson</a></footer>
+</body>
+</html>

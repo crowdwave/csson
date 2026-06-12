@@ -313,7 +313,9 @@ a browser-computed config format
 JSON with different punctuation
 ```
 
-The strongest version of CSSON is a **CSS-syntax config format** with a Rust/Servo-based reference validator, CLI, WASM package, C ABI, and language bindings.
+The strongest version of CSSON is a **CSS-syntax config format** with a single
+reference core (TypeScript on QuickJS-ng + PostCSS + csstree) exposed as a CLI, a
+C ABI, a WebAssembly module, and language bindings.
 
 ---
 
@@ -322,59 +324,65 @@ custom properties (`--key`), nested objects are nested rules, and repeated sibli
 rules become arrays. The point is to carry structured data through pipelines that
 already parse CSS — without adding a second format or parser.
 
-This repository's goal: provide everything needed to use CSSON across the
-**major programming environments**, from a single standard that every
-implementation reads the same way.
+This repository provides everything needed to use CSSON across major programming
+environments, from a single standard that every implementation reads the same way.
 
 ## Prime directive
 > **CSSON never writes its own parsing/processing.** Every implementation reads
-> from a real CSS parser's authored rule tree and only maps that tree to data. No
+> from a real CSS parser's authored rule tree and only maps that tree to data — no
 > hand-written tokenizers, scanners, brace-walkers, or regex extraction. The
-> system is based on **liblexbor**; the reference core is C over lexbor. See
-> `CLAUDE.md`.
+> reference core is TypeScript on **QuickJS-ng** over **PostCSS** (rule tree +
+> comment-preserving edits) and **csstree** (`@property`). See `CLAUDE.md`.
+
+## Governing rule
+> **CSSON reproduces what a developer gets reading the stylesheet from a browser
+> with ordinary API calls** (`document.styleSheets` → `cssRules`). The browser is
+> the oracle; canonical output is **byte-identical across every engine**.
 
 ## Layout
 ```
 csson/
-  CLAUDE.md         project directives (prime directive above)
-  spec/             the standard — the single canonical definition (versioned)
-    v1/SPEC.md      normative CSSON v1 (current)
-  core/             the C reference core on liblexbor: libcsson (read + edit) + the csson CLI
-                    include/csson.h (C ABI), src/, cli/, build.sh, PLATFORMS.md
-  packages/
-    typescript/     the JS/TS environment (wraps a real CSS parser)
-  bindings/         one wrapper per environment, each links libcsson (or lexbor-via-WASM)
-    wasm/ nodejs/ rust/ python/ go/ java/ dotnet/ c/ ruby/ php/ shell/
-  conformance/      canonical document + expected JSON + independent multi-engine verifier
-    v1/readers/     c (lexbor) · chrome (Blink) · firefox (Gecko)
-    VERIFICATION.md the cross-engine (core / Chrome / Firefox) verification runbook
-  docs/             css-data-complete-guide.html — the complete guide (live demo, open in a browser)
+  CLAUDE.md         project directives (prime directive + browser-parity)
+  spec/v1/SPEC.md   the standard — normative CSSON v1
+  core/             the reference core: a C facade over embedded QuickJS-ng running
+                    ts/csson.ts (PostCSS + csstree) -> libcsson (.a/.so) + the csson CLI
+  bindings/
+    javascript/     JS/TS — runs csson.wasm (Node, Deno, browser); no native build
+    python/         ctypes FFI over libcsson.so; zero dependencies
+    wasm/           builds the portable csson.wasm core the JS binding loads
+  conformance/v1/   canonical fixtures + expected JSON + a 4-engine verifier
+    readers/        c (QuickJS) · chrome (Blink) · firefox (Gecko) · wasm
+  samples/          ~90 example documents (features/ demos + showcase/ real-world)
+  docs/             the GitHub Pages site (landing + per-language docs + guide)
 ```
+
+## Bindings
+- **[JavaScript / TypeScript](bindings/javascript)** — runs `csson.wasm`; Node via
+  `node:wasi`, browser via a tiny WASI shim. No native build, ships types.
+- **[Python](bindings/python)** — `ctypes` FFI over the native `libcsson` shared
+  library; no third-party dependencies.
+
+Both expose the same surface (`parse`/`loads`, `get`, `set`, `remove`, `patch`,
+`stringify`/`dumps`, `validate`, `version`) and the `csson` CLI offers it from a
+shell. See the [docs site](https://crowdwave.github.io/csson/).
+
+## Conformance
+Canonical JSON is **byte-identical across four engines** — the C core (QuickJS),
+Chrome (Blink), Firefox (Gecko), and the WASM build — on every fixture, comments
+and edits included. Run `conformance/v1/verify.sh`.
 
 ## Versioning
 - **Standard version** — a single integer (CSSON v1, v2, …); the caller selects it
-  (default = current). **v1 is the current — and only — standard.** A future v2
-  (if needed) is added beside v1, which is then frozen.
-- **Implementation version** — each library's own semver, independent of the
-  standard version.
-
-## Architectures
-amd64 (x86-64) and ARM64 are first-class across Linux/macOS/Windows, plus wasm.
-CPU architecture never affects semantics. See `core/PLATFORMS.md`.
+  (default = current). **v1 is the current — and only — standard.** A future v2,
+  if needed, is added beside v1, which is then frozen.
+- **Implementation version** — each library's own semver.
 
 ## Status
-- `spec/v1` — current standard (draft).
-- `conformance/v1` — canonical doc + `expected.json` (614 B, MD5 `9ae94e…`) plus
-  a numeric edge-case fixture. Byte-identical across **C (lexbor)**, **Chrome
-  (Blink)**, **Firefox (Gecko)**, and the core — incl. floats/exponents. The
-  browser reader uses **only built-in CSSOM** (no deps); `packages/typescript`
-  ships it for end users.
-- `core` — **working**: `libcsson` + the `csson` CLI on lexbor. Reads canonical
-  JSON (matches `expected.json`) and performs **comment-preserving** edits
-  (`set`/`rm`) and **RFC 6902 JSON Patch** (`patch`, atomic) via byte-splicing at
-  lexbor offsets. Patch JSON parsed by vendored yyjson (MIT, stack-safe).
-- `packages/typescript`, `bindings/*` — scaffolds; each links `libcsson` (or
-  lexbor compiled to WASM) for its environment.
+The core is **working**: reads canonical JSON, performs comment-preserving edits
+(`set`/`rm`) and atomic RFC 6902 JSON Patch, and validates `@property` syntaxes —
+all byte-identical across the four engines. The JavaScript/TypeScript and Python
+bindings are **complete and tested**.
 
-See `docs/css-data-complete-guide.html` — the complete CSSON v1 guide; open it in
-any browser, the demo reads CSSON live via the built-in CSSOM (no server, no deps).
+See the [documentation site](https://crowdwave.github.io/csson/) — the landing page
+with live examples, per-language guides (CLI, Node.js, Python, browser), and
+`docs/css-data-complete-guide.html`, the complete CSSON v1 guide.

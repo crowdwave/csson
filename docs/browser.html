@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSSON in the browser — documentation</title>
+<meta name="description" content="Use CSSON in the browser: read it with the browser's own CSSOM (zero dependencies, no wasm), and edit it (set/remove/patch) with the same wasm core as everywhere else — byte-identical output.">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div class="wrap">
+  <span class="brand">CSSON</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cli.html">CLI</a>
+    <a href="nodejs.html">Node.js</a>
+    <a href="python.html">Python</a>
+    <a href="browser.html" class="active">Browser</a>
+    <a href="css-data-complete-guide.html">Guide</a>
+    <a href="https://github.com/crowdwave/csson">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+  <section class="hero">
+    <h1>CSSON in the browser</h1>
+    <p class="sub">In the browser, <b>read</b> CSSON with the native CSSOM — no dependencies, no wasm —
+    and <b>edit</b> it (set / remove / patch) with the same wasm core as everywhere else, byte-identical.</p>
+  </section>
+
+  <h2 id="serve">Serve it as CSS</h2>
+  <p>A CSSON file <em>is</em> valid CSS, so the browser parses it natively — but only when the server
+  hands it over as a stylesheet. A CSSON file is named <code>&lt;name&gt;-csson.css</code> and must be
+  served with <code>Content-Type: text/css</code>. Once it is, you can load it like any stylesheet:</p>
+  <pre><code>&lt;link rel="stylesheet" href="/config-csson.css"&gt;</code></pre>
+  <p>…or fetch its text and build a sheet from it yourself:</p>
+  <pre><code>const text = await fetch("/config-csson.css").then(r =&gt; r.text());</code></pre>
+  <div class="note">The <code>-csson.css</code> name and the <code>text/css</code> MIME type are what
+  make a browser parse the file with its native CSS engine. Reading then needs nothing else.</div>
+
+  <h2 id="read">Read via the native CSSOM (no wasm, no deps)</h2>
+  <p>The browser has already parsed the stylesheet into its authored rule tree, so reading is just a
+  walk of <code>cssRules</code>: find the <code>cssonv1</code> rule, map each <code>--custom</code>
+  property to a field, and turn nested rules into children (stripping a leading <code>&amp;</code> from
+  the selector). This is the same algorithm as the C/lexbor core and the other engines — it is
+  <b>read-only</b> and produces byte-identical canonical data.</p>
+  <pre><code>// Read-only canonical reader using ONLY the browser's built-in CSSOM.
+function cssonCanon(sheet) {
+  const seltype = r =&gt; r.selectorText.replace(/^[&amp;\s]+/, "").trim();
+  const coerce = s =&gt; {
+    s = s.trim();
+    // canonical integer in the JS-safe range → number; otherwise verbatim string
+    if (/^(?:0|-?[1-9][0-9]*)$/.test(s)) {
+      const n = Number(s);
+      if (Number.isSafeInteger(n)) return n;
+      return s;
+    }
+    if (s.length &gt;= 2 &amp;&amp; s[0] === '"' &amp;&amp; s.at(-1) === '"') return s.slice(1, -1);
+    return s;
+  };
+  const node = rule =&gt; {
+    const o = {}, st = rule.style;
+    for (let i = 0; i &lt; st.length; i++) {
+      const p = st[i];
+      if (p.startsWith("--")) o[p.slice(2)] = coerce(st.getPropertyValue(p));
+    }
+    for (const r of rule.cssRules || []) {
+      if (r.selectorText === undefined) continue;   // skip @property etc.
+      const ty = seltype(r);
+      (o[ty] = o[ty] || []).push(node(r));
+    }
+    return o;
+  };
+  let result = null;
+  for (const r of sheet.cssRules) {
+    if (r.selectorText !== undefined &amp;&amp; seltype(r) === "cssonv1") result = node(r);
+  }
+  // sort keys recursively for a canonical, byte-identical shape
+  const canon = v =&gt; {
+    if (Array.isArray(v)) return v.map(canon);
+    if (v &amp;&amp; typeof v === "object") {
+      const out = {};
+      for (const k of Object.keys(v).sort()) out[k] = canon(v[k]);
+      return out;
+    }
+    return v;
+  };
+  return JSON.stringify(canon(result));
+}</code></pre>
+  <p>If you have a loaded <code>&lt;link&gt;</code> stylesheet, grab its <code>CSSStyleSheet</code> from
+  <code>document.styleSheets</code> and pass it straight to <code>cssonCanon</code>. If you only have
+  the text, build a sheet from it first:</p>
+  <pre><code>const sheet = new CSSStyleSheet();
+await sheet.replace(cssonText);
+// …then walk sheet.cssRules, e.g. cssonCanon(sheet)</code></pre>
+  <div class="note muted">This path is <b>read-only</b>. It is byte-identical to the C (lexbor) reader
+  and the other browser engines — that parity is exactly what the conformance harness checks.</div>
+
+  <h2 id="edit">Edit via the wasm core</h2>
+  <p>To <b>set</b>, <b>remove</b>, <b>patch</b>, or to author / validate, load the wasm binding. Loading
+  wasm is async, so initialize once and reuse the returned API:</p>
+  <pre><code>import { init } from "@csson/js/browser";
+
+const csson = await init(new URL("./csson.wasm", import.meta.url));
+
+csson.parse(text);                  // canonical JSON (same as the reader above)
+csson.set(text, "/port", 9090);     // comment-preserving — returns new source text
+csson.remove(text, "/dept/1");      // returns new source text
+csson.validate("&lt;integer&gt;", "5");   // true — CSS @property value check</code></pre>
+  <div class="note">Editing must go through the wasm core, not the native CSSOM. The CSSOM exposes
+  <b>no source byte offsets</b>, so it cannot splice the original text, and editing through
+  <code>cssText</code> re-serializes the rules and <b>strips comments</b>. The wasm core edits by
+  splicing the original bytes at the parser-provided offsets, so comments and formatting survive — and
+  its output is byte-identical to the native C library (the browser-parity invariant). Reading is
+  dependency-free; editing brings in the one wasm download.</div>
+
+  <h2 id="types">Types &amp; shape</h2>
+  <div class="note">A bare integer becomes a JSON <b>number</b>; a quoted string becomes a
+  <b>string</b>; <b>everything else</b> (decimals like <code>1.5</code>, units like <code>30s</code>,
+  colors, <code>url(...)</code>) is kept as an exact string. Every named block is a JSON
+  <b>array</b> — a single block is a one-element list. That is exactly how the browser CSSOM models
+  rules (repeated selectors are just repeated rules), which is why CSSON reads identically here and
+  everywhere else. See the <a href="css-data-complete-guide.html">complete guide</a>.</div>
+</main>
+
+<footer class="site">CSSON — a data format which is a strict subset of CSS · <a href="https://github.com/crowdwave/csson">crowdwave/csson</a></footer>
+</body>
+</html>

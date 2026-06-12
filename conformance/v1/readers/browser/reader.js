@@ -8,7 +8,7 @@
 // browser-parity invariant is tested against across engines.
 //
 // Injected verbatim into Chrome (CDP) and Firefox (WebDriver) by the drivers,
-// and mirrored by packages/typescript/src/csson.ts for end users.
+// the same reader.js is also used by the Firefox driver (browser-parity).
 function cssonCanon(sheet) {
   var seltype = function (r) { return r.selectorText.replace(/^[&\s]+/, "").trim(); };
   var coerce = function (s) {

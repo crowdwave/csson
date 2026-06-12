@@ -13,7 +13,7 @@ Invariants that gate every task: **never write our own CSS parsing** and
 - [x] **Comment-preserving edits** via lexbor source offsets (proven)
 - [x] **Verbatim scalar read** (source offsets) — fixes `1e3`/float parity
 - [x] **Cross-engine conformance**: C · Chrome (Blink) · Firefox (Gecko) · core all byte-identical (canonical + numeric fixtures)
-- [x] **Browser reader** — built-ins-only CSSOM (`packages/typescript` + shared `reader.js`)
+- [x] **Browser reader** — built-ins-only CSSOM (shared `conformance/v1/readers/browser/reader.js`)
 - [x] **Firefox** installed & driven (geckodriver/WebDriver); Chrome via CDP
 - [x] Verification runbook (`conformance/VERIFICATION.md`); platforms matrix (`core/PLATFORMS.md`)
 - [x] `-csson.css` extension enforced across docs/fixtures
