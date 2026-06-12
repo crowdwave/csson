@@ -1,4 +1,4 @@
-/* submarine-systems.csson — submarine onboard systems configuration */
+/* submarine-systems-csson.css — submarine onboard systems configuration */
 cssonv1 {
   /* Typed schema: crush/operating depths validate as <length> */
   @property --depth {

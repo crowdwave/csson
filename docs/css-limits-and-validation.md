@@ -65,7 +65,7 @@ slice*, what CSSON does about each, and where a limit is a **browser-parity risk
 
 ## Recommended additional mandates (spec candidates)
 
-- **Encoding:** a `.csson` file MUST be UTF-8, MUST NOT use `@charset`, SHOULD NOT
+- **Encoding:** a `-csson.css` file MUST be UTF-8, MUST NOT use `@charset`, SHOULD NOT
   start with a BOM, and SHOULD be served `Content-Type: text/css; charset=utf-8`.
   This removes the only realistic encoding parity risk (#2).
 - **No `var()` / `env()` in values** (they introduce substitution and the

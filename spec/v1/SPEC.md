@@ -15,10 +15,12 @@ a real CSS parser already gives you, and invents nothing on top of CSS.
 
 ## 0. File extension & media type
 
-A CSSON file uses the **`.csson`** extension. Because a CSSON file is also valid
-CSS, it is served as **`Content-Type: text/css`** so a browser will parse it as a
-stylesheet (e.g. `<link rel="stylesheet" href="data.csson">`). Tools read `.csson`
-files directly.
+A CSSON file uses the **`.css`** extension and is named **`<name>-csson.css`**
+(e.g. `data-csson.css`) so it is recognisably CSSON while remaining valid CSS.
+Because a CSSON file is also valid CSS, it is served as
+**`Content-Type: text/css`** so a browser will parse it as a stylesheet (e.g.
+`<link rel="stylesheet" href="data-csson.css">`). Tools read `-csson.css` files
+directly.
 
 ## 1. Data model
 

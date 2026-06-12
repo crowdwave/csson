@@ -36,19 +36,19 @@ ok()     { report "PASS" "$1"; }
 echo "== Baseline: already-defended invariants (must stay PASS) =="
 
 # B1 — scalar-value breakout via set is rejected (bug H2 fix)
-printf 'cssonv1{ --x: 1; }\n' > "$tmp/b1.csson"
-if "$CS" set "$tmp/b1.csson" /x '2;} evil{--z:9' >/dev/null 2>&1; then
+printf 'cssonv1{ --x: 1; }\n' > "$tmp/b1-csson.css"
+if "$CS" set "$tmp/b1-csson.css" /x '2;} evil{--z:9' >/dev/null 2>&1; then
   report "REGRESSED" "set value breakout is NO LONGER blocked"; open=$((open+1))
 else ok "set scalar-value breakout rejected (H2)"; fi
 
 # B2 — root removal rejected
-if "$CS" rm "$tmp/b1.csson" / >/dev/null 2>&1; then
+if "$CS" rm "$tmp/b1-csson.css" / >/dev/null 2>&1; then
   report "REGRESSED" "root removal no longer blocked"; open=$((open+1))
 else ok "document-root removal rejected (M3)"; fi
 
 # B3 — deep nesting does not crash (bounded recursion)
-python3 -c "open('$tmp/b3.csson','w').write('cssonv1{'+'a{'*20000+'--x:1;'+'}'*20000+'}')"
-"$CS" canon "$tmp/b3.csson" >/dev/null 2>&1; rc=$?
+python3 -c "open('$tmp/b3-csson.css','w').write('cssonv1{'+'a{'*20000+'--x:1;'+'}'*20000+'}')"
+"$CS" canon "$tmp/b3-csson.css" >/dev/null 2>&1; rc=$?
 if [ "$rc" -le 128 ]; then ok "deep nesting bounded, no crash (rc=$rc, H1)"
 else report "REGRESSED" "deep nesting crashed (rc=$rc)"; open=$((open+1)); fi
 
@@ -56,16 +56,16 @@ echo
 echo "== Open findings (expected VULNERABLE/DIVERGENT until fixed) =="
 
 # S1 — patch-API structural injection (keys / types / path tokens)
-printf 'cssonv1{ --x: 1; }\n' > "$tmp/s1.csson"
+printf 'cssonv1{ --x: 1; }\n' > "$tmp/s1-csson.css"
 printf '[{"op":"add","path":"/y: 1;} evil{--z","value":7}]' > "$tmp/s1.patch"
-if "$CS" patch "$tmp/s1.csson" "$tmp/s1.patch" 2>/dev/null | grep -q 'evil'; then
+if "$CS" patch "$tmp/s1-csson.css" "$tmp/s1.patch" 2>/dev/null | grep -q 'evil'; then
   vuln "S1 patch-API structural injection (key/type/path written verbatim)" "patch serializer"
 else ok "S1 patch-API injection defended"; fi
 
 # S3 — set comment-injection: value 'a/*' must be rejected, or leave the doc intact.
 # Secure = set fails (no output) OR the document still round-trips to {x:..,y:2}.
-printf 'cssonv1{ --x: 1; --y: 2; }\n' > "$tmp/s3.csson"
-if "$CS" set "$tmp/s3.csson" /x 'a/*' > "$tmp/s3.out" 2>/dev/null; then
+printf 'cssonv1{ --x: 1; --y: 2; }\n' > "$tmp/s3-csson.css"
+if "$CS" set "$tmp/s3-csson.css" /x 'a/*' > "$tmp/s3.out" 2>/dev/null; then
   got=$("$CS" canon "$tmp/s3.out" 2>/dev/null)
   if [ "$got" = '{"x":"a/*","y":2}' ]; then ok "S3 comment value stored intact ($got)"
   else vuln "S3 set comment-injection corrupts doc (got $got)" "valid_scalar"; fi
@@ -73,8 +73,8 @@ else
   ok "S3 comment-injection rejected (set refused 'a/*')"
 fi
 # and a benign value must still succeed:
-printf 'cssonv1{ --x: 1; }\n' > "$tmp/s3b.csson"
-[ "$("$CS" set "$tmp/s3b.csson" /x 42 2>/dev/null | "$CS" canon - 2>/dev/null)" = '{"x":42}' ] \
+printf 'cssonv1{ --x: 1; }\n' > "$tmp/s3b-csson.css"
+[ "$("$CS" set "$tmp/s3b-csson.css" /x 42 2>/dev/null | "$CS" canon - 2>/dev/null)" = '{"x":42}' ] \
   && ok "S3 benign set still works" || { report "REGRESSED" "benign set broke"; open=$((open+1)); }
 
 # S5 — algorithmic complexity: many same-type siblings must stay near-linear.
@@ -82,11 +82,11 @@ printf 'cssonv1{ --x: 1; }\n' > "$tmp/s3b.csson"
 # quadratic -> ~4x. A fixed wall-time threshold would just flag a slower engine,
 # so we assert the SCALING RATIO instead.
 s5_time() { # $1 = sibling count -> prints seconds
-  python3 -c "open('$tmp/s5.csson','w').write('cssonv1{'+('it{--a:1;}'*$1)+'}')"
+  python3 -c "open('$tmp/s5-csson.css','w').write('cssonv1{'+('it{--a:1;}'*$1)+'}')"
   python3 -c "
 import subprocess,time
 t=time.monotonic()
-subprocess.run(['$CS','canon','$tmp/s5.csson'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+subprocess.run(['$CS','canon','$tmp/s5-csson.css'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 print(f'{time.monotonic()-t:.3f}')"
 }
 s5a=$(s5_time 20000); s5b=$(s5_time 40000)
@@ -100,8 +100,8 @@ else vuln "S5 O(N^2) read amplification: 20k->40k scaled ${s5ratio}x (${s5a}s->$
 # cannot occur in a real field name; the practical check is that a tilde token is
 # DECODED (so /x~0 looks for key "x~", not literal "x~0") and a normal pointer is
 # unaffected. We assert no regression on a plain pointer; decoding is implemented.
-printf 'cssonv1{ --x: 1; }\n' > "$tmp/s7.csson"
-if [ "$("$CS" set "$tmp/s7.csson" /x 9 2>/dev/null | "$CS" canon - 2>/dev/null)" = '{"x":9}' ]; then
+printf 'cssonv1{ --x: 1; }\n' > "$tmp/s7-csson.css"
+if [ "$("$CS" set "$tmp/s7-csson.css" /x 9 2>/dev/null | "$CS" canon - 2>/dev/null)" = '{"x":9}' ]; then
   ok "S7 RFC 6901 ~0/~1 decoding implemented (plain pointer unaffected)"
 else report "REGRESSED" "S7 pointer handling broke"; open=$((open+1)); fi
 
@@ -109,8 +109,8 @@ if [ "$have_browser" = 1 ]; then
   echo
   echo "== Parser differentials vs Chrome (DIVERGENT = parity break) =="
   cmp_engine() { # desc cssontext finding
-    printf '%b' "$2" > "$tmp/d.csson"
-    local c b; c=$("$CS" canon "$tmp/d.csson" 2>/dev/null); b=$(browser "$tmp/d.csson")
+    printf '%b' "$2" > "$tmp/d-csson.css"
+    local c b; c=$("$CS" canon "$tmp/d-csson.css" 2>/dev/null); b=$(browser "$tmp/d-csson.css")
     if [ "$c" = "$b" ]; then ok "$1 (core==chrome: $c)"
     else diverge "$1 (core=$c chrome=$b)" "$3"; fi
   }

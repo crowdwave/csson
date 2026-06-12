@@ -117,19 +117,19 @@ install(FILES include/csson.h DESTINATION include)
 enable_testing()
 set(CONF "${CMAKE_CURRENT_SOURCE_DIR}/../conformance/v1")
 add_test(NAME canon_v1 COMMAND ${CMAKE_COMMAND}
-  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/csson_v1.csson -DEXP=${CONF}/expected.json
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/csson_v1-csson.css -DEXP=${CONF}/expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME canon_numeric COMMAND ${CMAKE_COMMAND}
-  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/numeric.csson -DEXP=${CONF}/fixtures/numeric.expected.json
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/numeric-csson.css -DEXP=${CONF}/fixtures/numeric.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME canon_edge COMMAND ${CMAKE_COMMAND}
-  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/edge.csson -DEXP=${CONF}/fixtures/edge.expected.json
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/edge-csson.css -DEXP=${CONF}/fixtures/edge.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME canon_preprocess COMMAND ${CMAKE_COMMAND}
-  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/preprocess.csson -DEXP=${CONF}/fixtures/preprocess.expected.json
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/preprocess-csson.css -DEXP=${CONF}/fixtures/preprocess.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME canon_selectors COMMAND ${CMAKE_COMMAND}
-  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/selectors.csson -DEXP=${CONF}/fixtures/selectors.expected.json
+  -DCSSON=$<TARGET_FILE:csson_cli> -DDOC=${CONF}/fixtures/selectors-csson.css -DEXP=${CONF}/fixtures/selectors.expected.json
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/canon_test.cmake)
 add_test(NAME edits COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/edits.sh $<TARGET_FILE:csson_cli>)
 add_test(NAME handle_api COMMAND handle_test)

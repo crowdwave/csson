@@ -1,4 +1,4 @@
-# preprocess.csson — CSS Syntax §3.3 input normalization
+# preprocess-csson.css — CSS Syntax §3.3 input normalization
 
 Asserts that all engines normalize the input stream identically before reading:
 

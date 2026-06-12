@@ -4,7 +4,7 @@
 // (../browser/reader.js) and runs it against Firefox's built-in CSSOM, to prove
 // cross-browser parity (browser-parity invariant — see ../../../../CLAUDE.md).
 //
-// Usage: node canon_firefox.js <file.csson>
+// Usage: node canon_firefox.js <file-csson.css>
 // Binaries: $GECKODRIVER / $FIREFOX_BIN, else the ones under tmp/tools/.
 const { spawn } = require("child_process");
 const fs = require("fs");

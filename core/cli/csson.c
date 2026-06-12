@@ -1,14 +1,7 @@
-/* csson — the CSSON command-line utility (over libcsson / liblexbor).
+/* csson — the CSSON command-line utility (over libcsson).
  *
- *   csson canon     <file>               parse -> canonical JSON (default verb)
- *   csson get       <file> <ptr>         read one value (JSON) at a JSON Pointer
- *   csson check     <file>               exit 0 if valid CSSON, else 1
- *   csson set       <file> <ptr> <value> replace a scalar from a raw CSSON token
- *   csson set-json  <file> <ptr> <json>  replace a scalar from a JSON value
- *   csson rm        <file> <ptr>         remove a field or node (comment-preserving)
- *   csson patch     <file> <patch.json>  apply an RFC 6902 JSON Patch (comment-preserving)
- *   csson from-json <file>               serialize a JSON object into a CSSON document
- *   csson versions                       standard versions this build supports
+ * CSSON is a data format which is a strict subset of CSS. CSSON files use the
+ * `.css` extension (named `<name>-csson.css`). See `csson --help`.
  *
  * <file> of "-" reads stdin. Read/edit output goes to stdout (pipe or redirect).
  */
@@ -18,6 +11,40 @@
 #include "../include/csson.h"
 
 static_assert(__STDC_VERSION__ >= 202311L, "CSSON requires C23 (compile with -std=c23)");
+
+/* The CLI tool version (distinct from the CSSON standard version it implements,
+ * which is `csson versions`). */
+#define CSSON_CLI_VERSION "0.2.0"
+
+static void usage(FILE *f) {
+    fprintf(f,
+        "csson " CSSON_CLI_VERSION " — work with CSSON (a data format which is a strict subset of CSS)\n"
+        "\n"
+        "Usage: csson <command> [arguments]\n"
+        "       A <file> of \"-\" reads stdin; read/edit output goes to stdout.\n"
+        "\n"
+        "Commands:\n"
+        "  canon     <file>                     parse a document to canonical JSON (default)\n"
+        "  get       <file> <pointer>           read one value at an RFC 6901 JSON Pointer\n"
+        "  check     <file>                     exit 0 if the document is valid CSSON, else 1\n"
+        "  set       <file> <pointer> <value>   replace a scalar from a raw CSSON token\n"
+        "  set-json  <file> <pointer> <json>    replace a scalar from a JSON value\n"
+        "  rm        <file> <pointer>           remove a field or node (comment-preserving)\n"
+        "  patch     <file> <patch.json>        apply an RFC 6902 JSON Patch (comment-preserving)\n"
+        "  from-json <file>                     serialize a JSON object into a CSSON document\n"
+        "  validate  <syntax> <value>           check a value against a CSS @property syntax\n"
+        "  versions                             CSSON standard versions this build supports\n"
+        "\n"
+        "Options:\n"
+        "  -h, --help                           show this help and exit\n"
+        "  -V, --version                        show the version and exit\n"
+        "\n"
+        "Examples:\n"
+        "  csson canon config-csson.css\n"
+        "  cat config-csson.css | csson get - /server/0/port\n"
+        "  csson set-json config-csson.css /port 9090 > new-csson.css\n"
+        "  csson validate '<integer>' 5\n");
+}
 
 static void *xmalloc(size_t n) {
     void *p = malloc(n);
@@ -32,7 +59,7 @@ static void *xrealloc(void *p, size_t n) {
     return q;
 }
 
-/* Hard ceiling on input size (a .csson document or a patch). Bounds memory use on
+/* Hard ceiling on input size (a -csson.css document or a patch). Bounds memory use on
    a huge or endless stream rather than growing until the process is killed. */
 #define CSSON_MAX_INPUT ((size_t)256 << 20) /* 256 MiB */
 
@@ -71,12 +98,19 @@ static int fail(char *err) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "usage: csson "
-                        "canon|get|check|set|set-json|rm|patch|from-json|validate|versions ...\n");
+        usage(stderr);
         return 2;
     }
     const char *cmd = argv[1];
 
+    if (strcmp(cmd, "-h") == 0 || strcmp(cmd, "--help") == 0 || strcmp(cmd, "help") == 0) {
+        usage(stdout);
+        return 0;
+    }
+    if (strcmp(cmd, "-V") == 0 || strcmp(cmd, "--version") == 0) {
+        printf("csson %s (CSSON standard v%s)\n", CSSON_CLI_VERSION, csson_supported_versions());
+        return 0;
+    }
     if (strcmp(cmd, "versions") == 0) {
         printf("%s\n", csson_supported_versions());
         return 0;

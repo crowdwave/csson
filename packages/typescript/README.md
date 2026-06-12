@@ -1,7 +1,7 @@
 # csson (browser)
 
-Read a `.csson` file in the browser using **only the browser's built-in CSSOM** —
-no parser, no dependencies. A `.csson` file is valid CSS, so the browser parses
+Read a `-csson.css` file in the browser using **only the browser's built-in CSSOM** —
+no parser, no dependencies. A `-csson.css` file is valid CSS, so the browser parses
 it for you; this module walks the authored `cssRules` tree and returns canonical
 JSON.
 
@@ -10,7 +10,7 @@ JSON.
 Load the file as a stylesheet, then read it:
 
 ```html
-<link rel="stylesheet" href="data.csson" />
+<link rel="stylesheet" href="data-csson.css" />
 <script type="module">
   import { toCanonicalJson } from "csson";
   const json = toCanonicalJson(document.styleSheets[0]);
@@ -21,10 +21,10 @@ Or from fetched text (constructable stylesheet):
 
 ```js
 import { fromText } from "csson";
-const json = fromText(await (await fetch("data.csson")).text());
+const json = fromText(await (await fetch("data-csson.css")).text());
 ```
 
-> Serve `.csson` as `Content-Type: text/css` so the browser will parse it as a
+> Serve `-csson.css` as `Content-Type: text/css` so the browser will parse it as a
 > stylesheet.
 
 ## What it does

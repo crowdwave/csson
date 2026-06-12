@@ -1,4 +1,4 @@
-/* web-server.csson — reverse-proxy + virtual hosts (nginx/caddy style) */
+/* web-server-csson.css — reverse-proxy + virtual hosts (nginx/caddy style) */
 cssonv1 {
   --service: "edge-proxy";
   --worker-processes: auto;        /* verbatim string scalar */

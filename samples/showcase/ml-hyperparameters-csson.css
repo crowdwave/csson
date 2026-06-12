@@ -1,4 +1,4 @@
-/* ml-hyperparameters.csson — deep learning training configuration */
+/* ml-hyperparameters-csson.css — deep learning training configuration */
 cssonv1 {
   --experiment: "resnet-finetune-v4";
   --task: "image-classification";

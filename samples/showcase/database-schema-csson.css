@@ -1,4 +1,4 @@
-/* database-schema.csson — relational schema for a shop database */
+/* database-schema-csson.css — relational schema for a shop database */
 cssonv1 {
   --database: "shopdb";
   --engine: postgresql;

@@ -1,4 +1,4 @@
-/* wind-turbine-farm.csson — offshore wind farm SCADA & asset config */
+/* wind-turbine-farm-csson.css — offshore wind farm SCADA & asset config */
 cssonv1 {
   --farm_name: "North Shoal Array";
   --turbine_count: 24;       /* integer */

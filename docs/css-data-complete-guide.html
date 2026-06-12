@@ -66,7 +66,7 @@
   <div class="kick">CSSON v1 · the complete guide</div>
   <h1>CSSON — data that is <span class="x">also CSS</span></h1>
   <p class="lead">CSSON is structured data written as a valid CSS stylesheet. Because a
-  <code>.csson</code> file <em>is</em> CSS, a browser already knows how to parse it — you read your
+  <code>-csson.css</code> file <em>is</em> CSS, a browser already knows how to parse it — you read your
   data straight out of the browser's built-in CSSOM, with no library and no extra parser.</p>
 
   <nav class="toc">
@@ -76,7 +76,7 @@
     <a href="#mapping">04 · How CSS maps to JSON</a>
     <a href="#read">05 · Reading it — the authored rule tree</a>
     <a href="#scalars">06 · Scalars &amp; fidelity</a>
-    <a href="#load">07 · Loading a .csson file</a>
+    <a href="#load">07 · Loading a -csson.css file</a>
     <a href="#edit">08 · Editing without losing comments</a>
     <a href="#vsjson">09 · CSSON vs JSON</a>
   </nav>
@@ -185,11 +185,11 @@ cssonv1 {
   travelling-with-the-document schema. It is <strong>advisory</strong>: it does not change how the
   structure is read, only how a tool may validate or strongly type scalars.</p>
 
-  <h2 id="load"><span class="no">07</span>Loading a <code>.csson</code> file</h2>
-  <p>A CSSON file uses the <code>.csson</code> extension and is served as
+  <h2 id="load"><span class="no">07</span>Loading a <code>-csson.css</code> file</h2>
+  <p>A CSSON file uses the <code>-csson.css</code> extension and is served as
   <code>Content-Type: text/css</code> so the browser parses it as a stylesheet.</p>
   <pre class="block"><span class="cm">&lt;!-- already in the page --&gt;</span>
-&lt;link rel=<span class="st">"stylesheet"</span> href=<span class="st">"data.csson"</span>&gt;
+&lt;link rel=<span class="st">"stylesheet"</span> href=<span class="st">"data-csson.css"</span>&gt;
 &lt;script type=<span class="st">"module"</span>&gt;
   <span class="kw">import</span> { toCanonicalJson } <span class="kw">from</span> <span class="st">"csson"</span>;
   <span class="kw">const</span> json = <span class="fn">toCanonicalJson</span>(document.styleSheets[0]);
@@ -197,7 +197,7 @@ cssonv1 {
 
 <span class="cm">// or from fetched text, without touching the page:</span>
 <span class="kw">import</span> { fromText } <span class="kw">from</span> <span class="st">"csson"</span>;
-<span class="kw">const</span> json = <span class="fn">fromText</span>(<span class="kw">await</span> (<span class="kw">await</span> fetch(<span class="st">"data.csson"</span>)).text());</pre>
+<span class="kw">const</span> json = <span class="fn">fromText</span>(<span class="kw">await</span> (<span class="kw">await</span> fetch(<span class="st">"data-csson.css"</span>)).text());</pre>
 
   <h2 id="edit"><span class="no">08</span>Editing without losing comments</h2>
   <p>CSSON edits operate on the <strong>source text</strong>, never by re-serializing the CSSOM —

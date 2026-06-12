@@ -1,19 +1,19 @@
 /* csson.ts — CSSON reader for the browser, using ONLY the built-in CSSOM.
  *
- * No dependencies, no bundled parser: an end user loads a .csson file as a
+ * No dependencies, no bundled parser: an end user loads a -csson.css file as a
  * stylesheet and this walks the browser's authored `cssRules` tree. Same
  * algorithm as the lexbor core (core/src/read.c) and the shared
  * conformance reader (conformance/v1/readers/browser/reader.js); proven
  * byte-identical across Chrome (Blink) and Firefox (Gecko).
  *
  * Usage:
- *   // 1. via a <link rel="stylesheet" href="data.csson"> already in the page:
+ *   // 1. via a <link rel="stylesheet" href="data-csson.css"> already in the page:
  *   import { toCanonicalJson } from "csson";
  *   const json = toCanonicalJson(document.styleSheets[0]);
  *
  *   // 2. from fetched text (constructable stylesheet):
  *   import { fromText } from "csson";
- *   const json = fromText(await (await fetch("data.csson")).text());
+ *   const json = fromText(await (await fetch("data-csson.css")).text());
  */
 
 export type Scalar = string | number;

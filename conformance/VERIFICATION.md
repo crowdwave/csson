@@ -53,15 +53,15 @@ cd v1 && ./verify.sh
 committed expected JSON. Expected output:
 
 ```
-== csson_v1.csson ==
+== csson_v1-csson.css ==
   c: identical
   browser: identical
   firefox: identical
-== numeric.csson ==
+== numeric-csson.css ==
   c: identical
   browser: identical
   firefox: identical
-== edge.csson ==
+== edge-csson.css ==
   c: identical
   browser: identical
   firefox: identical
@@ -72,20 +72,20 @@ RESULT: all checked readers match expected
 Run a single engine by hand (each prints canonical JSON to stdout):
 
 ```sh
-../core/build/csson canon v1/csson_v1.csson                          # C core
-node v1/readers/browser/canon_browser.js  "$PWD/v1/csson_v1.csson"   # Chrome
-node v1/readers/firefox/canon_firefox.js  "$PWD/v1/csson_v1.csson"   # Firefox
+../core/build/csson canon v1/csson_v1-csson.css                          # C core
+node v1/readers/browser/canon_browser.js  "$PWD/v1/csson_v1-csson.css"   # Chrome
+node v1/readers/firefox/canon_firefox.js  "$PWD/v1/csson_v1-csson.css"   # Firefox
 ```
 
 ## Fixtures
 
-- `v1/csson_v1.csson` → `v1/expected.json` — the canonical document
+- `v1/csson_v1-csson.css` → `v1/expected.json` — the canonical document
   (MD5 `9ae94e393bf09a58bb597acee1b5d975`, 614 bytes).
-- `v1/fixtures/numeric.csson` → `v1/fixtures/numeric.expected.json` — scalar edge
+- `v1/fixtures/numeric-csson.css` → `v1/fixtures/numeric.expected.json` — scalar edge
   cases: floats, exponent (`1e3`), negatives, units (`px`/`s`), percentage,
   identifier, quoted string, nesting. This fixture is what catches engine
   serialization differences.
-- `v1/fixtures/edge.csson` → `v1/fixtures/edge.expected.json` — integer-coercion
+- `v1/fixtures/edge-csson.css` → `v1/fixtures/edge.expected.json` — integer-coercion
   boundaries: the JS-safe range (`±(2^53−1)` stays a number, `2^53` and a 20-digit
   value become strings), non-canonical numerics (`007`, `-0`, `1e3`, `3.14`), and a
   control character (`\t`) exercising JSON string escaping. Proves the C core and
@@ -93,9 +93,9 @@ node v1/readers/firefox/canon_firefox.js  "$PWD/v1/csson_v1.csson"   # Firefox
 
 **Expected files are generated from the core** and committed:
 ```sh
-../core/build/csson canon v1/csson_v1.csson          > v1/expected.json
-../core/build/csson canon v1/fixtures/numeric.csson  > v1/fixtures/numeric.expected.json
-../core/build/csson canon v1/fixtures/edge.csson     > v1/fixtures/edge.expected.json
+../core/build/csson canon v1/csson_v1-csson.css          > v1/expected.json
+../core/build/csson canon v1/fixtures/numeric-csson.css  > v1/fixtures/numeric.expected.json
+../core/build/csson canon v1/fixtures/edge-csson.css     > v1/fixtures/edge.expected.json
 ```
 A change to expected output must be a deliberate regeneration, reviewed as a diff.
 
@@ -116,7 +116,7 @@ engines to normalize differently.
 
 ## Extending the suite
 
-- **New fixture:** add `v1/fixtures/<name>.csson`, generate
+- **New fixture:** add `v1/fixtures/<name>-csson.css`, generate
   `v1/fixtures/<name>.expected.json` from the core, then add a `run_doc` line in
   `verify.sh` listing the engines it applies to.
 - **New engine/binding:** drive it to emit canonical JSON for the fixtures and

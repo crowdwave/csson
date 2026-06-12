@@ -4,7 +4,7 @@
 // tree. The Firefox driver (../firefox) injects the exact same reader.js, so the
 // two browsers are tested with identical reader code (browser-parity invariant).
 //
-// Usage: node canon_browser.js <file.csson>
+// Usage: node canon_browser.js <file-csson.css>
 // Chrome binary: $CHROME_PATH or `google-chrome` on PATH.
 
 const CDP = require('chrome-remote-interface');
@@ -35,7 +35,7 @@ function launchChrome() {
 }
 
 (async () => {
-  const css = fs.readFileSync(process.argv[2] || 'csson_v1.csson', 'utf8');
+  const css = fs.readFileSync(process.argv[2] || 'csson_v1-csson.css', 'utf8');
   const html = '<!DOCTYPE html><html><head><style id="s">' + css + '</style></head><body></body></html>';
   const { proc, wsUrl } = await launchChrome();
   const port = Number(new URL(wsUrl).port);

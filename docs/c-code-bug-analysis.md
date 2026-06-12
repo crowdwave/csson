@@ -96,7 +96,7 @@ A document nested ~200k deep crashes the process:
 ```
 cssonv1{ a{ a{ … }} }   (depth 200000)  → AddressSanitizer: DEADLYSIGNAL (SIGSEGV)
 ```
-`node_json` recurses once per nesting level with no depth limit; lexbor's recursive parse compounds it. Untrusted `.csson` (the whole point of the browser/edge use case) can crash any host linking `libcsson`.
+`node_json` recurses once per nesting level with no depth limit; lexbor's recursive parse compounds it. Untrusted `-csson.css` (the whole point of the browser/edge use case) can crash any host linking `libcsson`.
 **Fix:** impose a nesting-depth limit (return an error past N levels) in the walk; consider an explicit stack.
 
 ### H2 — `csson_set` injects raw value bytes (structural injection) **[confirmed]**

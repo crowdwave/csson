@@ -1,4 +1,4 @@
-/* observability-stack.csson — metrics, alerts, dashboards */
+/* observability-stack-csson.css — metrics, alerts, dashboards */
 cssonv1 {
   --stack: "obs-prod";
   --retention: 90d;

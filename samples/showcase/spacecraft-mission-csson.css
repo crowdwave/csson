@@ -1,4 +1,4 @@
-/* spacecraft-mission.csson — deep-space mission profile for an outer-planet flyby */
+/* spacecraft-mission-csson.css — deep-space mission profile for an outer-planet flyby */
 cssonv1 {
   /* Schema: typed property so altitude/length fields validate as <length> */
   @property --delta-v {

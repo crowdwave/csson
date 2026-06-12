@@ -1,4 +1,4 @@
-/* particle-detector.csson — collider experiment detector configuration */
+/* particle-detector-csson.css — collider experiment detector configuration */
 cssonv1 {
   --experiment: "HADRON-X";
   --beam_energy: 6.8TeV;     /* per beam (verbatim string) */

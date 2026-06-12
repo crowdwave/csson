@@ -87,8 +87,8 @@ The build is **CMake** (canonical), **C23-mandatory** (`-std=c23`,
 cmake -S . -B build -G Ninja           # add -DCSSON_SANITIZE=ON for ASan+UBSan, -DCSSON_TIDY=ON for clang-tidy
 cmake --build build                    # -> build/libcsson.a + build/csson
 ctest --test-dir build                 # conformance + edit + security + memory-safety
-build/csson canon ../conformance/v1/csson_v1.csson   # == ../conformance/v1/expected.json
-build/csson patch examples/sample_commented.csson examples/patch.json
+build/csson canon ../conformance/v1/csson_v1-csson.css   # == ../conformance/v1/expected.json
+build/csson patch examples/sample_commented-csson.css examples/patch.json
 ```
 
 ### Quality-check cycles

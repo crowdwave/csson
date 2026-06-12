@@ -1,4 +1,4 @@
-/* robot-arm.csson — 6-axis industrial robot arm configuration */
+/* robot-arm-csson.css — 6-axis industrial robot arm configuration */
 cssonv1 {
   --model: "KR-60-HA";
   --dof: 6;                  /* degrees of freedom (integer) */

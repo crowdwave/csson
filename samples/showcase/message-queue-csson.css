@@ -1,4 +1,4 @@
-/* message-queue.csson — broker config (Kafka-ish with queues) */
+/* message-queue-csson.css — broker config (Kafka-ish with queues) */
 cssonv1 {
   --cluster: "events-prod";
   --broker-count: 3;

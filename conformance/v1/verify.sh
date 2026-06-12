@@ -27,11 +27,11 @@ run_doc() {  # $1=doc  $2=expected  $3=engine list
   done
 }
 
-run_doc csson_v1.csson            expected.json                     "c browser firefox wasm"
-run_doc fixtures/numeric.csson    fixtures/numeric.expected.json    "c browser firefox wasm"
-run_doc fixtures/edge.csson       fixtures/edge.expected.json       "c browser firefox wasm"
-run_doc fixtures/preprocess.csson fixtures/preprocess.expected.json "c browser firefox wasm"
-run_doc fixtures/selectors.csson     fixtures/selectors.expected.json  "c browser firefox wasm"
+run_doc csson_v1-csson.css            expected.json                     "c browser firefox wasm"
+run_doc fixtures/numeric-csson.css    fixtures/numeric.expected.json    "c browser firefox wasm"
+run_doc fixtures/edge-csson.css       fixtures/edge.expected.json       "c browser firefox wasm"
+run_doc fixtures/preprocess-csson.css fixtures/preprocess.expected.json "c browser firefox wasm"
+run_doc fixtures/selectors-csson.css     fixtures/selectors.expected.json  "c browser firefox wasm"
 
 echo
 [ $fail = 0 ] && echo "RESULT: all checked readers match expected" || echo "RESULT: mismatch (see above)"

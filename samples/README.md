@@ -1,6 +1,6 @@
 # CSSON samples
 
-Example `.csson` documents — all valid CSSON v1, all using a `.css` extension
+Example CSSON documents — all valid CSSON v1, using the `.css` extension
 (named `*-csson.css`) because CSSON *is* valid CSS. Organised into two sets:
 
 ## [`features/`](features/) — learn the format

@@ -1,4 +1,4 @@
-/* ci-pipeline.csson — a CI/CD pipeline definition */
+/* ci-pipeline-csson.css — a CI/CD pipeline definition */
 cssonv1 {
   --pipeline: "build-test-deploy";
   --version: 2;

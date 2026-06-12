@@ -1,4 +1,4 @@
-/* kubernetes-deployment.csson — a Deployment workload */
+/* kubernetes-deployment-csson.css — a Deployment workload */
 cssonv1 {
   --apiVersion: "apps/v1";
   --kind: "Deployment";

@@ -6,8 +6,8 @@ right when you **consume** one in a browser.
 
 The short version:
 
-- **Authoring** a `.csson` file requires nothing special — you just write CSS.
-- **Reading** a `.csson` file must happen from the *authored rule tree* (the rules
+- **Authoring** a `-csson.css` file requires nothing special — you just write CSS.
+- **Reading** a `-csson.css` file must happen from the *authored rule tree* (the rules
   as written), which in a browser means one small, well-defined step.
 
 ---
@@ -83,7 +83,7 @@ work for you:
 ```js
 import { fromText } from "csson";
 
-const text = await fetch("data.csson").then(r => r.text());
+const text = await fetch("data-csson.css").then(r => r.text());
 const json = fromText(text);          // -> canonical JSON string
 const data = JSON.parse(json);
 ```
@@ -92,7 +92,7 @@ A handy one-liner you can drop into your own code:
 
 ```js
 const fromUrl = async (url) => fromText(await fetch(url).then(r => r.text()));
-const data = JSON.parse(await fromUrl("data.csson"));
+const data = JSON.parse(await fromUrl("data-csson.css"));
 ```
 
 Under the hood `fromText` builds a *constructable stylesheet*
@@ -103,7 +103,7 @@ rule tree — using only built-in browser APIs. No bundled parser, no dependenci
 
 ```html
 <!-- don't do this for data you want to READ -->
-<link rel="stylesheet" href="data.csson">
+<link rel="stylesheet" href="data-csson.css">
 ```
 
 A `<link rel="stylesheet">` tells the browser to **apply** the file as CSS. Two
@@ -136,7 +136,7 @@ No constructable-stylesheet step is needed — the reader parses the bytes direc
 **Command line:**
 
 ```sh
-csson canon data.csson      # -> canonical JSON on stdout
+csson canon data-csson.css      # -> canonical JSON on stdout
 ```
 
 **Any binding** links the `libcsson` core (or lexbor compiled to WASM); each one

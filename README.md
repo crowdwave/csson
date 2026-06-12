@@ -273,7 +273,7 @@ Content-Type: text/css
 The file does **not** need a `.css` suffix. This can work:
 
 ```html
-<link rel="stylesheet" href="/config.csson">
+<link rel="stylesheet" href="/config-csson.css">
 ```
 
 provided the server serves it as `text/css`.
@@ -281,7 +281,7 @@ provided the server serves it as `text/css`.
 But for application logic, the better pattern is usually:
 
 ```js
-const source = await fetch("/config.csson").then(r => r.text());
+const source = await fetch("/config-csson.css").then(r => r.text());
 const config = validateAndParseCsson(source);
 ```
 

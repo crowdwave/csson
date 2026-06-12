@@ -11,7 +11,7 @@
 set -u
 CS="${1:?usage: memcheck.sh <csson-binary>}"
 cd "$(dirname "$0")"
-EX="$PWD/../examples/sample_commented.csson"
+EX="$PWD/../examples/sample_commented-csson.css"
 FX="$PWD/../../conformance/v1/fixtures"
 d=$(mktemp -d "$PWD/.mem.XXXXXX"); trap 'rm -rf "$d"' EXIT
 export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=1}" UBSAN_OPTIONS="${UBSAN_OPTIONS:-halt_on_error=1}"
@@ -33,13 +33,13 @@ run() { # description, then CLI args
 }
 
 # fixtures, including malformed / adversarial inputs
-printf 'cssonv1 {\n  --org: "Acme";\n  dept { --name: "Eng"; --n: 3; }\n  dept { --name: "Ops"; }\n}\n' > "$d/doc.csson"
-printf 'cssonv1{ --x: 1; --y: 2; }\n' > "$d/flat.csson"
-printf 'cssonv1{ --x: 1; --x: 2; }\n' > "$d/dup.csson"
-printf 'body{ --x: 1; }\n' > "$d/noroot.csson"
-printf '\x00\xff\xfe garbage { not css ;;;; }}}}\n' > "$d/garbage.csson"
-: > "$d/empty.csson"
-python3 -c "open('$d/deep.csson','w').write('cssonv1{'+'a{'*20000+'--x:1;'+'}'*20000+'}')"
+printf 'cssonv1 {\n  --org: "Acme";\n  dept { --name: "Eng"; --n: 3; }\n  dept { --name: "Ops"; }\n}\n' > "$d/doc-csson.css"
+printf 'cssonv1{ --x: 1; --y: 2; }\n' > "$d/flat-csson.css"
+printf 'cssonv1{ --x: 1; --x: 2; }\n' > "$d/dup-csson.css"
+printf 'body{ --x: 1; }\n' > "$d/noroot-csson.css"
+printf '\x00\xff\xfe garbage { not css ;;;; }}}}\n' > "$d/garbage-csson.css"
+: > "$d/empty-csson.css"
+python3 -c "open('$d/deep-csson.css','w').write('cssonv1{'+'a{'*20000+'--x:1;'+'}'*20000+'}')"
 
 p() { printf '%s' "$2" > "$d/$1"; }
 p addfield '[{"op":"add","path":"/dept/0/lead","value":"Alice"}]'
@@ -63,56 +63,56 @@ p fjbad    'not json'
 p fjarr    '[1,2,3]'
 
 # read path
-run "canon doc"            canon "$d/doc.csson"
-run "canon edge"           canon "$FX/edge.csson"
-run "canon numeric"        canon "$FX/numeric.csson"
-run "canon duplicate keys" canon "$d/dup.csson"
-run "canon deep (err)"     canon "$d/deep.csson"
-run "canon no-root (err)"  canon "$d/noroot.csson"
-run "canon garbage (err)"  canon "$d/garbage.csson"
-run "canon empty (err)"    canon "$d/empty.csson"
-run "check valid"          check "$d/doc.csson"
-run "check invalid"        check "$d/noroot.csson"
+run "canon doc"            canon "$d/doc-csson.css"
+run "canon edge"           canon "$FX/edge-csson.css"
+run "canon numeric"        canon "$FX/numeric-csson.css"
+run "canon duplicate keys" canon "$d/dup-csson.css"
+run "canon deep (err)"     canon "$d/deep-csson.css"
+run "canon no-root (err)"  canon "$d/noroot-csson.css"
+run "canon garbage (err)"  canon "$d/garbage-csson.css"
+run "canon empty (err)"    canon "$d/empty-csson.css"
+run "check valid"          check "$d/doc-csson.css"
+run "check invalid"        check "$d/noroot-csson.css"
 # set: success + every rejection/cleanup path
-run "set valid"            set "$d/flat.csson" /x 42
-run "set inject rejected"  set "$d/flat.csson" /x '2;} evil{--z:9'
-run "set comment rejected" set "$d/flat.csson" /x 'a/*'
-run "set not-found"        set "$d/flat.csson" /nope 1
-run "set unresolved deep"  set "$d/flat.csson" /a/0/b 1
-run "set root pointer"     set "$d/flat.csson" / 1
+run "set valid"            set "$d/flat-csson.css" /x 42
+run "set inject rejected"  set "$d/flat-csson.css" /x '2;} evil{--z:9'
+run "set comment rejected" set "$d/flat-csson.css" /x 'a/*'
+run "set not-found"        set "$d/flat-csson.css" /nope 1
+run "set unresolved deep"  set "$d/flat-csson.css" /a/0/b 1
+run "set root pointer"     set "$d/flat-csson.css" / 1
 # remove
-run "rm field"             rm "$d/flat.csson" /x
-run "rm node"              rm "$d/doc.csson" /dept/1
-run "rm root rejected"     rm "$d/doc.csson" /
+run "rm field"             rm "$d/flat-csson.css" /x
+run "rm node"              rm "$d/doc-csson.css" /dept/1
+run "rm root rejected"     rm "$d/doc-csson.css" /
 [ -f "$EX" ] && run "rm node w/ comments" rm "$EX" /department/1
 # patch: every op + error path
-run "patch add field"      patch "$d/doc.csson" "$d/addfield"
-run "patch replace field"  patch "$d/doc.csson" "$d/replfield"
-run "patch add node"       patch "$d/doc.csson" "$d/addnode"
-run "patch add node array" patch "$d/doc.csson" "$d/addarr"
-run "patch add compact"    patch "$d/flat.csson" "$d/addnode"
-run "patch remove"         patch "$d/doc.csson" "$d/remove"
-run "patch replace2"       patch "$d/doc.csson" "$d/replace"
-run "patch replace node"   patch "$d/doc.csson" "$d/replnode"
-run "patch test ok"        patch "$d/doc.csson" "$d/testok"
-run "patch test fail (err)" patch "$d/doc.csson" "$d/testbad"
-run "patch move"           patch "$d/doc.csson" "$d/move"
-run "patch copy"           patch "$d/doc.csson" "$d/copy"
-run "patch bad json (err)" patch "$d/doc.csson" "$d/badjson"
-run "patch no op (err)"    patch "$d/doc.csson" "$d/noop"
-run "patch unknown (err)"  patch "$d/doc.csson" "$d/unknown"
-run "patch inject path"    patch "$d/flat.csson" "$d/inject"
-run "patch inject key"     patch "$d/doc.csson" "$d/injkey"
+run "patch add field"      patch "$d/doc-csson.css" "$d/addfield"
+run "patch replace field"  patch "$d/doc-csson.css" "$d/replfield"
+run "patch add node"       patch "$d/doc-csson.css" "$d/addnode"
+run "patch add node array" patch "$d/doc-csson.css" "$d/addarr"
+run "patch add compact"    patch "$d/flat-csson.css" "$d/addnode"
+run "patch remove"         patch "$d/doc-csson.css" "$d/remove"
+run "patch replace2"       patch "$d/doc-csson.css" "$d/replace"
+run "patch replace node"   patch "$d/doc-csson.css" "$d/replnode"
+run "patch test ok"        patch "$d/doc-csson.css" "$d/testok"
+run "patch test fail (err)" patch "$d/doc-csson.css" "$d/testbad"
+run "patch move"           patch "$d/doc-csson.css" "$d/move"
+run "patch copy"           patch "$d/doc-csson.css" "$d/copy"
+run "patch bad json (err)" patch "$d/doc-csson.css" "$d/badjson"
+run "patch no op (err)"    patch "$d/doc-csson.css" "$d/noop"
+run "patch unknown (err)"  patch "$d/doc-csson.css" "$d/unknown"
+run "patch inject path"    patch "$d/flat-csson.css" "$d/inject"
+run "patch inject key"     patch "$d/doc-csson.css" "$d/injkey"
 # JSON-bridge API
-run "get scalar"           get "$d/doc.csson" /org
-run "get subobject"        get "$d/doc.csson" /dept/0
-run "get not-found (err)"  get "$d/doc.csson" /nope
-run "get root"             get "$d/doc.csson" ""
+run "get scalar"           get "$d/doc-csson.css" /org
+run "get subobject"        get "$d/doc-csson.css" /dept/0
+run "get not-found (err)"  get "$d/doc-csson.css" /nope
+run "get root"             get "$d/doc-csson.css" ""
 run "from-json valid"      from-json "$d/fj"
 run "from-json bad (err)"  from-json "$d/fjbad"
 run "from-json array (err)" from-json "$d/fjarr"
-run "set-json scalar"      set-json "$d/flat.csson" /x '"hi"'
-run "set-json object (err)" set-json "$d/flat.csson" /x '{"a":1}'
+run "set-json scalar"      set-json "$d/flat-csson.css" /x '"hi"'
+run "set-json object (err)" set-json "$d/flat-csson.css" /x '{"a":1}'
 # validate (@property syntax checking — no file)
 run "validate match"       validate "<integer>" 5
 run "validate no-match"    validate "<integer>" 5.5
@@ -121,7 +121,7 @@ run "validate universal"   validate "*" "anything here"
 run "validate bad syntax"  validate "<nonsense" x
 # CLI surface
 run "versions"             versions
-run "missing args"         set "$d/flat.csson"
+run "missing args"         set "$d/flat-csson.css"
 
 # fuzz sweep: seeded, mutated/malformed inputs must never crash or trip a
 # sanitizer/valgrind — only ever a clean error exit. Deterministic (fixed seed).
@@ -148,10 +148,10 @@ for i in range(n):
         elif op < 0.7:                  b[p:p] = random.choice(inj)       # inject
         elif op < 0.85 and len(b) > 1:  del b[p]                          # delete
         else:                           b += random.choice(inj)          # append
-    open(f'{d}/fuzz/{i}.csson', 'wb').write(b)
+    open(f'{d}/fuzz/{i}-csson.css', 'wb').write(b)
 PY
 fz=0
-for f in "$d"/fuzz/*.csson; do
+for f in "$d"/fuzz/*-csson.css; do
   "${VG[@]}" "$CS" canon "$f" >/dev/null 2>"$d/e"; rc=$?
   if [ "$rc" -ge 128 ] || [ "$rc" -eq 42 ] || \
      grep -qiE "AddressSanitizer|LeakSanitizer|runtime error|UndefinedBehavior" "$d/e"; then

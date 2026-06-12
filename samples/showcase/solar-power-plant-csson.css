@@ -1,4 +1,4 @@
-/* solar-power-plant.csson — utility-scale PV plant configuration */
+/* solar-power-plant-csson.css — utility-scale PV plant configuration */
 cssonv1 {
   --plant_name: "Sunfield West";
   --capacity: 50MW;          /* nameplate AC capacity (verbatim string) */

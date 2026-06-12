@@ -13,9 +13,9 @@ the same output must come from Chrome (Blink) and Firefox (Gecko).
 ## Layout — grouped by standard version
 ```
 v1/
-  csson_v1.csson      the canonical example document
+  csson_v1-csson.css      the canonical example document
   expected.json       the canonical JSON every reader must emit (byte-identical)
-  fixtures/           extra fixtures (numeric.csson, edge.csson + their .expected.json)
+  fixtures/           extra fixtures (numeric-csson.css, edge-csson.css + their .expected.json)
   verify.sh           builds-aware harness: runs each built engine, diffs to expected
   readers/
     browser/ reader.js             the dependency-free reader (browser built-ins ONLY)
@@ -32,7 +32,7 @@ the two browsers run identical reader code. `packages/typescript` ships the same
 reader for end users.
 
 ## The contract
-For `v1/csson_v1.csson`, every conforming reader emits exactly:
+For `v1/csson_v1-csson.css`, every conforming reader emits exactly:
 ```
 MD5 (expected.json) = 9ae94e393bf09a58bb597acee1b5d975   (614 bytes)
 ```
@@ -56,7 +56,7 @@ Byte-identical canonical JSON across three engines (two real browsers):
 - **Chrome (Blink)** — built-in `cssRules` walk
 - **Firefox (Gecko)** — built-in `cssRules` walk
 
-…on `csson_v1.csson`, `fixtures/numeric.csson`, and `fixtures/edge.csson` (the
+…on `csson_v1-csson.css`, `fixtures/numeric-csson.css`, and `fixtures/edge-csson.css` (the
 integer-range / leading-zero / control-character edge cases).
 
 ## Scalar value fidelity

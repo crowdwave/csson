@@ -1,4 +1,4 @@
-/* dns-zone.csson — authoritative zone for example.com */
+/* dns-zone-csson.css — authoritative zone for example.com */
 cssonv1 {
   --origin: "example.com.";
   --ttl: 3600;          /* default TTL in seconds (integer) */

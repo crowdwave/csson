@@ -7,7 +7,7 @@ Invariants that gate every task: **never write our own CSS parsing** and
 ---
 
 ## Done
-- [x] CSSON **v1** spec (draft) — `spec/v1/SPEC.md` (array-free model, `.csson`/`text/css`, verbatim-token §5)
+- [x] CSSON **v1** spec (draft) — `spec/v1/SPEC.md` (array-free model, `-csson.css`/`text/css`, verbatim-token §5)
 - [x] **C core** on lexbor (`core/`) — `libcsson` + `csson` CLI: `canon`, `check`, `set`, `rm`
 - [x] **RFC 6902 patch** (`csson_patch`, atomic, comment-preserving) via vendored yyjson
 - [x] **Comment-preserving edits** via lexbor source offsets (proven)
@@ -16,7 +16,7 @@ Invariants that gate every task: **never write our own CSS parsing** and
 - [x] **Browser reader** — built-ins-only CSSOM (`packages/typescript` + shared `reader.js`)
 - [x] **Firefox** installed & driven (geckodriver/WebDriver); Chrome via CDP
 - [x] Verification runbook (`conformance/VERIFICATION.md`); platforms matrix (`core/PLATFORMS.md`)
-- [x] `.csson` extension enforced across docs/fixtures
+- [x] `-csson.css` extension enforced across docs/fixtures
 
 ---
 
@@ -70,7 +70,7 @@ Invariants that gate every task: **never write our own CSS parsing** and
       + ASan/UBSan/LSan over all read/edit/patch paths incl. error/cleanup, and a
       12k-run fuzz. Locked in as `ctest -R memcheck` (`tests/memcheck.sh`; bare under
       the sanitizer build, or `MEMCHECK_VALGRIND=1` against a plain build).
-- [x] Security review (untrusted `.csson` + patch JSON) — threat model + ranked
+- [x] Security review (untrusted `-csson.css` + patch JSON) — threat model + ranked
       findings in `docs/csson-security-analysis.md`; test set in
       `conformance/v1/security/`. **All S1–S9 fixed** (patch key/type/path injection,
       duplicate-key last-wins, set round-trip guard, CSS §3.3 preprocessing for

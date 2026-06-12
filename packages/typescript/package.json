@@ -1,7 +1,7 @@
 {
   "name": "csson",
   "version": "1.0.0",
-  "description": "CSSON reader for the browser — walks the built-in CSSOM (cssRules) of a loaded .csson stylesheet and returns canonical JSON. Zero dependencies; byte-identical to the lexbor core across Chrome and Firefox.",
+  "description": "CSSON reader for the browser — walks the built-in CSSOM (cssRules) of a loaded -csson.css stylesheet and returns canonical JSON. Zero dependencies; byte-identical to the lexbor core across Chrome and Firefox.",
   "type": "module",
   "main": "./dist/csson.js",
   "types": "./dist/csson.d.ts",

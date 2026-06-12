@@ -1,4 +1,4 @@
-/* firewall-rules.csson — a security group / firewall policy */
+/* firewall-rules-csson.css — a security group / firewall policy */
 cssonv1 {
   --name: "web-tier-sg";
   --vpc: "vpc-0a1b2c3d";
